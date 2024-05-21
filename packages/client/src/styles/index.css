@@ -1,0 +1,51 @@
+@import './reset.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: TypoRound;
+  src: url('@Assets/font/Typo-Round.otf');
+}
+
+@layer {
+  :root {
+    --background: #f0f0f0;
+    --foreground: #0f0f0f;
+    --border: #e3e3e7;
+    --logo-bg: #0000000d;
+    --fill-quaternary: #e7e7e7;
+    --fill-quaternary_hover: #e2e2e2;
+    --loading: #d9d9d9;
+    --loading-bg: #c3bdbd;
+    --text-gray: #a8a8a8;
+    --tag-bg: #f0f0f0;
+  }
+
+  .dark {
+    --background: #0f0f0f;
+    --foreground: #f0f0f0;
+    --border: #27272a;
+    --logo-bg: #ffffff14;
+    --fill-quaternary: #222222;
+    --fill-quaternary_hover: #2f2f2f;
+    --loading: #3d3d3d;
+    --loading-bg: #a8a3a3;
+    --text-gray: #a8a8a8;
+    --tag-bg: #3c3c3c;
+  }
+
+  .font-typo {
+    font-family: TypoRound, sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply box-border border-[--border];
+  }
+
+  body {
+    @apply bg-[--background] text-[--foreground];
+  }
+}

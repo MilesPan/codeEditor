@@ -1,0 +1,23 @@
+:root {
+    --question-text_color: #262626bf
+}
+.dark {
+    --question-text_color: #eff1f6bf
+}
+.anchorsWrapper {
+    @apply rounded-2xl flex justify-center items-center gap-1 hover:opacity-80 cursor-pointer bg-[--tag-bg] px-2 py-1;
+}
+
+.bottom-boder {
+    @apply border-b  border-b-[#f2f2f2] dark:border-b-[#3f3f40];
+}
+
+.question {
+    @apply flex mb-3 text-sm text-[--question-text_color];
+}
+.questionTag  {
+    @apply px-2 py-1 rounded-xl bg-[--tag-bg] text-[--question-text_color] hover:opacity-80 cursor-pointer;
+}
+.questionInformation {
+    @apply text-[--pure-black] dark:text-[--pure-white] ml-2;
+}
