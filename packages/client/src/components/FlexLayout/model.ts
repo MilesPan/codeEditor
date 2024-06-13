@@ -1,5 +1,4 @@
-import { IJsonModel,  IJsonRowNode } from 'flexlayout-react';
-
+import { IJsonModel, IJsonRowNode, IJsonTabSetNode } from 'flexlayout-react';
 
 export const MinTabSet = { width: 40, height: 36 };
 export const TabName = {
@@ -8,21 +7,23 @@ export const TabName = {
   solution: '题解',
   code: '代码',
   testCase: '测试用例',
-  testResponse: '测试结果'
+  testResponse: '测试结果',
+  meeting: '视频会议'
 };
-export type TABNAME = keyof typeof TabName
+export type TABNAME = keyof typeof TabName;
 export default {
   global: {
     tabSetMinWidth: MinTabSet.width,
     tabSetMinHeight: MinTabSet.height,
-    tabEnableClose: false
+    tabEnableClose: false,
+    tabEnableRename: false
   },
   layout: {
     type: 'row',
     children: [
       {
         type: 'tabset',
-        weight: 50,
+        weight: 20,
         foldBeforeWeight: 59.05,
         children: [
           {
@@ -55,7 +56,7 @@ export default {
               {
                 type: 'tab',
                 name: TabName.code,
-                component: 'code',
+                component: TabName.code,
                 enableRenderOnDemand: false
               }
             ],
@@ -79,7 +80,19 @@ export default {
             ],
             selected: 0
           }
-        ]
+        ] as (IJsonTabSetNode & { foldBeforeWeight: number })[]
+      },
+      {
+        type: 'tabset',
+        weight: 30,
+        children: [
+          {
+            type: 'tab',
+            name: TabName.meeting,
+            component: TabName.meeting
+          }
+        ],
+        selected: 0
       }
     ]
   }

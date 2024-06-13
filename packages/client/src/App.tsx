@@ -1,11 +1,18 @@
 import { ConfigProvider, theme } from 'antd';
-import Header from './Layout/Header/Header';
-import Main from './Layout/Main/Main';
+
 import './styles/App.css';
+import '@livekit/components-styles';
+
+
 import { useTheme } from './components/ThemeProvider';
+import { CodeProvider } from './contexts/CodeContext';
+import { TabProvider } from './contexts/TabContext';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router';
 
 const App = () => {
   const { resolvedTheme } = useTheme();
+
   return (
     <ConfigProvider
       theme={{
@@ -14,16 +21,20 @@ const App = () => {
           Button: {
             colorPrimary: '#2cbb5d',
             algorithm: true
+          },
+          Popover: {
+            colorBgElevated: 'var(--popover-bgColor)'
           }
         }
       }}
     >
-      <div className="app flex flex-col w-full  px-4 overflow-x-auto h-[100vh]">
-        <div className="flex flex-col h-full min-w-[1000px]">
-          <Header></Header>
-          <Main></Main>
-        </div>
-      </div>
+      <CodeProvider>
+        <TabProvider>
+          <div className="app flex flex-col w-full  px-4 overflow-x-auto h-[100vh]">
+            <RouterProvider router={router}></RouterProvider>
+          </div>
+        </TabProvider>
+      </CodeProvider>
     </ConfigProvider>
   );
 };

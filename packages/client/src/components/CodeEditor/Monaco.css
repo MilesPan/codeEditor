@@ -1,0 +1,35 @@
+.yRemoteSelection {
+  background-color: rgb(250, 129, 0, 0.5);
+}
+.yRemoteSelectionHead {
+  position: absolute;
+  border-left: orange solid 2px;
+  border-top: orange solid 2px;
+  border-bottom: orange solid 2px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+:root {
+  --custom-hover-message_bg: #fff;
+  --custom-hover-message_borderColor: #eee;
+}
+.dark {
+  --custom-hover-message_bg: #333;
+  --custom-hover-message_borderColor: rgba(0, 0, 0, 0.3);
+}
+.custom-hover-message {
+  position: absolute;
+  background-color: var(--custom-hover-message_bg);
+  border: 1px solid var(--custom-hover-message_borderColor);
+  padding: 5px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(-10px);
+}
+
+.custom-hover-message.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

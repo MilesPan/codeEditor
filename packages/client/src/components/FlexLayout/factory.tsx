@@ -1,23 +1,29 @@
-import TabOne from '@/components/TabOne';
-import TabTwo from '@/components/TabTwo';
 import { TabNode, TitleFactory } from 'flexlayout-react';
-import { ClipboardPen, Code, FlaskRound, History, SquareActivity, Terminal } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ClipboardPen, Code, FlaskRound, History, LoaderCircle, SquareActivity, Terminal } from 'lucide-react';
+import { ReactNode, useMemo } from 'react';
 import { TABNAME, TabName } from './model';
-import ProblemDescription from '../ProblemDescription/ProblemDescription';
+import CodeEditor from '@/components/CodeEditor/CodeEditor';
+import ProblemDescription from '@/components/ProblemDescription/ProblemDescription';
+import TestResponse from '../TestResponse/TetstResponse';
+import { useCodeContext } from '@/contexts/CodeContext';
+import './factory.css';
+import Meeting from '../Meeting/Meeting';
 export const contentFactory = (node: TabNode): ReactNode => {
   const TabStrategy = {
     [TabName.desc]: <ProblemDescription></ProblemDescription>,
-    [TabName.solution]: <TabTwo></TabTwo>,
-    [TabName.record]: <TabTwo></TabTwo>,
-    [TabName.code]: <TabTwo></TabTwo>,
-    [TabName.testCase]: <TabTwo></TabTwo>,
-    [TabName.testResponse]: <TabTwo></TabTwo>
-  }
+    [TabName.solution]: <TestResponse></TestResponse>,
+    [TabName.record]: <TestResponse></TestResponse>,
+    [TabName.code]: <CodeEditor></CodeEditor>,
+    [TabName.testCase]: <TestResponse></TestResponse>,
+    [TabName.testResponse]: <TestResponse></TestResponse>,
+    [TabName.meeting]: <Meeting></Meeting>
+  };
   return TabStrategy[node.getComponent() as TABNAME];
 };
 
 export const titleFactory: TitleFactory = (node: TabNode) => {
+  const { isRunning } = useCodeContext();
+
   const TitleStrategy = {
     [TabName.desc]: (
       <>
@@ -54,7 +60,11 @@ export const titleFactory: TitleFactory = (node: TabNode) => {
     [TabName.testResponse]: (
       <>
         <div className="flex items-center">
-          <Terminal size={18} color="var(--logo_bg-green)"></Terminal>
+          {isRunning ? (
+            <LoaderCircle size={18} className="animate-spin opacity-40"></LoaderCircle>
+          ) : (
+            <Terminal size={18} color="var(--logo_bg-green)"></Terminal>
+          )}
           <span className="ml-1 text-sm">{TabName.testResponse}</span>
         </div>
       </>

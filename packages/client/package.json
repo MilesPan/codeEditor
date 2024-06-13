@@ -8,12 +8,20 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "@livekit/components-react": "^2.3.1",
+    "@livekit/components-styles": "^1.0.12",
+    "@monaco-editor/react": "^4.6.0",
     "antd": "^5.17.2",
     "flexlayout-react": "^0.7.15",
     "lucide-react": "^0.378.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-transition-group": "^4.4.5"
+    "react-router-dom": "^6.23.1",
+    "react-transition-group": "^4.4.5",
+    "y-monaco": "^0.1.5",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.3",
+    "yjs": "^13.6.15"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^6.0.0",

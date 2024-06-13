@@ -1,0 +1,21 @@
+:root {
+    --layer-01: #fff;
+}
+.dark {
+    --layer-01: var(--dark-gray-20)
+}
+.monaco-editor,
+.monaco-editor .inputarea.ime-input,
+.monaco-editor .margin,
+.monaco-editor .monaco-editor-background {
+  background: var(--layer-01) !important;
+}
+.monaco-editor .scroll-decoration {
+  box-shadow: none !important;
+}
+.monaco-editor .line-numbers {
+  word-wrap: normal !important;
+}
+.monaco-editor .slider-mouseover {
+ display: none !important;
+}

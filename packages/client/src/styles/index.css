@@ -20,6 +20,11 @@
     --loading-bg: #c3bdbd;
     --text-gray: #a8a8a8;
     --tag-bg: #f0f0f0;
+    --text-b1: #6c6c6c;
+    /* --scrollbar-background: #333333; */
+    --popover-bgColor: #fff;
+    --scrollbar-background: #fff;
+    --scrollbar-thumb: #cdcaca;
   }
 
   .dark {
@@ -33,10 +38,21 @@
     --loading-bg: #a8a3a3;
     --text-gray: #a8a8a8;
     --tag-bg: #3c3c3c;
+    --text-b1: #b1b1b1;
+    --popover-bgColor: #323232;
+    --scrollbar-background: #333333;
+    --scrollbar-thumb: #aaaaaa;
   }
 
   .font-typo {
     font-family: TypoRound, sans-serif;
+  }
+
+  ._hoverTag {
+    @apply px-2 rounded-md hover:bg-[--tag-bg];
+  }
+  ._hoveredTag {
+    @apply px-2 rounded-md bg-[--tag-bg];
   }
 }
 
@@ -48,4 +64,22 @@
   body {
     @apply bg-[--background] text-[--foreground];
   }
+}
+
+body {
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-background);
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--scrollbar-background);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 3px solid var(--scrollbar-background);
 }

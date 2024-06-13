@@ -1,8 +1,10 @@
 :root {
-    --question-text_color: #262626bf
+    --question-text_color: #262626bf;
+    --star_color: #ffb800;
 }
 .dark {
-    --question-text_color: #eff1f6bf
+    --question-text_color: #eff1f6bf;
+    --star_color: #fac31d;
 }
 .anchorsWrapper {
     @apply rounded-2xl flex justify-center items-center gap-1 hover:opacity-80 cursor-pointer bg-[--tag-bg] px-2 py-1;

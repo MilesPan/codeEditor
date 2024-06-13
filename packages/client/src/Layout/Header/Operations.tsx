@@ -1,18 +1,27 @@
 import { Bug, Play, Send } from 'lucide-react';
 import { CSSTransition } from 'react-transition-group';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useCodeContext } from '@/contexts/CodeContext';
+import { useTabContext } from '@/contexts/TabContext';
+import { TabName } from '@/components/FlexLayout/model';
 const Operations = () => {
-  const [running, setRunning] = useState(false);
+  const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
+
+  const { activateTab, findTabNodeByName, model } = useTabContext();
   function handleRun() {
-    setRunning(true);
+    setIsRunning(true);
+    setExecedCode(true);
     setTimeout(() => {
-      setRunning(false);
+      setIsRunning(false);
     }, 3000);
+
+    const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
+    activateTab(testResponseNode?.getId() || '');
   }
   ``;
   return (
     <>
-      <CSSTransition in={!running} timeout={500} classNames="button-transition" unmountOnExit>
+      <CSSTransition in={!isRunning} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="operations flex items-center gap-1">
           <div className="h-9 px-3 bug flex items-center bg-[--fill-quaternary_hover] rounded-l-lg cursor-not-allowed">
             <Bug size={18} color="#a4a4a4"></Bug>
@@ -34,8 +43,8 @@ const Operations = () => {
         </div>
       </CSSTransition>
 
-      <CSSTransition in={running} timeout={500} classNames="button-transition" unmountOnExit>
-        <div className="running-container flex justify-center">
+      <CSSTransition in={isRunning} timeout={500} classNames="button-transition" unmountOnExit>
+        <div className="isRunning-container flex justify-center">
           <div className="h-9 px-3 rounded-lg flex items-center gap-2 bg-[--fill-quaternary]">
             <div className="loader"></div>
             判题中...

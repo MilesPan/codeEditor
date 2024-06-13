@@ -1,0 +1,61 @@
+/* custom-livekit.css */
+
+/* Light theme */
+:root[data-theme='light'] {
+  --lk-background-color: #ffffff;
+  --lk-text-color: #000000;
+  --lk-control-bar-background: #ffffff;
+  --lk-control-bar-color: #333333;
+  --lk-prejoin-bar-background: #ede9f4; 
+  --lk-prejoin-bar-color: #000000;
+  --lk-button-background: #6093ec;
+
+  /* Add other CSS variables as needed */
+}
+
+/* Dark theme */
+:root[data-theme='dark'] {
+  --lk-background-color: #000000;
+  --lk-text-color: #ffffff;
+  --lk-control-bar-background: #000000;
+  --lk-control-bar-color: #f0f0f0;
+  --lk-prejoin-bar-background: #000;
+  --lk-prejoin-bar-color: #f0f0f0;
+  /* Add other CSS variables as needed */
+}
+
+/* Apply the variables */
+.livekit-container {
+  background-color: var(--lk-background-color);
+  color: var(--lk-text-color);
+}
+
+.livekit-control-bar {
+  flex-wrap: wrap;
+  background-color: var(--lk-control-bar-background);
+  color: var(--lk-control-bar-color);
+}
+.lk-participant-tile .lk-participant-placeholder {
+  background-color: rgb(169, 115, 223);
+}
+
+.lk-prejoin {
+  background-color: var(--lk-background-color);
+  color: var(--lk-text-color);
+}
+
+.lk-prejoin .lk-form-control {
+  background-color: var(--lk-prejoin-bar-background);
+  color: var(--lk-prejoin-bar-color);
+}
+
+[data-theme='light'] .lk-prejoin .lk-button {
+  background-color: var(--lk-button-background);
+}
+[data-theme='light'] .lk-prejoin .lk-button:hover {
+  background-color: #3396fa;
+}
+
+.lk-prejoin .lk-video-container .lk-camera-off-note {
+  background-color: rgb(169, 115, 223);
+}

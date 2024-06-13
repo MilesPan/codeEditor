@@ -14,7 +14,9 @@ import './ProblemDescription.css';
 import Questions from './Questions';
 import Collapse from '../Collapse/Collapse';
 import Avatar from '@/Layout/Header/Avatar';
-const ProblemDescription = () => {
+import { memo } from 'react';
+const ProblemDescription = memo(() => {
+  console.log('problemDescription render')
   const tags = ['贪心', '数组', '双指针', '二分查找', '排序'];
   return (
     <>
@@ -78,18 +80,18 @@ const ProblemDescription = () => {
             </div>
           </section>
         </div>
-        <div className="bottomOperators h-10 bottom-1 px-1 flex items-center gap-2 dark:text-[#b1b1b1] text-[#6c6c6c]">
-          <div className="lick cursor-pointer py-1.5 px-2.5 rounded-xl flex items-center gap-1.5 bg-[#3c3c3c] hover:bg-[#505050]">
+        <div className="bottomOperators h-10 bottom-1 px-1 flex items-center gap-2 text-[--text-b1]">
+          <div className="lick cursor-pointer py-1.5 px-2.5 rounded-xl flex items-center gap-1.5 bg-[#f0f0f0] dark:bg-[#3c3c3c] hover:bg-[#e2e2e2] dark:hover:bg-[#505050]">
             <ThumbsUp size={14}></ThumbsUp>
             <span className="text-sm">144</span>
           </div>
-          <div className="comments cursor-pointer py-1.5 px-2.5 rounded-xl flex items-center gap-1.5 hover:bg-[#3c3c3c]">
+          <div className="comments cursor-pointer py-1.5 px-2.5 rounded-xl flex items-center gap-1.5 dark:hover:bg-[#3c3c3c] hover:bg-[#f0f0f0]">
             <MessageCircleMore size={14}></MessageCircleMore>
-            <span className='text-sm'>300</span>
+            <span className="text-sm">300</span>
           </div>
-          <div className="line w-[1px] h-4 bg-[#ffffff24]"></div>
-          <div className="favorite">
-            <Star size={14} fill='yellow' color='yellow'></Star>
+          <div className="line w-[1px] h-4 dark:bg-[#ffffff24] bg-[#ebebeb]"></div>
+          <div className="favorite flex items-center">
+            <Star size={18} fill="var(--star_color)" color=""></Star>
           </div>
           <div className="share"></div>
           <div className="help"></div>
@@ -97,6 +99,6 @@ const ProblemDescription = () => {
       </div>
     </>
   );
-};
+});
 
 export default ProblemDescription;
