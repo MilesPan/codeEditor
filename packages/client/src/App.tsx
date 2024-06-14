@@ -3,15 +3,26 @@ import { ConfigProvider, theme } from 'antd';
 import './styles/App.css';
 import '@livekit/components-styles';
 
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 import { useTheme } from './components/ThemeProvider';
 import { CodeProvider } from './contexts/CodeContext';
 import { TabProvider } from './contexts/TabContext';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
+import { useEffect } from 'react';
 
 const App = () => {
   const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    AOS.init({
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 50
+    });
+  }, []);
 
   return (
     <ConfigProvider

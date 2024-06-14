@@ -7,3 +7,7 @@ body, #root {
   overflow: hidden;
 }
 
+::selection {
+  color: white;
+  background-color: orange;
+}

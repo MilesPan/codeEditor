@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@nestjs/mapped-types": "*"
+    "@nestjs/mapped-types": "*",
+    "ahooks": "^3.8.0",
+    "axios": "^1.7.2"
   },
   "name": "codeEditor",
   "version": "1.0.0",

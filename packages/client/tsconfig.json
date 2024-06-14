@@ -12,9 +12,11 @@
     "useDefineForClassFields": true,
     "baseUrl": "./",
     "paths": {
-      "@SVG/*": ["assets/svgs/*"],
-      "@Assets/*": ["assets/*"],
-      "@/*": ["src/*"]
+      "@SVG/*": ["../../lib/assets/svgs/*"],
+      "@Assets/*": ["../../lib/assets/*"],
+      "@/*": ["src/*"],
+      "@Utils/*": ["../../lib/utils/*"],
+      "@Request/*": ["../../lib/requests/*"]
     }
   },
   "include": ["src"]

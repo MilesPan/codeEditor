@@ -7,9 +7,6 @@ export function randomRgb() {
   );
 }
 
-// https://github.com/davidmarkclements/hsl_rgb_converter
-// ISC license
-
 export function hslToRgb(hue: number, saturation: number, lightness: number) {
   // based on algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV#Converting_to_RGB
   if (hue == undefined) {

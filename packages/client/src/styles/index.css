@@ -8,6 +8,7 @@
   src: url('@Assets/font/Typo-Round.otf');
 }
 
+
 @layer {
   :root {
     --background: #f0f0f0;
@@ -45,14 +46,19 @@
   }
 
   .font-typo {
-    font-family: TypoRound, sans-serif;
+    font-family: TypoRound, sans-serif  !important;
   }
-
   ._hoverTag {
     @apply px-2 rounded-md hover:bg-[--tag-bg];
   }
   ._hoveredTag {
     @apply px-2 rounded-md bg-[--tag-bg];
+  }
+  ._hoverBtnRight {
+    @apply cursor-pointer transition-all duration-300 hover:!opacity-50  hover:!translate-x-1
+  }
+  ._hoverBtnLeft {
+    @apply cursor-pointer transition-all duration-300 hover:!opacity-50  hover:!-translate-x-1
   }
 }
 
