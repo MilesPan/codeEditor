@@ -6,34 +6,38 @@
   --lk-text-color: #000000;
   --lk-control-bar-background: #ffffff;
   --lk-control-bar-color: #333333;
-  --lk-prejoin-bar-background: #ede9f4; 
+  --lk-prejoin-bar-background: #ede9f4;
   --lk-prejoin-bar-color: #000000;
   --lk-button-background: #6093ec;
-
-  /* Add other CSS variables as needed */
+  --lk-chat-background: #95c695;
+  --lk-input-bg: #d4edd1;
 }
 
 /* Dark theme */
 :root[data-theme='dark'] {
   --lk-background-color: #000000;
   --lk-text-color: #ffffff;
-  --lk-control-bar-background: #000000;
+  --lk-control-bar-background: #262626;
   --lk-control-bar-color: #f0f0f0;
   --lk-prejoin-bar-background: #000;
   --lk-prejoin-bar-color: #f0f0f0;
-  /* Add other CSS variables as needed */
+  --lk-chat-background: #262626;
+  --lk-input-bg: #1e1e1e;
 }
 
 /* Apply the variables */
 .livekit-container {
+  @apply min-h-[26rem];
+  height: 100%;
   background-color: var(--lk-background-color);
   color: var(--lk-text-color);
 }
 
-.livekit-control-bar {
+.lk-control-bar {
   flex-wrap: wrap;
   background-color: var(--lk-control-bar-background);
   color: var(--lk-control-bar-color);
+  max-height: unset;
 }
 .lk-participant-tile .lk-participant-placeholder {
   background-color: rgb(169, 115, 223);
@@ -49,13 +53,24 @@
   color: var(--lk-prejoin-bar-color);
 }
 
-[data-theme='light'] .lk-prejoin .lk-button {
+[data-theme='light'] .lk-button {
   background-color: var(--lk-button-background);
 }
-[data-theme='light'] .lk-prejoin .lk-button:hover {
-  background-color: #3396fa;
+[data-theme='light'] .lk-button:hover {
+  background-color: #3396fa !important;
+}
+[data-theme='light'] .lk-device-menu {
+  background-color: #1677ff36;
 }
 
 .lk-prejoin .lk-video-container .lk-camera-off-note {
   background-color: rgb(169, 115, 223);
+}
+.lk-toast-connection-state {
+  display: none;
+}
+
+
+.lk-chat-toggle {
+    display: none;
 }

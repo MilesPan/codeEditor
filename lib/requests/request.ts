@@ -1,5 +1,12 @@
 import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import { message } from 'antd';
 
+interface ResponseResult<T, V = any> {
+  code: string;
+  message: string;
+  data: T;
+  extra: V;
+}
 class Axios {
   private instance!: AxiosInstance;
   private baseConfig: AxiosRequestConfig = {
@@ -43,7 +50,8 @@ class Axios {
       res => {
         return res.data;
       },
-      (error: AxiosError) => {
+      (error: AxiosError<{ code: number; data: any; message: string }>) => {
+        message.error(error.response?.data?.message || '');
         return Promise.reject(error.response?.data);
       }
     );
@@ -52,7 +60,7 @@ class Axios {
 
 const instance = new Axios();
 // 返回一个Promise(发送post请求)
-export function fetchPost<T = ResponseResult<any>>(url: string, params?: any): Promise<AxiosResponse<T>> {
+export function fetchPost<T>(url: string, params?: any): Promise<ResponseResult<T>> {
   return new Promise((resolve, reject) => {
     instance
       .request({
@@ -65,7 +73,7 @@ export function fetchPost<T = ResponseResult<any>>(url: string, params?: any): P
       })
       .then(
         response => {
-          resolve(response as AxiosResponse<T>);
+          resolve(response as unknown as ResponseResult<T>);
         },
         err => {
           reject(err);
@@ -78,7 +86,7 @@ export function fetchPost<T = ResponseResult<any>>(url: string, params?: any): P
 }
 
 // 返回一个Promise(发送get请求)
-export function fetchGet<T = ResponseResult<any>>(url: string, param?: any): Promise<AxiosResponse<T>> {
+export function fetchGet<T>(url: string, param?: any): Promise<ResponseResult<T>> {
   return new Promise((resolve, reject) => {
     instance
       .request({
@@ -88,7 +96,7 @@ export function fetchGet<T = ResponseResult<any>>(url: string, param?: any): Pro
       })
       .then(
         response => {
-          resolve(response as AxiosResponse<T>);
+          resolve(response as unknown as ResponseResult<T>);
         },
         err => {
           reject(err);

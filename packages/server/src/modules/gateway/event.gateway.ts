@@ -1,4 +1,10 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { IncomingMessage } from 'http';
 import { Server, WebSocket } from 'ws';
 import * as Y from 'yjs';
 // import * as yawareness from 'y-protocols/awareness'
@@ -6,15 +12,14 @@ import * as Y from 'yjs';
 @WebSocketGateway({
   transports: ['websocket'],
 })
-export class EventsGateway {
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
-
   private clients: Map<string, { socket: WebSocket; room: string | null }> =
     new Map();
   private docs: Map<string, Y.Doc> = new Map();
-
-  handleConnection(client: WebSocket) {
+  handleConnection(client: WebSocket, message: IncomingMessage) {
+    console.log(message.url);
     const clientId = this.generateClientId();
     this.clients.set(clientId, { socket: client, room: null });
     client.on('message', (message: Buffer) =>
@@ -31,9 +36,10 @@ export class EventsGateway {
     this.clients.delete(clientId);
   }
 
-  handleMessage(clientId: string, message: Buffer) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleMessage(clientId: string, _message: Buffer) {
     // const decoder = new Decoder(message);
-    console.log(Y.decodeStateVector(message));
+    console.log(clientId);
     // const messageType = decoder.readUint8();
 
     // // If it's a sync step message

@@ -12,11 +12,11 @@ import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { MonacoBinding } from 'y-monaco';
 import { randomRgb, randomId } from '@/utils';
+import { UserStore } from '@/store';
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap('settings');
 
 const CodeEditor: FC = memo(() => {
-  console.log('codeEditorRender')
   const { resolvedTheme } = useTheme();
   const [curLanguage, setCurLanguage] = useState(languages[0].name);
   const [curCode, setCurCode] = useState(languages[0].defaultCode);
@@ -40,10 +40,11 @@ const CodeEditor: FC = memo(() => {
       setCurLanguage(newLanguage);
     });
 
-    const provider = new WebsocketProvider('ws://localhost:3000', '', ydoc);
+    const provider = new WebsocketProvider(`ws://localhost:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
+    console.log(provider);
     const awareness = provider.awareness;
 
-    const curUser = { name: randomId(), clientId: randomId(), color: randomRgb() };
+    const curUser = { name: UserStore.userInfo.userName, clientId: UserStore.userInfo.userName, color: randomRgb() };
     awareness.setLocalStateField('user', curUser);
     let decorations: any = [];
     let tooltipContainers: { [key: string]: HTMLDivElement } = {};
@@ -114,23 +115,23 @@ const CodeEditor: FC = memo(() => {
     editor.onMouseMove(event => {
       const position = event.target.position;
       if (position && event.target.element?.className.includes('yRemoteSelectionHead')) {
-        if(isShowUsers) return;
+        if (isShowUsers) return;
         isShowUsers = true;
         let offset = 0;
         Object.values(tooltipContainers).forEach(container => {
           container.style.top = `${event.event.posy + offset}px`;
           container.style.left = `${event.event.posx}px`;
-          container.style.display = 'unset'
+          container.style.display = 'unset';
           container.classList.add('visible');
           offset += container.offsetHeight + 2; // 间隔5px
         });
       } else {
         isShowUsers = false;
         Object.values(tooltipContainers).forEach(container => {
-          if(container.classList.contains('visible')){
+          if (container.classList.contains('visible')) {
             container.classList.remove('visible');
             setTimeout(() => {
-              container.style.display = 'none'
+              container.style.display = 'none';
             }, 400);
           }
         });

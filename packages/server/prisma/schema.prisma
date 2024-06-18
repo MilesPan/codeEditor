@@ -14,5 +14,13 @@ datasource db {
 }
 
 model Room {
-  id String @id @default(uuid())
+  id    String @id @default(uuid())
+  users User[]
+}
+
+model User {
+  id     String  @id @default(uuid())
+  name   String
+  roomId String?
+  room   Room?    @relation(fields: [roomId], references: [id])
 }

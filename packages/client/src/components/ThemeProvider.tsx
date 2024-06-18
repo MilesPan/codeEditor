@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigation } from 'react-router-dom';
 
 type Theme = 'dark' | 'light' | 'system';
 type ResolvedTheme = Exclude<Theme, 'system'>;
@@ -23,7 +24,12 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 'theme', ...props }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+  defaultTheme = 'system',
+  storageKey = 'theme',
+  ...props
+}: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem(storageKey) as Theme) || defaultTheme);
 
   const [resolvedTheme, setresolvedTheme] = useState<'dark' | 'light'>(() => {
@@ -44,7 +50,6 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
       setresolvedTheme(systemTheme);
       return;
     }
-
     root.classList.add(theme);
     setresolvedTheme(theme === 'dark' ? 'dark' : 'light');
   }, [theme]);
@@ -55,6 +60,9 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
+      if (window.location.pathname === '/') {
+        window.location.reload();
+      }
     }
   };
 

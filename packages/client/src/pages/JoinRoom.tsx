@@ -2,13 +2,16 @@ import './joinRoom.css';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { LocalUserChoices, PreJoin } from '@livekit/components-react';
 import { useTheme } from '@/components/ThemeProvider';
-import { Input, message } from 'antd';
+import { Input, Spin, message } from 'antd';
 import cs from 'classnames';
-import { ArrowLeft, ArrowRight, Shuffle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDownIcon, LoaderCircle, Shuffle } from 'lucide-react';
 import * as utils from '@Utils/index';
-import { findOrCreateRoomReq } from '@Request/room';
+import { findOrCreateRoomReq, userJoinRoomReq } from '@Request/room';
 import { useRequest } from 'ahooks';
-const JoinRoom: FC = () => {
+import { UserStore } from '@/store';
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router-dom';
+const JoinRoom: FC = observer(() => {
   const { resolvedTheme } = useTheme();
   const [messageApi, contextHolder] = message.useMessage();
   useEffect(() => {
@@ -27,8 +30,12 @@ const JoinRoom: FC = () => {
   const prevStep = () => setStep(_step => _step - 1);
 
   const [roomId, setRoomId] = useState('');
-  const handleSubmit = (choices: LocalUserChoices) => {
-    console.log(choices);
+  const { runAsync: runUserJoinRoomReq } = useRequest(userJoinRoomReq, { manual: true });
+  const handleSubmit = async (choices: LocalUserChoices) => {
+    UserStore.setUserInfo('userName', choices.username);
+    UserStore.setUserChoice(choices);
+    await runUserJoinRoomReq(roomId, choices.username);
+    navigate(`/code/${roomId}`);
   };
 
   const generateRoomId = () => {
@@ -36,10 +43,14 @@ const JoinRoom: FC = () => {
   };
 
   const { loading, runAsync } = useRequest(findOrCreateRoomReq, { manual: true });
+  const navigate = useNavigate();
   const goToPreJoin = async () => {
     if (!utils.validRoomId(roomId)) return messageApi.error('房间ID只可以输入字母和数字');
-    await runAsync(roomId);
-    // nextStep();
+    const res = await runAsync(roomId);
+    if (!res.data?.id) return;
+    messageApi.success(res.data.message);
+    UserStore.setUserInfo('roomId', roomId);
+    nextStep();
   };
   return (
     <>
@@ -83,10 +94,10 @@ const JoinRoom: FC = () => {
             </div>
           </>
         )}
-        {loading && <div>loading...</div>}
+        {loading && <Spin fullscreen></Spin>}
       </div>
     </>
   );
-};
+});
 
 export default JoinRoom;

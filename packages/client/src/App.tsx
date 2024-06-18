@@ -6,6 +6,7 @@ import '@livekit/components-styles';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+import { observer } from 'mobx-react-lite';
 import { useTheme } from './components/ThemeProvider';
 import { CodeProvider } from './contexts/CodeContext';
 import { TabProvider } from './contexts/TabContext';
