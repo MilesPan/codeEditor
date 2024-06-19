@@ -5,12 +5,13 @@ export default defineConfig({
   plugins: [pluginReact()],
   server: {
     port: 3030,
+    open: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://0.0.0.0:3000',
         pathRewrite: { '^/api': '' }
       }
-    }
+    },
   },
   source: {
     define: {
