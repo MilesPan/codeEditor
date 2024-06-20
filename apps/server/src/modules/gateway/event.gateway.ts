@@ -8,6 +8,7 @@ import { IncomingMessage } from 'http';
 import { Server, WebSocket } from 'ws';
 import * as Y from 'yjs';
 // import * as yawareness from 'y-protocols/awareness'
+import { setupWsConnection } from './y-websocket';
 
 @WebSocketGateway({
   transports: ['websocket'],
@@ -19,51 +20,24 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     new Map();
   private docs: Map<string, Y.Doc> = new Map();
   handleConnection(client: WebSocket, message: IncomingMessage) {
-    console.log(message.url);
-    const clientId = this.generateClientId();
-    this.clients.set(clientId, { socket: client, room: null });
-    client.on('message', (message: Buffer) =>
-      this.handleMessage(clientId, message),
-    );
-    client.on('close', () => this.handleDisconnect(clientId));
+    const room = message.url.match(/room=([^&/]+)/)?.[1];
+    setupWsConnection(client, message, { docName: room, gc: true });
   }
 
-  handleDisconnect(clientId: string) {
-    const client = this.clients.get(clientId);
-    if (client && client.room) {
-      this.broadcast(client.room, `${clientId} has left the room`);
-    }
-    this.clients.delete(clientId);
-  }
+  handleDisconnect() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleMessage(clientId: string, _message: Buffer) {
-    // const decoder = new Decoder(message);
-    console.log(clientId);
-    // const messageType = decoder.readUint8();
-
-    // // If it's a sync step message
+  handleMessage() {
+    // const decoder = decoding.createDecoder(message);
+    // const encoder = encoding.createEncoder();
+    // const messageType = decoding.readUint8(decoder);
+    // console.log(messageType);
     // if (messageType === 0) {
+    //   const roomId = decoding.readVarUint(decoder);
     //   const client = this.clients.get(clientId);
-    //   if (!client) return;
-
-    //   const roomId = readVarString(decoder);
-    //   if (!client.room) {
-    //     client.room = roomId;
-    //     if (!this.docs.has(roomId)) {
-    //       this.docs.set(roomId, new Y.Doc());
-    //     }
-    //     this.broadcast(client.room, `${clientId} has joined the room`);
-    //   }
-
-    //   const doc = this.docs.get(roomId);
-    //   if (doc) {
-    //     applyUpdate(doc, message.subarray(decoder.pos));
-    //     this.broadcast(client.room, message, clientId);
-    //   }
+    //   console.log('roomId', roomId);
+    //   // console.log('client', client)
+    // }
   }
-  // }
-
   broadcast(room: string, message: Buffer | string, senderId?: string) {
     for (const [clientId, client] of this.clients.entries()) {
       if (client.room === room && clientId !== senderId) {

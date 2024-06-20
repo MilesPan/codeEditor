@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Popover, Tooltip } from 'antd';
 import LanguageSelector, { languages } from './LanguageSelector';
@@ -13,6 +13,7 @@ import { WebsocketProvider } from 'y-websocket';
 import { MonacoBinding } from 'y-monaco';
 import { randomRgb, randomId } from '@/utils';
 import { UserStore } from '@/store';
+import { Awareness } from 'y-protocols/awareness.js';
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap('settings');
 
@@ -30,6 +31,7 @@ const CodeEditor: FC = memo(() => {
   }, []);
 
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  let _awareness = useRef<Awareness>();
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
 
@@ -41,7 +43,7 @@ const CodeEditor: FC = memo(() => {
     });
 
     const provider = new WebsocketProvider(`ws://localhost:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
-    console.log(provider);
+    _awareness.current = provider.awareness;
     const awareness = provider.awareness;
 
     const curUser = { name: UserStore.userInfo.userName, clientId: UserStore.userInfo.userName, color: randomRgb() };
@@ -49,7 +51,9 @@ const CodeEditor: FC = memo(() => {
     let decorations: any = [];
     let tooltipContainers: { [key: string]: HTMLDivElement } = {};
 
-    awareness.on('change', (changes: any) => {
+    awareness.on('change', (changes: any, ...args: any[]) => {
+      console.log('local', awareness.clientID);
+      console.log(args);
       // 清除旧的 tooltip
       Object.values(tooltipContainers).forEach(container => {
         container.remove();
@@ -60,10 +64,11 @@ const CodeEditor: FC = memo(() => {
       decorations = [];
 
       const states = awareness.getStates();
+      UserStore.setUsers(Array.from(states.values()).map(state => state.user));
+
       states.forEach((state, clientId) => {
         if (state.cursor) {
           const user = state.user as typeof curUser;
-          console.log(clientId);
           const { position } = state.cursor;
           if (user) {
             const tooltip = document.createElement('div');
@@ -91,7 +96,6 @@ const CodeEditor: FC = memo(() => {
               )[0]
             );
           }
-
           const style = document.createElement('style');
           style.innerHTML = `
           .yRemoteSelection-${clientId} {

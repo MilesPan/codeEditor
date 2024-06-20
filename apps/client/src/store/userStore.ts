@@ -2,6 +2,11 @@ import { LocalUserChoices } from '@livekit/components-react';
 import { makeAutoObservable, computed, keys } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
+type User = {
+  name: string;
+  clientId: string;
+  color: string;
+};
 class UserStore {
   userInfo = {
     userName: '',
@@ -14,11 +19,13 @@ class UserStore {
     videoDeviceId: '',
     videoEnabled: false
   };
+
+  users: Array<User> = [];
   constructor() {
     makeAutoObservable(this);
     makePersistable(this, {
       name: 'UserStore',
-      properties: ['userInfo'],
+      properties: ['userInfo', 'users'],
       storage: window.localStorage
     }).then(r => console.log('持久化存储', r));
   }
@@ -26,10 +33,16 @@ class UserStore {
     this.userInfo[key] = value;
   };
   setUserChoice = (value: LocalUserChoices) => {
-    this.userChoice = value
+    this.userChoice = value;
+  };
+  setUsers = (value: Array<User>) => {
+    this.users = value;
   };
   get hasUserInfo() {
     return Boolean(this.userInfo.roomId && this.userInfo.userName);
+  }
+  get curUser() {
+    return this.users.find(user => user.name === this.userChoice.username);
   }
 }
 

@@ -214,10 +214,6 @@ importers:
         specifier: ^5.4.2
         version: 5.4.5
 
-  packages/client: {}
-
-  packages/server: {}
-
 packages:
 
   '@alloc/quick-lru@5.2.0':
