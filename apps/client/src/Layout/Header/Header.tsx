@@ -17,7 +17,6 @@ const Header: FC = () => {
   const { resolvedTheme } = useTheme();
 
   const { roomId } = useParams();
-  console.log(UserStore.userInfo.roomId, UserStore.userInfo.userName);
   const { runAsync: runUserLeaveRoomReq } = useRequest(userLeaveRoomReq, { manual: true });
   const navigate = useNavigate();
   const leaveRoom = async () => {

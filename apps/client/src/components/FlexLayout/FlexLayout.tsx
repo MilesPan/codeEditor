@@ -1,11 +1,11 @@
 import { Layout, Model, Action, Actions, IJsonTabNode, TabNode } from 'flexlayout-react';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Layout_Model from './model';
 
 import './FlexLayout.css';
 import { contentFactory, titleFactory } from './factory';
 import { useTabContext } from '@/contexts/TabContext';
-const FlexLayout = () => {
+const FlexLayout = memo(() => {
   const [model, setModel] = useState(Model.fromJson(Layout_Model));
   const layoutRef = useRef<any>(null);
   const { setActivateTab, setModel: setContextModel } = useTabContext();
@@ -44,6 +44,6 @@ const FlexLayout = () => {
       ></Layout>
     </>
   );
-};
+});
 
 export default FlexLayout;

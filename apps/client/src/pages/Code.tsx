@@ -1,6 +1,7 @@
 import FlexLayout from '@/components/FlexLayout/FlexLayout';
+import { memo } from 'react';
 
-const Code = () => {
+const Code = memo(() => {
   return (
     <>
       <main className="flex-1  pb-2 flex-grow">
@@ -10,6 +11,6 @@ const Code = () => {
       </main>
     </>
   );
-};
+});
 
 export default Code;

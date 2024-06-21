@@ -1,9 +1,9 @@
-import avatar from '@Assets/avatar.jpg';
 import { UserStore } from '@/store';
-const Avatar = () => {
+import { observer } from 'mobx-react-lite';
+const Avatar = observer(() => {
   return (
     <>
-      <div className="flex relative">
+      <div className="flex relative" data-aos="fade-left">
         {UserStore.users.map((user, index) => {
           return user ? (
             <span
@@ -20,5 +20,5 @@ const Avatar = () => {
       </div>
     </>
   );
-};
+});
 export default Avatar;
