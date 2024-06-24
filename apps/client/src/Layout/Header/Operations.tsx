@@ -1,19 +1,29 @@
 import { Bug, Play, Send } from 'lucide-react';
 import { CSSTransition } from 'react-transition-group';
-import { useContext, useState } from 'react';
 import { useCodeContext } from '@/contexts/CodeContext';
 import { useTabContext } from '@/contexts/TabContext';
 import { TabName } from '@/components/FlexLayout/model';
+import { CodeStore } from '@/store';
+import { runCode } from '@Request/code';
+import { useRequest } from 'ahooks';
 const Operations = () => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
 
   const { activateTab, findTabNodeByName, model } = useTabContext();
+  const { run} = useRequest(runCode, {manual: true})
   function handleRun() {
     setIsRunning(true);
     setExecedCode(true);
-    setTimeout(() => {
-      setIsRunning(false);
-    }, 3000);
+
+    run({
+      code: CodeStore.code,
+      testCases: CodeStore.testCases,
+      type: CodeStore.codeType
+    });
+    setIsRunning(false)
+    // setTimeout(() => {
+    //   setIsRunning(false);
+    // }, 3000);
 
     const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
     activateTab(testResponseNode?.getId() || '');

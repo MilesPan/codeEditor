@@ -2,36 +2,40 @@ import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Popover, Tooltip } from 'antd';
 import LanguageSelector, { languages } from './LanguageSelector';
-import { ChevronDown, Maximize2, Menu, Minimize2, RotateCcw, Turtle } from 'lucide-react';
+import { Language } from '@Request/index';
+import { ChevronDown, Maximize2, Menu, Minimize2, RotateCcw } from 'lucide-react';
 import useFullscreen from '@/hooks/useFullscreen';
 
-import Editor, { BeforeMount, Monaco, OnMount } from '@monaco-editor/react';
+import Editor, { OnMount } from '@monaco-editor/react';
 import './Monaco.css';
 
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { MonacoBinding } from 'y-monaco';
-import { randomRgb, randomId } from '@/utils';
-import { UserStore } from '@/store';
-import { Awareness, removeAwarenessStates } from 'y-protocols/awareness.js';
+import { randomRgb } from '@/utils';
+import { CodeStore, UserStore } from '@/store';
+import { Awareness } from 'y-protocols/awareness.js';
 import { observer } from 'mobx-react-lite';
 import { throttle } from 'lodash-es';
 
 const ydoc = new Y.Doc();
-const yMap = ydoc.getMap('settings');
+const yMap = ydoc.getMap<Language>('settings');
 
 const CodeEditor: FC = memo(
   observer(() => {
     const { resolvedTheme } = useTheme();
-    const [curLanguage, setCurLanguage] = useState(languages[0].name);
+    const [curLanguage, setCurLanguage] = useState<Language>(languages[0].value);
     const [curCode, setCurCode] = useState(languages[0].defaultCode);
+
     const [showLangSelector, setShowLangSelector] = useState(false);
     // 改变语言事件
-    const handleLanguageChange = useCallback((languageName: string) => {
-      setCurLanguage(languageName);
+    const handleLanguageChange = useCallback((languageType: Language) => {
+      setCurLanguage(languageType);
       setShowLangSelector(false);
-      setCurCode(languages.find(lang => lang.name === languageName)?.defaultCode || '');
-      yMap.set('language', languageName);
+      CodeStore.setCodeType(languageType);
+
+      setCurCode(languages.find(lang => lang.value === languageType)?.defaultCode || '');
+      yMap.set('language', languageType);
     }, []);
 
     const awarenessRef = useRef<Awareness>();
@@ -40,7 +44,6 @@ const CodeEditor: FC = memo(
     const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
     useEffect(() => {
       return () => {
-        console.log('editor destroy');
         awarenessRef.current?.destroy();
       };
     }, []);
@@ -50,14 +53,16 @@ const CodeEditor: FC = memo(
     }
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
+      CodeStore.setEditorRef(editor);
       editorRef.current = editor;
       const provider = new WebsocketProvider(`ws://localhost:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
       const awareness = provider.awareness;
       awarenessRef.current = awareness;
+
       // 语言协同
       yMap.set('language', curLanguage);
       yMap.observe(event => {
-        const newLanguage = yMap.get('language') as string;
+        const newLanguage = yMap.get('language') as Language;
         setCurLanguage(newLanguage);
       });
 
@@ -65,19 +70,12 @@ const CodeEditor: FC = memo(
       awareness.setLocalStateField('user', curUser);
       const states = awareness.getStates();
       setUsers(states);
-      const throttledAdd = throttle(addUserNameToCursors, 400);
-      throttledAdd(states);
+      const throttledAddTooltip = throttle(addUserNameToCursors, 400);
+      throttledAddTooltip(states);
       awareness.on('change', (changes: any, ...args: any[]) => {
         const states = awareness.getStates();
         setUsers(states);
-        // addUserNameToCursors(states);
-        throttledAdd(states);
-        states.forEach((state, clientId) => {
-          if (state.cursor) {
-            const user = state.user as typeof curUser;
-            const { position } = state.cursor;
-          }
-        });
+        throttledAddTooltip(states);
       });
       function addUserNameToCursors(states: Map<number, any>) {
         const cursorElements = document.querySelectorAll('.yRemoteSelectionHead');
@@ -86,35 +84,9 @@ const CodeEditor: FC = memo(
           const elementUserId = cursorElement.className.split('-').pop();
           const state = states.get(Number(elementUserId));
           if (state && state.user) {
-            console.log(state);
             const user = state.user;
             const username = user.name;
-            if (cursorElement.querySelector('.username-tag')) return;
-            const usernameTag = document.createElement('div');
-            usernameTag.className = 'username-tag';
-            usernameTag.innerText = username;
-            // 样式调整
-            const editorRect = document.querySelector('.monaco-editor')!.getBoundingClientRect()
-            const cursorRect = cursorElement.getBoundingClientRect()
-            if(cursorRect.top - editorRect.top < 20) {
-              usernameTag.style.bottom = 'auto';
-              usernameTag.style.top = '100%';
-            } else {
-              usernameTag.style.bottom = '100%';
-              usernameTag.style.top = 'auto';
-            }
-            usernameTag.style.position = 'absolute';
-            usernameTag.style.zIndex = '100';
-            usernameTag.style.left = '0';
-            usernameTag.style.backgroundColor = '#fff';
-            usernameTag.style.color = '#000';
-            usernameTag.style.padding = '2px 4px';
-            usernameTag.style.border = '1px solid #ccc';
-            usernameTag.style.borderRadius = '3px';
-            usernameTag.style.whiteSpace = 'nowrap';
-            usernameTag.dataset.aos = 'fade-in'
-            console.log(cursorElement);
-            cursorElement.appendChild(usernameTag);
+            genUserTooltip(cursorElement, username);
           }
         });
       }
@@ -139,7 +111,7 @@ const CodeEditor: FC = memo(
     };
     // 还原模板
     const resetCode = () => {
-      const defaultCode = languages.find(lang => lang.name === curLanguage)?.defaultCode || '';
+      const defaultCode = languages.find(lang => lang.value === curLanguage)?.defaultCode || '';
       setCurCode(defaultCode);
       if (editorRef.current) editorRef.current.setValue(defaultCode);
     };
@@ -162,7 +134,7 @@ const CodeEditor: FC = memo(
                   arrow={false}
                 >
                   <div className="text-sm _hoverTag flex items-center gap-1  h-6 text-[--text-b1] cursor-pointer">
-                    {curLanguage}
+                    {languages.find(lang => lang.value === curLanguage)?.name}
                     <ChevronDown size={14}></ChevronDown>
                   </div>
                 </Popover>
@@ -194,7 +166,7 @@ const CodeEditor: FC = memo(
             width="100%"
             height="100%"
             className="flex-1"
-            language={languages.find(lang => lang.name === curLanguage)?.value || ''}
+            language={curLanguage || ''}
             value={curCode}
             theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
             onMount={handleEditorDidMount}

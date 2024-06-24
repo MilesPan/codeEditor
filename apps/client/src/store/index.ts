@@ -1,5 +1,3 @@
 import UserStore from './userStore';
-
-export { UserStore };
-
-
+import CodeStore from './codeStore';
+export { UserStore, CodeStore };

@@ -1,4 +1,4 @@
-import { FC, createContext, useContext, useState } from 'react';
+import { FC, createContext, useCallback, useContext, useState } from 'react';
 
 interface CodeContextProps {
   execedCode: boolean;
