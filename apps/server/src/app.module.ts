@@ -6,8 +6,16 @@ import { LivekitModule } from './modules/livekit/livekit.module';
 import { RoomModule } from './modules/room/room.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { CodeModule } from './modules/code/code.module';
+import { DockerModule } from './modules/docker/docker.module';
 @Module({
-  imports: [PrismaModule, EventModule, LivekitModule, RoomModule, CodeModule],
+  imports: [
+    PrismaModule,
+    EventModule,
+    LivekitModule,
+    RoomModule,
+    CodeModule,
+    DockerModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

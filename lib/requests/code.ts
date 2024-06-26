@@ -1,25 +1,20 @@
 import request from './request';
 
-export enum Language {
-  Cpp = 'cpp',
-  Java = 'java',
-  Python2 = 'python2',
-  Python3 = 'python3',
-  C = 'c',
-  Csharp = 'csharp',
-  Javascript = 'javascript',
-  Typescript = 'typescript',
-  Php = 'php',
-  Swift = 'swift',
-  Kotlin = 'kotlin',
-  Dart = 'dart',
-  Go = 'go',
-  Ruby = 'ruby',
-  Rust = 'rust'
+export enum CodeType {
+  cpp = 'cpp',
+  nodejs = 'nodejs',
+  go = 'go',
+  python3 = 'python3',
+  python2 = 'python2',
+  java = 'java',
+  php = 'php',
+  rust = 'rust',
+  c = 'c',
+  dotnet = 'dotnet',
+  ts = 'typescript'
 }
-
 export interface RunCodeParams {
-  type: Language;
+  type: CodeType;
   code: string;
   testCases: any;
 }

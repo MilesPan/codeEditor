@@ -1,26 +1,24 @@
+import { DockerService } from '../docker/docker.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { RunCodeDto } from './dto/run-code.dto';
 import { Injectable } from '@nestjs/common';
-import { CreateCodeDto } from './dto/run-code.dto';
-import { UpdateCodeDto } from './dto/update-code.dto';
 
 @Injectable()
 export class CodeService {
-  create(createCodeDto: CreateCodeDto) {
-    return 'This action adds a new code';
-  }
+  constructor(
+    private prisma: PrismaService,
+    private dockerService: DockerService,
+  ) {}
+  async runCode(runCodeDto: RunCodeDto) {
+    const { code, type } = runCodeDto;
+    // const dockerOptions = this.dockerService.imageMap[type];
+    const dockerOptions = this.dockerService.setDockerOptions(type);
+    if (!dockerOptions) return new Error('未知语言');
 
-  findAll() {
-    return `This action returns all code`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} code`;
-  }
-
-  update(id: number, updateCodeDto: UpdateCodeDto) {
-    return `This action updates a #${id} code`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} code`;
+    try {
+      const container = await this.dockerService.generateContainer(code);
+    } catch (error) {
+      return error;
+    }
   }
 }

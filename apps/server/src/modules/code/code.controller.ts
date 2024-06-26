@@ -7,7 +7,7 @@ export class CodeController {
   constructor(private readonly codeService: CodeService) {}
 
   @Post()
-  create(@Body() runCodeDto: RunCodeDto) {
-    return this.codeService.create(runCodeDto);
+  runCode(@Body() runCodeDto: RunCodeDto) {
+    return this.codeService.runCode(runCodeDto);
   }
 }

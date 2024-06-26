@@ -1,10 +1,10 @@
-import { Language } from '@Request/index';
+import { CodeType } from '@Request/index';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class RunCodeDto {
   @IsNotEmpty()
   @IsString()
-  type: Language;
+  type: CodeType;
 
   @IsString()
   code: string;

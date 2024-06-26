@@ -1,7 +1,7 @@
 import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { message } from 'antd';
 
-interface ResponseResult<T, V = any> {
+export interface ResponseResult<T, V = any> {
   code: string;
   message: string;
   data: T;

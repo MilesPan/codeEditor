@@ -19,3 +19,10 @@ export function generateRoomId(): string {
 export function validRoomId(roomId: string): boolean {
   return /^[a-zA-Z0-9]+$/.test(roomId);
 }
+
+// 判断是不是某些类型
+export function isType(...args: ('Object' | 'Array' | 'Number' | 'String')[]) {
+  return (target: any) => {
+    return args.some(arg => Object.prototype.toString.call(target) === `[object ${arg}]`);
+  };
+}
