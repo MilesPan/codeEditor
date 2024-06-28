@@ -6,9 +6,9 @@ type IEditor = Parameters<OnMount>[0];
 
 class CodeStore {
   editorRef: IEditor | null = null;
-  codeType: Language = Language.Cpp;
+  codeType: Language | undefined = Language.cpp;
   testCases: any;
-  setCodeType(type: Language) {
+  setCodeType(type: Language | undefined) {
     this.codeType = type;
   }
   setTestCases(cases: any) {

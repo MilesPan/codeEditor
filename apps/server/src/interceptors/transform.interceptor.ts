@@ -22,14 +22,19 @@ export class TransformInterceptor<T>
     next: CallHandler,
   ): Observable<ReponseType<T>> {
     return next.handle().pipe(
-      map((data) => ({
-        data,
-        code: 0,
-        extra: {},
-        message: 'success',
-      })),
+      map((data) => {
+        return {
+          data: data,
+          code: 0,
+          extra: {},
+          message: 'success',
+        };
+      }),
       catchError((error) => {
-        const errorMessage = error.message || 'Internal Server Error';
+        const errorMessage =
+          error.response?.message?.[0] ||
+          error.message ||
+          'Internal Server Error';
         const statusCode =
           error instanceof HttpException
             ? error.getStatus()

@@ -1,5 +1,6 @@
-import './joinRoom.css';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 import { LocalUserChoices, PreJoin } from '@livekit/components-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { Input, Spin, message } from 'antd';
@@ -9,8 +10,8 @@ import * as utils from '@Utils/index';
 import { findOrCreateRoomReq, userJoinRoomReq } from '@Request/room';
 import { useRequest } from 'ahooks';
 import { UserStore } from '@/store';
-import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
+import '@/styles/joinRoom.css'
+
 const JoinRoom: FC = observer(() => {
   const { resolvedTheme } = useTheme();
   const [messageApi, contextHolder] = message.useMessage();

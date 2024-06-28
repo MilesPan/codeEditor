@@ -11,14 +11,12 @@ export class CodeService {
   ) {}
   async runCode(runCodeDto: RunCodeDto) {
     const { code, type } = runCodeDto;
-    // const dockerOptions = this.dockerService.imageMap[type];
     const dockerOptions = this.dockerService.setDockerOptions(type);
     if (!dockerOptions) return new Error('未知语言');
 
-    try {
-      const container = await this.dockerService.generateContainer(code);
-    } catch (error) {
-      return error;
-    }
+
+    return new Promise((resolve, reject) => {
+        this.dockerService.generateContainer(code, resolve, reject);
+    })
   }
 }

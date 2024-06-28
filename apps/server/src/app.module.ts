@@ -7,6 +7,7 @@ import { RoomModule } from './modules/room/room.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { CodeModule } from './modules/code/code.module';
 import { DockerModule } from './modules/docker/docker.module';
+import { LeetcodeModule } from './modules/leetcode/leetcode.module';
 @Module({
   imports: [
     PrismaModule,
@@ -15,6 +16,7 @@ import { DockerModule } from './modules/docker/docker.module';
     RoomModule,
     CodeModule,
     DockerModule,
+    LeetcodeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

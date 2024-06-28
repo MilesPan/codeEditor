@@ -1,17 +1,15 @@
 // ProtectedRoute.js
-import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRequest } from 'ahooks';
 import { findRoomReq } from '@Request/room';
-import { useEffect, useMemo, useState } from 'react';
+import {  useEffect, useState } from 'react';
 
 const ProtectedRoute = ({ children }: { children: any }) => {
   const { roomId } = useParams();
 
   const { loading, run } = useRequest(findRoomReq, {
-    onBefore(params) {
-      params[0] = roomId!;
-    },
+    manual: true,
     onError: () => {
       setHasRoom(false);
     },
@@ -19,13 +17,15 @@ const ProtectedRoute = ({ children }: { children: any }) => {
       setHasRoom(true);
     }
   });
-  const [hasRoom, setHasRoom] = useState(true);
-  const hasRoomMemo = useMemo(() => hasRoom, [hasRoom]);
+  useEffect(() => {
+    roomId && run(roomId)
+  }, [])
+  const [hasRoom, setHasRoom] = useState(!!roomId);
 
   if (loading) {
     return <div className="flex justify-center items-center h-full">Loading...</div>;
   }
-  if (!hasRoomMemo) {
+  if (!hasRoom) {
     return <Navigate to="/joinRoom" />;
   }
 

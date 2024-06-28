@@ -6,27 +6,29 @@ import { TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
 import { runCode } from '@Request/code';
 import { useRequest } from 'ahooks';
-const Operations = () => {
+import { observer } from 'mobx-react-lite';
+const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
 
   const { activateTab, findTabNodeByName, model } = useTabContext();
-  const { run} = useRequest(runCode, {manual: true})
+  const { run } = useRequest(runCode, {
+    manual: true,
+    onSuccess(data) {
+    },
+    onFinally () {
+      setIsRunning(false);
+      const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
+      activateTab(testResponseNode?.getId() || '');
+    }
+  });
   function handleRun() {
-    setIsRunning(true);
     setExecedCode(true);
-
+    setIsRunning(true);
     run({
       code: CodeStore.code,
       testCases: CodeStore.testCases,
       type: CodeStore.codeType
     });
-    setIsRunning(false)
-    // setTimeout(() => {
-    //   setIsRunning(false);
-    // }, 3000);
-
-    const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
-    activateTab(testResponseNode?.getId() || '');
   }
   ``;
   return (
@@ -63,6 +65,6 @@ const Operations = () => {
       </CSSTransition>
     </>
   );
-};
+});
 
 export default Operations;

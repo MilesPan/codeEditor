@@ -11,12 +11,24 @@ import {
   ThumbsUp
 } from 'lucide-react';
 import './ProblemDescription.css';
+import './Markdown.css'
 import Questions from './Questions';
 import Collapse from '../Collapse/Collapse';
 import Avatar from '@/Layout/Header/Avatar';
-import { memo } from 'react';
+import { memo, useEffect, useMemo } from 'react';
+import { getQuestionReq } from '@Request/question';
+import { useRequest } from 'ahooks';
+
 const ProblemDescription = memo(() => {
-  console.log('problemDescription render')
+  const { data, run: getQuestion } = useRequest(getQuestionReq, { manual: true });
+
+  const description = useMemo(() => {
+    return data?.data.props.pageProps.dehydratedState.queries[1].state.data.question.translatedContent;
+  }, [data]);
+  useEffect(() => {
+    getQuestion();
+  }, []);
+
   const tags = ['贪心', '数组', '双指针', '二分查找', '排序'];
   return (
     <>
@@ -47,8 +59,8 @@ const ProblemDescription = memo(() => {
               <Languages size={15}></Languages>
             </div>
           </section>
-          <section className="markdown break-words pb-10 bottom-boder">
-            <span>MarkdownsMarkdownsMarkdownsMarkdownsMarkdownsMarkdownsMarkdownsMarkdownsMarkdowns</span>
+          <section className="markdown break-words pb-10 bottom-boder text-left">
+            <div dangerouslySetInnerHTML={{ __html: description }}></div>
           </section>
           <section className="questions mt-4 text-[#bdbfc2] pb-3 bottom-boder">
             <Questions></Questions>

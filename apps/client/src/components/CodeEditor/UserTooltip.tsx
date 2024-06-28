@@ -1,3 +1,7 @@
+import { UserStore } from "@/store";
+import { throttle } from "lodash-es";
+import { Awareness } from "y-protocols/awareness.js";
+
 function genUserTooltip(cursorElement: Element, username: string) {
   if (cursorElement.querySelector('.username-tag')) return;
   const usernameTag = document.createElement('div');
@@ -24,4 +28,30 @@ function genUserTooltip(cursorElement: Element, username: string) {
   usernameTag.style.whiteSpace = 'nowrap';
   usernameTag.dataset.aos = 'fade-in';
   cursorElement.appendChild(usernameTag);
+}
+function addUserNameToCursors(states: Map<number, any>) {
+  const cursorElements = document.querySelectorAll('.yRemoteSelectionHead');
+
+  cursorElements.forEach(cursorElement => {
+    const elementUserId = cursorElement.className.split('-').pop();
+    const state = states.get(Number(elementUserId));
+    if (state && state.user) {
+      const user = state.user;
+      const username = user.name;
+      genUserTooltip(cursorElement, username);
+    }
+  });
+}
+
+const throttledAddTooltip = throttle(addUserNameToCursors, 400);
+
+function setUsers(states: Map<any, any>) {
+  UserStore.setUsers(Array.from(states.values()).map(state => state.user));
+}
+
+export function setUserToolTip (awareness: Awareness) {
+  const states = awareness.getStates();
+  setUsers(states);
+  throttledAddTooltip(states);
+
 }

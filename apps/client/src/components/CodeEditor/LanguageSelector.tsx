@@ -1,76 +1,70 @@
 import { Info } from 'lucide-react';
-import { useState } from 'react';
-import { CodeType } from '@Request/index';
+import { memo, useState } from 'react';
+import { Language } from '@Request/index';
 
 export const languages = [
   {
     name: 'C++',
-    value: CodeType.cpp,
+    value: Language.cpp,
     defaultCode: '// C++ code here',
     info: 'C++ is a powerful, high-performance language.'
   },
   {
     name: 'Java',
-    value: CodeType.java,
+    value: Language.java,
     defaultCode: '// Java code here',
     info: 'Java is widely used in enterprise environments.'
   },
   {
-    name: 'Python',
-    value: CodeType.python2,
-    defaultCode: '# Python code here',
-    info: 'Python is great for data science.'
-  },
-  {
     name: 'Python3',
-    value: CodeType.python3,
+    value: Language.python3,
     defaultCode: '# Python 3 code here',
     info: 'Python 3 is the latest version of Python.'
   },
   {
     name: 'C',
-    value: CodeType.c,
+    value: Language.c,
     defaultCode: '// C code here',
     info: 'C is a general-purpose programming language.'
   },
   {
     name: 'JavaScript',
-    value: CodeType.nodejs,
+    value: Language.nodejs,
     defaultCode: '// JavaScript code here',
     info: 'JavaScript is a versatile language.'
   },
   {
     name: 'TypeScript',
-    value: CodeType.ts,
+    value: Language.ts,
     defaultCode: '// TypeScript code here',
     info: 'TypeScript is a typed superset of JavaScript.'
   },
   {
     name: 'PHP',
-    value: CodeType.php,
+    value: Language.php,
     defaultCode: '<?php // PHP code here ?>',
     info: 'PHP is a popular server-side scripting language.'
   },
   {
     name: 'Go',
-    value: CodeType.go,
+    value: Language.go,
     defaultCode: '// Go code here',
     info: 'Go is an open-source programming language that makes it easy to build simple, reliable, and efficient software.'
   },
   {
     name: 'Rust',
-    value: CodeType.rust,
+    value: Language.rust,
     defaultCode: '// Rust code here',
     info: 'Rust is a systems programming language focused on safety and performance.'
   }
 ];
 
-const LanguageSelector = ({
+const LanguageSelector = memo(({
   currentLanguage,
   onChange
 }: {
-  currentLanguage: CodeType;
-  onChange: (lang: CodeType) => void;
+  currentLanguage: Language | undefined;
+  onChange: (lang: Language) => void;
 }) => {
   const [hoveredLang, setHoveredLang] = useState(languages.find(lang => lang.name === currentLanguage)?.value || '');
   return (
@@ -103,6 +97,6 @@ const LanguageSelector = ({
       </div>
     </>
   );
-};
+});
 
 export default LanguageSelector;

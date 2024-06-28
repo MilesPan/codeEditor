@@ -1,0 +1,132 @@
+.html pre {
+  @apply my-4 overflow-visible whitespace-pre-wrap border-l-2 pl-4 text-sm;
+  /* @apply border-border-tertiary font-menlo text-text-secondary my-4 overflow-visible whitespace-pre-wrap border-l-2 pl-4 text-sm; */
+}
+
+.html pre strong {
+  /* @apply text-label-1; */
+}
+
+:global(.dark) .html pre strong {
+  /* @apply text-dark-label-1; */
+}
+
+.html a {
+  /* @apply text-blue-s; */
+}
+
+:global(.dark) .html a {
+  /* @apply text-dark-blue-s; */
+}
+
+.html ul {
+  @apply mx-4 mb-4 list-disc;
+}
+
+.html ol {
+  @apply mx-4 mb-4 list-decimal;
+}
+
+.html li {
+  @apply mb-3;
+}
+
+.html p {
+  @apply mb-4;
+}
+
+.html code {
+  /* @apply border-divider-3 bg-fill-4 font-menlo text-label-2 whitespace-pre-wrap rounded border px-0.5 py-0.5 text-xs; */
+  @apply whitespace-pre-wrap rounded border px-0.5 py-0.5 text-xs;
+}
+
+:global(.dark) .html code {
+  /* @apply border-dark-divider-3 bg-dark-fill-4 text-dark-label-2; */
+}
+
+.html blockquote {
+  /* @apply border-divider-3 text-label-2 border-l-4 pl-4; */
+  @apply border-l-4 pl-4;
+}
+
+:global(.dark) .html blockquote {
+  /* @apply border-dark-divider-3 text-dark-label-2; */
+}
+
+:global(.content-example-testcase) {
+  /* @apply text-label-1 mb-4 text-base font-medium; */
+  @apply mb-4 text-base font-medium;
+}
+
+:global(.dark .content-example-testcase) {
+  /* @apply text-dark-label-1; */
+}
+
+.html img {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.html .example {
+  /* @apply text-label-1 dark:text-label-1 mb-4 text-base font-medium; */
+  @apply mb-4 text-base font-medium;
+}
+
+:global(.example-block) {
+  /* @apply border-border-tertiary text-text-secondary my-4 overflow-visible border-l-2 pl-4 text-[14px]; */
+  @apply my-4 overflow-visible border-l-2 pl-4 text-[14px];
+  pre {
+    @apply border-l-0 border-none pl-0;
+  }
+  :global(.example-io) {
+    /* @apply font-menlo text-[0.85rem]; */
+    @apply text-[0.85rem];
+  }
+  pre:global(.example-io) {
+    @apply overflow-auto whitespace-pre;
+  }
+}
+
+.html table {
+  box-shadow: 0 0 0 1px #e5e5e5;
+  /* @apply text-label-1 mb-3 rounded-lg border-hidden; */
+  @apply mb-3 rounded-lg border-hidden;
+}
+
+:global(.dark) .html table {
+  box-shadow: 0 0 0 1px #424242;
+  /* @apply border-dark-gray-4 text-dark-label-1; */
+}
+
+.html table th {
+  /* @apply border-gray-4 bg-fill-3 border-[1px] px-2.5 py-2 font-medium; */
+  @apply border-[1px] px-2.5 py-2 font-medium;
+}
+
+.html table th:first-child {
+  @apply rounded-tl-lg;
+}
+
+.html table th:last-child {
+  @apply rounded-tr-lg;
+}
+
+:global(.dark) .html table th {
+  /* @apply border-dark-gray-4 bg-dark-fill-3; */
+}
+
+.html table td {
+  /* @apply border-gray-4 border-[1px] px-2.5 py-2; */
+}
+
+:global(.dark) .html table td {
+  /* @apply border-dark-gray-4; */
+}
+
+.html :global(.language-md .table) {
+  /*
+      FIXME: tailwind-css `.table` conflict with highlight.js `.table`,
+             which just have different meanings but with the same name
+       */
+  display: inline !important;
+}

@@ -1,20 +1,23 @@
 import { TabNode, TitleFactory } from 'flexlayout-react';
 import { ClipboardPen, Code, FlaskRound, History, LoaderCircle, SquareActivity, Terminal } from 'lucide-react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { TABNAME, TabName } from './model';
-import CodeEditor from '@/components/CodeEditor/CodeEditor';
-import ProblemDescription from '@/components/ProblemDescription/ProblemDescription';
+import CodeEditor from '../CodeEditor/CodeEditor';
+import ProblemDescription from '../ProblemDescription/ProblemDescription';
 import TestResponse from '../TestResponse/TetstResponse';
+import Meeting from '../Meeting/Meeting';
+import TestCase from '../TestCase/TestCase';
+
 import { useCodeContext } from '@/contexts/CodeContext';
 import './factory.css';
-import Meeting from '../Meeting/Meeting';
+
 export const contentFactory = (node: TabNode): ReactNode => {
   const TabStrategy = {
     [TabName.desc]: <ProblemDescription></ProblemDescription>,
     [TabName.solution]: <TestResponse></TestResponse>,
     [TabName.record]: <TestResponse></TestResponse>,
     [TabName.code]: <CodeEditor></CodeEditor>,
-    [TabName.testCase]: <TestResponse></TestResponse>,
+    [TabName.testCase]: <TestCase></TestCase>,
     [TabName.testResponse]: <TestResponse></TestResponse>,
     [TabName.meeting]: <Meeting></Meeting>
   };

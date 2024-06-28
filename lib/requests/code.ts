@@ -1,11 +1,24 @@
 import request from './request';
 
+// Docker的env
 export enum CodeType {
   cpp = 'cpp',
   nodejs = 'nodejs',
   go = 'go',
   python3 = 'python3',
-  python2 = 'python2',
+  java = 'java',
+  php = 'php',
+  rust = 'rust',
+  c = 'c',
+  dotnet = 'dotnet',
+  ts = 'typescript'
+}
+// Monaco编辑器绑定的language
+export enum Language {
+  cpp = 'cpp',
+  nodejs = 'javascript',
+  go = 'go',
+  python3 = 'python',
   java = 'java',
   php = 'php',
   rust = 'rust',
