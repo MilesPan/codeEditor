@@ -23,7 +23,8 @@
       "@Assets/*": ["../../lib/assets/*"],
       "@/*": ["src/*"],
       "@Utils/*": ["../../lib/utils/*"],
-      "@Request/*": ["../../lib/requests/*"]
+      "@Request/*": ["../../lib/requests/*"],
+      "@Types/*": ["../../lib/types/*"]
     }
   }
 }
