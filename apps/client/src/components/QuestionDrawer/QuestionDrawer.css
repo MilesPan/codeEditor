@@ -1,0 +1,26 @@
+:root {
+  --oddItemBg: #fafafa;
+  --oddItemBgHover: #ebebeb;
+}
+
+.dark {
+  --oddItemBg: #272727;
+  --oddItemBgHover: #3a3a3a;
+}
+
+.oddItem:hover {
+  background-color: var(--oddItemBgHover);
+}
+.oddItem {
+  background-color: var(--oddItemBg);
+}
+
+.easy {
+  color: #1cbaba;
+}
+.medium {
+  color: #ffb700;
+}
+.hard {
+  color: #f63737;
+}

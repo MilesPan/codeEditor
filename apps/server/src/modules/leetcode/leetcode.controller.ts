@@ -1,6 +1,6 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { LeetcodeService } from './leetcode.service';
-import { GetQuestionDto } from './dto';
+import { GetQuesionCommentsDto, GetQuestionDto } from './dto';
 
 @Controller('leetcode')
 export class LeetcodeController {
@@ -8,5 +8,9 @@ export class LeetcodeController {
   @Get('questions')
   getQuestions(@Query() getQuestionDto: GetQuestionDto) {
     return this.leetcodeService.getQuestions(getQuestionDto);
+  }
+  @Post('comments')
+  getQuestionComment(@Body() getQuesionCommentsDto: GetQuesionCommentsDto) {
+    return this.leetcodeService.getQuestionComment(getQuesionCommentsDto);
   }
 }

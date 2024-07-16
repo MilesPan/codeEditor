@@ -4,7 +4,7 @@ import { useCodeContext } from '@/contexts/CodeContext';
 import { useTabContext } from '@/contexts/TabContext';
 import { TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
-import { runCode } from '@Request/code';
+import { runCode, convertLanguageToCodeType } from '@Request/code';
 import { useRequest } from 'ahooks';
 import { observer } from 'mobx-react-lite';
 const Operations = observer(() => {
@@ -27,7 +27,7 @@ const Operations = observer(() => {
     run({
       code: CodeStore.code,
       testCases: CodeStore.testCases,
-      type: CodeStore.codeType
+      type: convertLanguageToCodeType(CodeStore.codeType)
     });
   }
   ``;

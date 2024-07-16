@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "lib": ["es5", "ES2015"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@SVG/*": ["../lib/assets/svgs/*"],
+      "@Assets/*": ["../lib/assets/*"],
+      "@Utils/*": ["../lib/utils/*"],
+      "@Request/*": ["../lib/requests/*"],
+      "@Types/*": ["../lib/types/*"]
+    }
+  }
+}

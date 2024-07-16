@@ -26,6 +26,22 @@ export enum Language {
   dotnet = 'dotnet',
   ts = 'typescript'
 }
+const languageToCodeTypeMap: { [key in Language]: CodeType } = {
+  [Language.cpp]: CodeType.cpp,
+  [Language.nodejs]: CodeType.nodejs,
+  [Language.go]: CodeType.go,
+  [Language.python3]: CodeType.python3,
+  [Language.java]: CodeType.java,
+  [Language.php]: CodeType.php,
+  [Language.rust]: CodeType.rust,
+  [Language.c]: CodeType.c,
+  [Language.dotnet]: CodeType.dotnet,
+  [Language.ts]: CodeType.ts,
+};
+
+export function convertLanguageToCodeType(language: Language | undefined): CodeType {
+  return languageToCodeTypeMap[language];
+}
 export interface RunCodeParams {
   type: CodeType;
   code: string;

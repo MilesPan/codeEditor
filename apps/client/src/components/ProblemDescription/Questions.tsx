@@ -38,7 +38,7 @@ const Question2 = (props: { step: number; stepCount: number; handleNext: (step: 
       <div className="answer">
         <div className="preset flex gap-2 flex-wrap">
           {companies.map(company => (
-            <div className="questionTag" onClick={() => handleNext(step, company)}>
+            <div className="questionTag" key={company} onClick={() => handleNext(step, company)}>
               {company}
             </div>
           ))}

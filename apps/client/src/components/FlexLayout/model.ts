@@ -84,7 +84,7 @@ export default {
       },
       {
         type: 'tabset',
-        weight: 30,
+        weight: 1,
         children: [
           {
             type: 'tab',

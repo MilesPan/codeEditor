@@ -1,0 +1,12 @@
+:root {
+    --tab-panel-hover-bg-color: #454545
+}
+.dark {
+    --tab-panel-hover-bg-color: #454545
+}
+.tabPanel {
+    @apply px-3 py-1  text-sm cursor-pointer
+}
+.tabPanel:hover {
+    @apply bg-[var(--tab-panel-hover-bg-color)] rounded-lg 
+}

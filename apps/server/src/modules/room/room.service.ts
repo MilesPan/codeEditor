@@ -39,7 +39,6 @@ export class RoomService {
       include: { users: true },
     });
     if (!room) throw new Error('不存在该房间');
-
     const existingUser = room.users.find((user) => user.name === userName);
     if (existingUser?.roomId)
       throw new Error('房间内已存在该名称用户, 请更换用户名');

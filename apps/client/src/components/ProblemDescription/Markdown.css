@@ -1,14 +1,29 @@
+:root {
+  --pre-boder-color: #fff;
+  --strong-text-color: rgb(38 38 38 / 1);
+  --code-bg-color: #000a2008;
+  --code-border-color: #0000000d;
+  --code-text-color: #262626bf;
+}
+.dark {
+  --pre-boder-color: #ffffff24;
+  --pre-text-color: #fff9;
+  --strong-text-color: rgb(255 255 255 / 1);
+  --code-bg-color: #ffffff12;
+  --code-border-color: #f7faff1f;
+  --code-text-color: #eff1f6bf;
+}
 .html pre {
   @apply my-4 overflow-visible whitespace-pre-wrap border-l-2 pl-4 text-sm;
   /* @apply border-border-tertiary font-menlo text-text-secondary my-4 overflow-visible whitespace-pre-wrap border-l-2 pl-4 text-sm; */
+  border-color: var(--pre-boder-color);
+  color: var(--pre-text-color);
 }
 
 .html pre strong {
   /* @apply text-label-1; */
-}
-
-:global(.dark) .html pre strong {
-  /* @apply text-dark-label-1; */
+  color: var(--strong-text-color);
+  font-weight: 700;
 }
 
 .html a {
@@ -32,12 +47,16 @@
 }
 
 .html p {
-  @apply mb-4;
+  @apply mb-4 leading-6;
 }
 
 .html code {
   /* @apply border-divider-3 bg-fill-4 font-menlo text-label-2 whitespace-pre-wrap rounded border px-0.5 py-0.5 text-xs; */
-  @apply whitespace-pre-wrap rounded border px-0.5 py-0.5 text-xs;
+  @apply whitespace-pre-wrap rounded font-menlo border px-0.5 py-0.5 text-xs;
+  background-color: var(--code-bg-color);
+  color: var(--code-text-color);
+  /* font-family: 'Menlo', 'sans-serif'; */
+  border-color: var(--code-border-color);
 }
 
 :global(.dark) .html code {
