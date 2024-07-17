@@ -63,6 +63,9 @@
   ._hoverBtnRight {
     @apply cursor-pointer transition-all duration-300 hover:!opacity-50  hover:!translate-x-1;
   }
+  ._hoverBtn {
+    @apply cursor-pointer hover:!opacity-50 ;
+  }
   ._hoverBtnLeft {
     @apply cursor-pointer transition-all duration-300 hover:!opacity-50  hover:!-translate-x-1;
   }

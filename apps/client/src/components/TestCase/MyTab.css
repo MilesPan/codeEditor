@@ -1,12 +1,17 @@
 :root {
-    --tab-panel-hover-bg-color: #454545
+    --tab-panel-hover-bg-color: #454545;
+    --tab-active-panel-hover-bg-color: #3c3c3c
 }
 .dark {
-    --tab-panel-hover-bg-color: #454545
+    --tab-panel-hover-bg-color: #454545;
+    --tab-active-panel-hover-bg-color: #3c3c3c
 }
 .tabPanel {
-    @apply px-3 py-1  text-sm cursor-pointer
+    @apply px-3 py-1  text-sm cursor-pointer rounded-lg 
 }
-.tabPanel:hover {
-    @apply bg-[var(--tab-panel-hover-bg-color)] rounded-lg 
+.tabPanel:hover, .tabPanel.isActive:hover {
+    @apply bg-[var(--tab-panel-hover-bg-color)] 
+}
+.tabPanel.isActive {
+    @apply bg-[var(--tab-active-panel-hover-bg-color)]
 }

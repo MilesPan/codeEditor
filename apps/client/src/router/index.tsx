@@ -21,9 +21,9 @@ const router = createBrowserRouter([
       {
         path: '/code/:roomId',
         element: (
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <Code />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         )
       }
     ],
