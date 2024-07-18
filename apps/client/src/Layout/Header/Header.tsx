@@ -41,7 +41,7 @@ const Header: FC = observer(() => {
         )}
         <div className="left flex items-center pl-2">
           <img src={resolvedTheme === 'dark' ? LogoDark : LogoLight} className="w-7" />
-          {userStore.hasUserInfo && (
+          {userStore.hasUserInfo ?? (
             <li className="flex h-[16px] ml-2">
               <div className="flex items-center gap-1 _hoverBtnRight" onClick={openDrawer}>
                 <Menu />

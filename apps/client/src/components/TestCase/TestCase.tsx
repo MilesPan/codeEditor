@@ -2,8 +2,8 @@ import { FC, useState } from 'react';
 import MyTab, { Action, MyTabItemType, TargetKey } from './MyTab';
 
 const initTabs: MyTabItemType[] = [
-  { key: 1, name: 'Case1' },
-  { key: 2, name: 'Case2' }
+  { key: 1, name: 'Case 1' },
+  { key: 2, name: 'Case 2' }
 ];
 
 const TestCase: FC = () => {
@@ -13,6 +13,13 @@ const TestCase: FC = () => {
   const onEdit = (targetKey: TargetKey, action: Action) => {
     switch (action) {
       case 'add':
+        const tabIndex = Number(tabs[tabs.length - 1].name.split(' ')[1]);
+        setTabs(
+          tabs.concat({
+            key: Date.now(),
+            name: `Case ${(tabIndex ?? 0) + 1}`
+          })
+        );
         break;
 
       case 'remove':
@@ -31,8 +38,8 @@ const TestCase: FC = () => {
             newActiveKey = newTabs[0].key;
           }
         }
-        setActiveKey(newActiveKey)
-        setTabs(newTabs);
+        setActiveKey(newActiveKey);
+        setTabs(newTabs.map((tab, index) => ({ ...tab, name: `Case ${index + 1}` })));
         break;
       default:
         break;
