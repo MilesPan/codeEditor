@@ -1,0 +1,22 @@
+:root {
+  --paramName-label-color: #3c3c4399;
+}
+.dark {
+  --paramName-label-color: #eff2f699;
+}
+
+.paramName {
+  color: var(--paramName-label-color);
+}
+.paramValue:hover {
+  border: 1px solid rgb(10 132 255);
+}
+.paramValue:focus {
+  border: 1px solid rgb(10 132 255);
+}
+.paramValue {
+  @apply rounded-lg;
+  outline: none;
+  border: 1px solid transparent;
+  background-color: var(--tab-active-panel-bg-color);
+}

@@ -1,5 +1,5 @@
 import { CircleX, Plus } from 'lucide-react';
-import { memo, useRef } from 'react';
+import { Fragment, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import cs from 'classnames';
 import './MyTab.css';
 import { useHover } from 'ahooks';
@@ -7,6 +7,7 @@ import { useHover } from 'ahooks';
 type MyTabProps = {
   activeKey: number | string;
   tabs: MyTabItemType[];
+  maxTabCount?: number;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
 };
@@ -17,40 +18,51 @@ type MyTabPanelProps = {
   tabs: MyTabItemType[];
   tab: MyTabItemType;
   index: number;
+  maxTabCount?: number;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
 };
+``;
 const ADDTAB: MyTabItemType = {
   key: '**_ADDTAB_**',
-  name: 'add'
+  name: 'add',
+  children: <></>
 };
-const MyTab = memo(({ tabs, activeKey, onEdit, onChange }: MyTabProps) => {
-  const selfTabs = tabs.concat(ADDTAB);
-  console.log(JSON.stringify(activeKey), JSON.stringify(tabs))
+const MyTab = ({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTabProps) => {
+  const selfTabs = useMemo(() => tabs.concat(ADDTAB), [tabs]);
   return (
     <>
-      <div className="container flex gap-2 items-center">
-        {selfTabs.map((tab, index) => {
-          return (
-            <MyTabPanel
-              key={tab.key}
-              tabs={tabs}
-              tab={tab}
-              index={index}
-              onEdit={onEdit}
-              isActive={tab.key === activeKey}
-              onChange={onChange}
-            ></MyTabPanel>
-          );
-        })}
+      <div className="container flex gap-2  flex-col">
+        <div className="panels flex gap-2 items-center">
+          {selfTabs.map((tab, index) => {
+            return (
+              <Fragment key={tab.key}>
+                <MyTabPanel
+                  tabs={tabs}
+                  tab={tab}
+                  maxTabCount={maxTabCount}
+                  index={index}
+                  onEdit={onEdit}
+                  isActive={tab.key === activeKey}
+                  onChange={onChange}
+                ></MyTabPanel>
+              </Fragment>
+            );
+          })}
+        </div>
+        <div className="children">{tabs.find(tab => tab.key === activeKey)?.children}</div>
       </div>
     </>
   );
-});
+};
 
-const MyTabPanel = ({ tab, index, tabs, isActive, onEdit, onChange }: MyTabPanelProps) => {
+const MyTabPanel = ({ tab, index, tabs, isActive, maxTabCount, onEdit, onChange }: MyTabPanelProps) => {
   const panelRef = useRef(null);
   const isHovering = useHover(panelRef);
+  const onAdd = useCallback(() => {
+    if (maxTabCount && tabs.length >= maxTabCount) return;
+    onEdit?.(ADDTAB.key, 'add');
+  }, [maxTabCount]);
   return (
     <>
       {tab.key !== ADDTAB.key ? (
@@ -61,9 +73,11 @@ const MyTabPanel = ({ tab, index, tabs, isActive, onEdit, onChange }: MyTabPanel
           {tab.name}
         </div>
       ) : (
-        <div onClick={() => onEdit?.(ADDTAB.key, 'add')}>
-          <Plus size={14} className="cursor-pointer opacity-70 hover:opacity-40"></Plus>
-        </div>
+        (!maxTabCount || tabs.length < maxTabCount) && (
+          <div onClick={onAdd}>
+            <Plus size={14} className="cursor-pointer opacity-70 hover:opacity-40"></Plus>
+          </div>
+        )
       )}
     </>
   );
@@ -71,5 +85,7 @@ const MyTabPanel = ({ tab, index, tabs, isActive, onEdit, onChange }: MyTabPanel
 export type MyTabItemType = {
   key: number | string;
   name: string;
+  children: ReactNode;
 };
+
 export default MyTab;
