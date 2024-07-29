@@ -14,8 +14,11 @@
 .paramValue:focus {
   border: 1px solid rgb(10 132 255);
 }
+.paramValue:hover, .paramValue:focus {
+  background-color: var(--tab-active-panel-bg-color);
+}
 .paramValue {
-  @apply rounded-lg;
+  @apply rounded-lg py-2;
   outline: none;
   border: 1px solid transparent;
   background-color: var(--tab-active-panel-bg-color);

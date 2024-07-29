@@ -4,6 +4,7 @@ import './QuestionDrawer.css';
 import { LevelCssMap, LevelTextMap, ProblemItemType } from '@Types/leetcode';
 import questionStore from '@/store/questionStore';
 import { observer } from 'mobx-react-lite';
+import { generateUUID } from '@Utils/index';
 
 const QuestionDrawer: FC<{ drawerStatus: boolean; openDrawer: () => void; closeDrawer: () => void }> = observer(
   ({ drawerStatus, closeDrawer }) => {
@@ -25,7 +26,8 @@ const QuestionDrawer: FC<{ drawerStatus: boolean; openDrawer: () => void; closeD
                   <div
                     className={`flex justify-between cursor-pointer rounded-xl _hoverBtnRight py-4 pr-6 pl-10 text-left ${(index + 1) % 2 && 'oddItem'}`}
                     onClick={() => clickQuestionItem(item)}
-                    key={item?.frontend_question_id}
+                    // key={item?.frontend_question_id}
+                    key={generateUUID()}
                   >
                     <div className="title">
                       {item.frontend_question_id}.{item.title}

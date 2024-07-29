@@ -21,6 +21,9 @@ import { useRequest } from 'ahooks';
 import { Skeleton } from 'antd';
 import { observer } from 'mobx-react-lite';
 import questionStore from '@/store/questionStore';
+import codeStore from '@/store/codeStore';
+import { Case } from '../TestCase/TestCase';
+import { MyTabItemType } from '../TestCase/MyTab';
 
 const ProblemDescription = observer(() => {
   const { run: getQuestion } = useRequest(getQuestionReq, {
@@ -28,6 +31,49 @@ const ProblemDescription = observer(() => {
     onSuccess(data) {
       questionStore.setQuestions(data.data);
       questionStore.setCurQuestion(data.data[0]);
+    },
+    onFinally() {
+      const initDeltas = [
+        [
+          {
+            name: 'nums',
+            value: '[2,7,11,15]',
+            type: 'array'
+          },
+          {
+            name: 'target',
+            value: '9',
+            type: 'number'
+          }
+        ],
+        [
+          {
+            name: 'nums',
+            value: '[1,2,3,4]',
+            type: 'array'
+          },
+          {
+            name: 'target',
+            value: '10',
+            type: 'number'
+          }
+        ]
+      ];
+      const initTabs: MyTabItemType[] = [
+        {
+          key: 1,
+          name: 'Case 1',
+          children: <Case delta={initDeltas[0]} setDeltaValue={codeStore.updateTestCases}></Case>
+        },
+        {
+          key: 2,
+          name: 'Case 2',
+          children: <Case delta={initDeltas[1]} setDeltaValue={codeStore.updateTestCases}></Case>
+        }
+      ];
+      codeStore.setTestCases(initDeltas);
+      codeStore.setTabs(initTabs);
+      codeStore.setActiveTabKey(initTabs[0].key);
     }
   });
 

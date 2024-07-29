@@ -13,17 +13,18 @@ const Operations = observer(() => {
   const { activateTab, findTabNodeByName, model } = useTabContext();
   const { run } = useRequest(runCode, {
     manual: true,
-    onSuccess(data) {
-    },
-    onFinally () {
-      setIsRunning(false);
+    onBefore() {
+      setIsRunning(true);
+      setExecedCode(true);
       const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
       activateTab(testResponseNode?.getId() || '');
+    },
+    onSuccess(data) {},
+    onFinally() {
+      setIsRunning(false);
     }
   });
   function handleRun() {
-    setExecedCode(true);
-    setIsRunning(true);
     run({
       code: CodeStore.code,
       testCases: CodeStore.testCases,

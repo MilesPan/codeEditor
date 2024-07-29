@@ -1,18 +1,23 @@
 import { CircleX, Plus } from 'lucide-react';
-import { Fragment, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Fragment,
+  ReactNode,
+  useCallback,
+  useRef} from 'react';
 import cs from 'classnames';
 import './MyTab.css';
 import { useHover } from 'ahooks';
+import { observer } from 'mobx-react-lite';
 
 type MyTabProps = {
-  activeKey: number | string;
+  activeKey: number | string | null;
   tabs: MyTabItemType[];
   maxTabCount?: number;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
 };
 export type Action = 'add' | 'remove';
-export type TargetKey = React.MouseEvent | React.KeyboardEvent | string | number;
+export type TargetKey = string | number;
 type MyTabPanelProps = {
   isActive: boolean;
   tabs: MyTabItemType[];
@@ -28,8 +33,8 @@ const ADDTAB: MyTabItemType = {
   name: 'add',
   children: <></>
 };
-const MyTab = ({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTabProps) => {
-  const selfTabs = useMemo(() => tabs.concat(ADDTAB), [tabs]);
+const MyTab = observer(({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTabProps) => {
+  const selfTabs = tabs.concat(ADDTAB);
   return (
     <>
       <div className="container flex gap-2  flex-col">
@@ -54,7 +59,7 @@ const MyTab = ({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTabProps) =
       </div>
     </>
   );
-};
+});
 
 const MyTabPanel = ({ tab, index, tabs, isActive, maxTabCount, onEdit, onChange }: MyTabPanelProps) => {
   const panelRef = useRef(null);
