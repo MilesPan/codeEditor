@@ -18,7 +18,7 @@ export function parseConsoleOutput(output: string, type: OutputType = OutputType
     }
 
     return decodeURI(str);
-  });
+  }).filter(str => str);
 
   return splitAsEnter;
 }

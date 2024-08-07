@@ -5,6 +5,7 @@ import { useTabContext } from '@/contexts/TabContext';
 import { TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
 import { runCode, convertLanguageToCodeType } from '@Request/code';
+import { parseConsoleOutput } from '@Utils/code'
 import { useRequest } from 'ahooks';
 import { observer } from 'mobx-react-lite';
 const Operations = observer(() => {
@@ -19,7 +20,9 @@ const Operations = observer(() => {
       const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
       activateTab(testResponseNode?.getId() || '');
     },
-    onSuccess(data) {},
+    onSuccess(res) {
+      console.log(parseConsoleOutput(res.data))
+    },
     onFinally() {
       setIsRunning(false);
     }

@@ -49,9 +49,11 @@ function setUsers(states: Map<any, any>) {
   UserStore.setUsers(Array.from(states.values()).map(state => state.user));
 }
 
+//  设置协同时的用户信息tooltip
 export function setUserToolTip (awareness: Awareness) {
   const states = awareness.getStates();
   setUsers(states);
   throttledAddTooltip(states);
-
 }
+
+// 断点功能

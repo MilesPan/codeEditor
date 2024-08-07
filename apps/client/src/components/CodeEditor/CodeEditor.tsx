@@ -16,7 +16,7 @@ import { randomRgb } from '@/utils';
 import { CodeStore, UserStore } from '@/store';
 import { Awareness } from 'y-protocols/awareness.js';
 import { observer } from 'mobx-react-lite';
-import {  setUserToolTip } from '@/components/CodeEditor/UserTooltip';
+import { setUserToolTip } from '@/components/CodeEditor/UserTooltip';
 
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap<Language | undefined>('settings');
@@ -26,7 +26,7 @@ const CodeEditor: FC = memo(
 
     const [curLanguage, setCurLanguage] = useState<Language>(Language.cpp);
     const curCode = useMemo(() => languages.find(lang => lang.value === curLanguage)?.defaultCode || '', [curLanguage]);
-    
+
     useEffect(() => {
       CodeStore.setCodeType(curLanguage);
       yMap.set('language', curLanguage);
@@ -50,6 +50,7 @@ const CodeEditor: FC = memo(
       };
     }, []);
 
+    const breakPoints = useRef(new Set());
     const handleEditorDidMount: OnMount = (editor, monaco) => {
       CodeStore.setEditorRef(editor);
       editorRef.current = editor;
@@ -69,10 +70,10 @@ const CodeEditor: FC = memo(
       const curUser = { name: UserStore.userInfo.userName, clientId: awareness.clientID, color: randomRgb() };
       awareness.setLocalStateField('user', curUser);
 
-      setUserToolTip(awareness)
+      setUserToolTip(awareness);
 
       awareness.on('change', (changes: any, ...args: any[]) => {
-        setUserToolTip(awareness)
+        setUserToolTip(awareness);
       });
 
       new MonacoBinding(ydoc.getText('monaco'), editor.getModel()!, new Set([editor]), awareness);
@@ -83,6 +84,32 @@ const CodeEditor: FC = memo(
         awareness.setLocalStateField('cursor', {
           position: { line: position.lineNumber, column: position.column }
         });
+      });
+      // 断点相关
+      editor.onMouseDown(event => {
+        if (event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
+          const lineNumber = event.target.position.lineNumber;
+          if (breakPoints.current.has(lineNumber)) {
+            breakPoints.current.delete(lineNumber);
+          } else {
+            console.log(1);
+            breakPoints.current.add(lineNumber);
+            editor.createDecorationsCollection([
+              {
+                range: {
+                  startLineNumber: lineNumber,
+                  startColumn: 1,
+                  endLineNumber: lineNumber,
+                  endColumn: 1
+                },
+                options: {
+                  isWholeLine: true,
+                  glyphMarginClassName: 'breakpoint-glyph'
+                }
+              }
+            ]);
+          }
+        }
       });
     };
 
@@ -152,6 +179,7 @@ const CodeEditor: FC = memo(
             value={curCode}
             theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
             onMount={handleEditorDidMount}
+            options={{ glyphMargin: true, lineNumbersMinChars: 3  }}
           ></Editor>
         </div>
       </>

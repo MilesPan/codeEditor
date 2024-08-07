@@ -48,5 +48,5 @@ export interface RunCodeParams {
   testCases: any;
 }
 export function runCode(params: RunCodeParams) {
-  return request.fetchPost('/run', params);
+  return request.fetchPost<string>('/run', params);
 }

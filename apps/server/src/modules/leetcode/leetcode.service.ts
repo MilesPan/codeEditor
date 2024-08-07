@@ -99,7 +99,7 @@ export class LeetcodeService {
           ?.data?.question?.difficulty as Level,
       };
     });
-    return htmls;
+    return list;
   }
   // 获取问题列表
   private async fetchProblems(getQuestionDto: GetQuestionDto) {
@@ -141,12 +141,6 @@ export class LeetcodeService {
   // 请求问题页面内容
   private async fetchProblemHTML(slug: string) {
     const url = `https://leetcode.cn/problems/${slug}/description/`;
-    // try {
-    //   const response = await axios.get<string>(url);
-    //   return response.data;
-    // } catch (error) {
-    //   throw new Error(`Failed to fetch problem page. Error: ${error.message}`);
-    // }
     const { data } = await firstValueFrom(
       this.httpService.get<string>(url).pipe(
         catchError((error: AxiosError) => {

@@ -35,6 +35,19 @@ export const Case = observer(
   }
 );
 
+const FunctionName = () => {
+  return (
+    <div className="functionName flex items-center gap-2">
+      <div className="font-menlo">function</div>
+      <Input
+        className="font-menlo"
+        // value={codeStore.functionName}
+        // onChange={event => codeStore.setFunctionName(event.target.value)}
+      ></Input>
+    </div>
+  );
+}
+
 const TestCase: FC = observer(() => {
   console.log('render');
   let newAddActiveKey = useRef(generateUUID());
@@ -91,6 +104,7 @@ const TestCase: FC = observer(() => {
             activeKey={codeStore.activeTabKey}
             maxTabCount={8}
             onChange={tab => codeStore.setActiveTabKey(tab.key)}
+            pannelRight={<FunctionName />}
           ></MyTab>
         )}
       </div>

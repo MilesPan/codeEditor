@@ -51,7 +51,7 @@ class CodeStore {
     this.tabs.splice(idx, 1);
     this.tabs.forEach((tab, index) => (tab.name = `Case ${index + 1}`));
     this.testCases.splice(idx, 1);
-    console.log(this.testCases)
+    console.log(this.tabs)
   }
   setActiveTabKey(key: string | number) {
     this.activeTabKey = key;

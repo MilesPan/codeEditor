@@ -15,6 +15,7 @@ type MyTabProps = {
   maxTabCount?: number;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
+  pannelRight?: ReactNode
 };
 export type Action = 'add' | 'remove';
 export type TargetKey = string | number;
@@ -33,7 +34,7 @@ const ADDTAB: MyTabItemType = {
   name: 'add',
   children: <></>
 };
-const MyTab = observer(({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTabProps) => {
+const MyTab = observer(({ tabs, activeKey, maxTabCount, onEdit, onChange, pannelRight }: MyTabProps) => {
   const selfTabs = tabs.concat(ADDTAB);
   return (
     <>
@@ -54,6 +55,9 @@ const MyTab = observer(({ tabs, activeKey, maxTabCount, onEdit, onChange }: MyTa
               </Fragment>
             );
           })}
+          <div className="pannelRight justify-self-end">
+          {pannelRight}
+          </div>
         </div>
         <div className="children">{tabs.find(tab => tab.key === activeKey)?.children}</div>
       </div>
