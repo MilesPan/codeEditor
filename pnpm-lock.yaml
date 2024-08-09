@@ -168,6 +168,9 @@ importers:
       '@rsbuild/plugin-react':
         specifier: ^0.6.15
         version: 0.6.15(@rsbuild/core@0.6.15)
+      '@rsbuild/plugin-typed-css-modules':
+        specifier: ^1.0.2
+        version: 1.0.2(@rsbuild/core@0.6.15)
       '@types/aos':
         specifier: ^3.0.7
         version: 3.0.7
@@ -1753,6 +1756,17 @@ packages:
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - '@swc/helpers'
+    dev: true
+
+  /@rsbuild/plugin-typed-css-modules@1.0.2(@rsbuild/core@0.6.15):
+    resolution: {integrity: sha512-QX376pBXWeBrZBvYLP2HGGrHiWA5O0SDHwRoBNto5BqYDXhi6y+Eol2Hb/cY+h2ARKZVanMfUiJRABULOJ/FCQ==}
+    peerDependencies:
+      '@rsbuild/core': 1.x || ^1.0.1-beta.0
+    peerDependenciesMeta:
+      '@rsbuild/core':
+        optional: true
+    dependencies:
+      '@rsbuild/core': 0.6.15
     dev: true
 
   /@rsbuild/shared@0.6.15(@swc/helpers@0.5.3):

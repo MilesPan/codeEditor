@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { TABNAME, TabName } from './model';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import ProblemDescription from '../ProblemDescription/ProblemDescription';
-import TestResponse from '../TestResponse/TetstResponse';
+import TestResponse from '../TestResponse/TestResponse';
 import Meeting from '../Meeting/Meeting';
 import TestCase from '../TestCase/TestCase';
 

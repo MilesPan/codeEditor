@@ -1,27 +1,44 @@
-import { getQuestionReq, Language } from '@Request/index';
+import { Language } from '@Request/index';
 import { OnMount } from '@monaco-editor/react';
-import { useRequest } from 'ahooks';
 import { makeAutoObservable } from 'mobx';
 import {} from 'mobx-react-lite';
-import questionStore from './questionStore';
 import { MyTabItemType } from '@/components/TestCase/MyTab';
+import { CaseDeltaType, ParsedTestResponse } from '@Types/leetcode';
 
 type IEditor = Parameters<OnMount>[0];
-export type CaseDeltaType = {
-  name: string;
-  value: string;
-  type: string;
-};
 
 class CodeStore {
   editorRef: IEditor | null = null;
+  setEditorRef(ref: IEditor) {
+    this.editorRef = ref;
+  }
+
   codeType: Language | undefined = Language.cpp;
-  tabs: MyTabItemType[] = [];
-  activeTabKey: string | number | null = null;
-  testCases: Array<CaseDeltaType[]> = [];
   setCodeType(type: Language | undefined) {
     this.codeType = type;
   }
+
+  tabs: MyTabItemType[] = [];
+  setTabs(tabs: MyTabItemType[]) {
+    this.tabs = tabs;
+  }
+  addTab(tab: MyTabItemType) {
+    this.tabs.push(tab);
+  }
+  deleteTab(key: string | number) {
+    const idx = this.tabs.findIndex(tab => tab.key === key);
+    this.tabs.splice(idx, 1);
+    this.tabs.forEach((tab, index) => (tab.name = `Case ${index + 1}`));
+    this.testCases.splice(idx, 1);
+    console.log(this.tabs);
+  }
+
+  activeTabKey: string | number | null = null;
+  setActiveTabKey(key: string | number) {
+    this.activeTabKey = key;
+  }
+
+  testCases: Array<CaseDeltaType[]> = [];
   updateTestCases = function (
     this: CodeStore,
     delta: CaseDeltaType[],
@@ -37,24 +54,15 @@ class CodeStore {
   addTestCases(targetCase: CaseDeltaType[]) {
     this.testCases.push(targetCase);
   }
-  setEditorRef(ref: IEditor) {
-    this.editorRef = ref;
+
+  functionName: string = '';
+  setFunctionName(name: string) {
+    this.functionName = name;
   }
-  setTabs(tabs: MyTabItemType[]) {
-    this.tabs = tabs;
-  }
-  addTab(tab: MyTabItemType) {
-    this.tabs.push(tab);
-  }
-  deleteTab(key: string | number) {
-    const idx = this.tabs.findIndex(tab => tab.key === key);
-    this.tabs.splice(idx, 1);
-    this.tabs.forEach((tab, index) => (tab.name = `Case ${index + 1}`));
-    this.testCases.splice(idx, 1);
-    console.log(this.tabs)
-  }
-  setActiveTabKey(key: string | number) {
-    this.activeTabKey = key;
+
+  testResponse: ParsedTestResponse[] | null = null;
+  setTestResponse(response: ParsedTestResponse[]) {
+    this.testResponse = response;
   }
   constructor() {
     makeAutoObservable(this);

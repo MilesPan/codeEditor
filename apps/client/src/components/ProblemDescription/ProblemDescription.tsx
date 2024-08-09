@@ -1,6 +1,6 @@
 import {
   Building2,
-  CheckCheck,
+  CircleCheckBig,
   Languages,
   Lightbulb,
   LockKeyhole,
@@ -21,9 +21,6 @@ import { useRequest } from 'ahooks';
 import { Skeleton } from 'antd';
 import { observer } from 'mobx-react-lite';
 import questionStore from '@/store/questionStore';
-import codeStore from '@/store/codeStore';
-import { Case } from '../TestCase/TestCase';
-import { MyTabItemType } from '../TestCase/MyTab';
 
 const ProblemDescription = observer(() => {
   const { run: getQuestion } = useRequest(getQuestionReq, {
@@ -52,7 +49,7 @@ const ProblemDescription = observer(() => {
               </div>
               <div className="flex gap-1 text-sm">
                 <span className="text-[--text-gray]">已解答</span>
-                <CheckCheck color="var(--logo_bg-green)" size={18}></CheckCheck>
+                <CircleCheckBig color="var(--logo_bg-green)" size={18}></CircleCheckBig>
               </div>
             </section>
             <section className="anchors flex gap-2 mt-2 mb-3">

@@ -5,9 +5,10 @@ import { useTabContext } from '@/contexts/TabContext';
 import { TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
 import { runCode, convertLanguageToCodeType } from '@Request/code';
-import { parseConsoleOutput } from '@Utils/code'
+import { parseConsoleOutput } from '@Utils/code';
 import { useRequest } from 'ahooks';
 import { observer } from 'mobx-react-lite';
+import codeStore from '@/store/codeStore';
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
 
@@ -21,7 +22,14 @@ const Operations = observer(() => {
       activateTab(testResponseNode?.getId() || '');
     },
     onSuccess(res) {
-      console.log(parseConsoleOutput(res.data))
+      const parsedResponse = res.data.logs.map(log => {
+        return {
+          consoleLogs: log.consoleLogs.map(consoleLog => parseConsoleOutput(consoleLog)),
+          results: log.results.map(result => parseConsoleOutput(result)),
+          execTime: res.data.execTime
+        };
+      });
+      codeStore.setTestResponse(parsedResponse);
     },
     onFinally() {
       setIsRunning(false);
@@ -31,6 +39,7 @@ const Operations = observer(() => {
     run({
       code: CodeStore.code,
       testCases: CodeStore.testCases,
+      functionName: CodeStore.functionName,
       type: convertLanguageToCodeType(CodeStore.codeType)
     });
   }

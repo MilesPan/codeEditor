@@ -49,6 +49,7 @@ export class DockerService {
       await this.container.start();
       const handleOutput = async () => {
         try {
+          const startTime = Date.now();
           let outputString: Buffer | string = await this.container.logs({
             stdout: true,
             stderr: true,
@@ -66,8 +67,7 @@ export class DockerService {
           if (isTimeout) {
             throw new Error('Timeout');
           } else {
-            // return outputString;
-            resolver(outputString);
+            resolver({ output: outputString, time: Date.now() - startTime });
           }
         } catch (error) {
           rejecter(error);

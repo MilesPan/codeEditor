@@ -1,3 +1,4 @@
+import { TestResponseType } from '@Types/leetcode';
 import request from './request';
 
 // Docker的env
@@ -45,8 +46,9 @@ export function convertLanguageToCodeType(language: Language | undefined): CodeT
 export interface RunCodeParams {
   type: CodeType;
   code: string;
+  functionName: string;
   testCases: any;
 }
 export function runCode(params: RunCodeParams) {
-  return request.fetchPost<string>('/run', params);
+  return request.fetchPost<TestResponseType>('/run', params);
 }

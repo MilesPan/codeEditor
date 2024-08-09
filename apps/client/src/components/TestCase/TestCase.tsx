@@ -1,13 +1,15 @@
-import { FC, useRef } from 'react';
+import { ChangeEventHandler, FC, useRef } from 'react';
 import MyTab, { Action, TargetKey } from './MyTab';
 import { Input, Skeleton } from 'antd';
 import './TestCase.css';
 import { generateUUID } from '@Utils/index';
 import { observer } from 'mobx-react-lite';
-import codeStore, { CaseDeltaType } from '@/store/codeStore';
+import codeStore from '@/store/codeStore';
+import { CaseDeltaType } from '@Types/leetcode';
+import { useFunctionName } from '@/hooks/useInput';
 
 const { TextArea } = Input;
-export const Case = observer(
+export const CaseDetail = observer(
   ({
     delta,
     setDeltaValue
@@ -36,17 +38,18 @@ export const Case = observer(
 );
 
 const FunctionName = () => {
+  const [functionName, setFunctionName] = useFunctionName('');
+  const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
+    setFunctionName(event.target.value);
+    codeStore.setFunctionName(event.target.value);
+  };
   return (
-    <div className="functionName flex items-center gap-2">
-      <div className="font-menlo">function</div>
-      <Input
-        className="font-menlo"
-        // value={codeStore.functionName}
-        // onChange={event => codeStore.setFunctionName(event.target.value)}
-      ></Input>
+    <div className="functionName flex items-center gap-2 min-w-48">
+      <div className="font-menlo text-nowrap">入口函数名</div>
+      <Input className="font-menlo" value={functionName} maxLength={20} onChange={handleChange}></Input>
     </div>
   );
-}
+};
 
 const TestCase: FC = observer(() => {
   console.log('render');
@@ -61,10 +64,10 @@ const TestCase: FC = observer(() => {
           key: newAddActiveKey.current,
           name: `Case ${codeStore.testCases.length}`,
           children: (
-            <Case
+            <CaseDetail
               delta={codeStore.testCases[codeStore.testCases.length - 1]}
               setDeltaValue={codeStore.updateTestCases}
-            ></Case>
+            ></CaseDetail>
           )
         });
         codeStore.setActiveTabKey(newAddActiveKey.current);
@@ -99,6 +102,8 @@ const TestCase: FC = observer(() => {
           <Skeleton active></Skeleton>
         ) : (
           <MyTab
+            needAdd={true}
+            needDelete={true}
             tabs={codeStore.tabs}
             onEdit={onEdit}
             activeKey={codeStore.activeTabKey}

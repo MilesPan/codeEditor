@@ -1,0 +1,17 @@
+:root {
+  --bg-green-s: rgb(45 181 93 / 1);
+}
+
+.dark {
+  --bg-green-s: rgb(44 187 93 / 1);
+}
+
+.box {
+  @apply font-menlo flex flex-col items-start justify-center;
+}
+.title {
+  @apply text-[--paramName-label-color] mb-1;
+}
+.content {
+  @apply text-sm rounded-md min-h-8 p-2 bg-[--tag-bg] w-full mb-2 flex flex-col items-start gap-2;
+}

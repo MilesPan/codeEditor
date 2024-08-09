@@ -1,21 +1,25 @@
 import { CircleX, Plus } from 'lucide-react';
-import {
-  Fragment,
-  ReactNode,
-  useCallback,
-  useRef} from 'react';
+import { Fragment, ReactNode, useCallback, useRef } from 'react';
 import cs from 'classnames';
 import './MyTab.css';
 import { useHover } from 'ahooks';
 import { observer } from 'mobx-react-lite';
 
+export type MyTabItemType = {
+  key: number | string;
+  name: string;
+  pannel?: ReactNode;
+  children: ReactNode;
+};
 type MyTabProps = {
   activeKey: number | string | null;
   tabs: MyTabItemType[];
+  needDelete?: boolean;
+  needAdd?: boolean;
   maxTabCount?: number;
+  pannelRight?: ReactNode;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
-  pannelRight?: ReactNode
 };
 export type Action = 'add' | 'remove';
 export type TargetKey = string | number;
@@ -24,6 +28,8 @@ type MyTabPanelProps = {
   tabs: MyTabItemType[];
   tab: MyTabItemType;
   index: number;
+  tabPannel?: ReactNode;
+  needDelete?: boolean;
   maxTabCount?: number;
   onChange?: (tab: MyTabItemType) => void;
   onEdit?: (targetKey: TargetKey, action: Action) => void;
@@ -34,40 +40,54 @@ const ADDTAB: MyTabItemType = {
   name: 'add',
   children: <></>
 };
-const MyTab = observer(({ tabs, activeKey, maxTabCount, onEdit, onChange, pannelRight }: MyTabProps) => {
-  const selfTabs = tabs.concat(ADDTAB);
-  return (
-    <>
-      <div className="container flex gap-2  flex-col">
-        <div className="panels flex gap-2 items-center">
-          {selfTabs.map((tab, index) => {
-            return (
-              <Fragment key={tab.key}>
-                <MyTabPanel
-                  tabs={tabs}
-                  tab={tab}
-                  maxTabCount={maxTabCount}
-                  index={index}
-                  onEdit={onEdit}
-                  isActive={tab.key === activeKey}
-                  onChange={onChange}
-                ></MyTabPanel>
-              </Fragment>
-            );
-          })}
-          <div className="pannelRight justify-self-end">
-          {pannelRight}
+const MyTab = observer(
+  ({ tabs, activeKey, maxTabCount, needAdd, needDelete, pannelRight, onEdit, onChange }: MyTabProps) => {
+    const selfTabs = needAdd ? tabs.concat(ADDTAB) : tabs;
+    return (
+      <>
+        <div className="container flex gap-2  flex-col">
+          <div className="panels flex gap-2 justify-between">
+            <div className="pannelLeft flex gap-2 items-center">
+              {selfTabs.map((tab, index) => {
+                return (
+                  <Fragment key={tab.key}>
+                    <MyTabPannel
+                      tabs={tabs}
+                      tab={tab}
+                      needDelete={needDelete}
+                      maxTabCount={maxTabCount}
+                      index={index}
+                      tabPannel={tab.pannel}
+                      onEdit={onEdit}
+                      isActive={tab.key === activeKey}
+                      onChange={onChange}
+                    ></MyTabPannel>
+                  </Fragment>
+                );
+              })}
+            </div>
+            <div className="pannelRight justify-self-end">{pannelRight}</div>
           </div>
+          <div className="children">{tabs.find(tab => tab.key === activeKey)?.children}</div>
         </div>
-        <div className="children">{tabs.find(tab => tab.key === activeKey)?.children}</div>
-      </div>
-    </>
-  );
-});
+      </>
+    );
+  }
+);
 
-const MyTabPanel = ({ tab, index, tabs, isActive, maxTabCount, onEdit, onChange }: MyTabPanelProps) => {
-  const panelRef = useRef(null);
-  const isHovering = useHover(panelRef);
+const MyTabPannel = ({
+  tab,
+  index,
+  tabs,
+  isActive,
+  maxTabCount,
+  tabPannel,
+  needDelete,
+  onEdit,
+  onChange
+}: MyTabPanelProps) => {
+  const pannelRef = useRef(null);
+  const isHovering = useHover(pannelRef);
   const onAdd = useCallback(() => {
     if (maxTabCount && tabs.length >= maxTabCount) return;
     onEdit?.(ADDTAB.key, 'add');
@@ -75,11 +95,15 @@ const MyTabPanel = ({ tab, index, tabs, isActive, maxTabCount, onEdit, onChange 
   return (
     <>
       {tab.key !== ADDTAB.key ? (
-        <div className={cs('tabPanel relative', { isActive })} ref={panelRef} onClick={() => onChange?.(tab)}>
+        <div
+          className={cs('tabPanel relative text-nowrap', { isActive })}
+          ref={pannelRef}
+          onClick={() => onChange?.(tab)}
+        >
           <div className="absolute -top-1 -right-1" onClickCapture={() => onEdit?.(tab.key, 'remove')}>
-            {isHovering && tabs.length >= 2 && <CircleX size={12} className="_hoverBtn"></CircleX>}
+            {needDelete && isHovering && tabs.length >= 2 && <CircleX size={12} className="_hoverBtn"></CircleX>}
           </div>
-          {tab.name}
+          {tabPannel ? tabPannel : tab.name}
         </div>
       ) : (
         (!maxTabCount || tabs.length < maxTabCount) && (
@@ -90,11 +114,6 @@ const MyTabPanel = ({ tab, index, tabs, isActive, maxTabCount, onEdit, onChange 
       )}
     </>
   );
-};
-export type MyTabItemType = {
-  key: number | string;
-  name: string;
-  children: ReactNode;
 };
 
 export default MyTab;

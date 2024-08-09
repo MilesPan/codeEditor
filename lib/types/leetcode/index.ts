@@ -58,3 +58,23 @@ export type ProblemItemType = {
 };
 
 export type FetchProblemListRes = ProblemItemType[];
+
+// 测试用例
+export type CaseDeltaType = {
+  name: string;
+  value: string;
+  type: string;
+};
+export interface LogData {
+  consoleLogs: string[];
+  results: string[];
+}
+export type TestResponseType = {
+  logs: LogData[];
+  execTime: string;
+};
+export type ParsedTestResponse = {
+  consoleLogs: string[][];
+  results: string[][];
+  execTime: string;
+}
