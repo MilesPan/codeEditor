@@ -1930,3 +1930,103 @@ export namespace LCComments {
 
   export interface Extra {}
 }
+
+export namespace LCProblem {
+  export interface Response {
+    data: Data;
+    code: number;
+    extra: ExampleGenerateExtra;
+    message: string;
+  }
+
+  export interface Data {
+    problemsetQuestionList: ProblemsetQuestionList;
+  }
+
+  export interface ProblemsetQuestionList {
+    __typename: string;
+    questions: Question[];
+    hasMore: boolean;
+    total: number;
+  }
+
+  export interface Question {
+    __typename: QuestionTypename;
+    acRate: number;
+    difficulty: Difficulty;
+    freqBar: number;
+    paidOnly: boolean;
+    status: Status;
+    frontendQuestionId: string;
+    isFavor: boolean;
+    solutionNum: number;
+    title: string;
+    titleCn: string;
+    titleSlug: string;
+    topicTags: TopicTag[];
+    extra: QuestionExtra;
+  }
+
+  export enum QuestionTypename {
+    QuestionLightNode = 'QuestionLightNode'
+  }
+
+  export enum Difficulty {
+    Easy = 'EASY',
+    Hard = 'HARD',
+    Medium = 'MEDIUM'
+  }
+
+  export interface QuestionExtra {
+    companyTagNum: number;
+    hasVideoSolution: boolean;
+    topCompanyTags: TopCompanyTag[];
+    __typename: ExtraTypename;
+  }
+
+  export enum ExtraTypename {
+    QuestionExtraInfoNode = 'QuestionExtraInfoNode'
+  }
+
+  export interface TopCompanyTag {
+    imgUrl: string;
+    slug: Slug;
+    __typename: TopCompanyTagTypename;
+  }
+
+  export enum TopCompanyTagTypename {
+    CommonTagNode = 'CommonTagNode'
+  }
+
+  export enum Slug {
+    Adobe = 'adobe',
+    Airbnb = 'airbnb',
+    Amazon = 'amazon',
+    Apple = 'apple',
+    Bloomberg = 'bloomberg',
+    Bytedance = 'bytedance',
+    Facebook = 'facebook',
+    GoldmanSachs = 'goldman-sachs',
+    Google = 'google',
+    Huawei = 'huawei',
+    Jpmorgan = 'jpmorgan',
+    Linkedin = 'linkedin',
+    Microsoft = 'microsoft',
+    Paypal = 'paypal',
+    Uber = 'uber'
+  }
+
+  export enum Status {
+    NotStarted = 'NOT_STARTED'
+  }
+
+  export interface TopicTag {
+    id: string;
+    name: string;
+    slug: string;
+    nameTranslated: string;
+    __typename: TopCompanyTagTypename;
+  }
+
+  export interface ExampleGenerateExtra {}
+}

@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { cloneElement, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Popover, Tooltip } from 'antd';
 import LanguageSelector, { languages } from './LanguageSelector';
@@ -16,7 +16,8 @@ import { randomRgb } from '@/utils';
 import { CodeStore, UserStore } from '@/store';
 import { Awareness } from 'y-protocols/awareness.js';
 import { observer } from 'mobx-react-lite';
-import { setUserToolTip } from '@/components/CodeEditor/UserTooltip';
+import { setUserToolTip } from './helpers/UserTooltip';
+import { initBreakPoints } from './helpers/BreakPoint';
 
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap<Language | undefined>('settings');
@@ -50,7 +51,8 @@ const CodeEditor: FC = memo(
       };
     }, []);
 
-    const breakPoints = useRef(new Set());
+    const breakPoints = useRef(new Set<number>());
+    const lastLineNumber = useRef<number>();
     const handleEditorDidMount: OnMount = (editor, monaco) => {
       CodeStore.setEditorRef(editor);
       editorRef.current = editor;
@@ -85,32 +87,9 @@ const CodeEditor: FC = memo(
           position: { line: position.lineNumber, column: position.column }
         });
       });
+
       // 断点相关
-      editor.onMouseDown(event => {
-        if (event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
-          const lineNumber = event.target.position.lineNumber;
-          if (breakPoints.current.has(lineNumber)) {
-            breakPoints.current.delete(lineNumber);
-          } else {
-            console.log(1);
-            breakPoints.current.add(lineNumber);
-            editor.createDecorationsCollection([
-              {
-                range: {
-                  startLineNumber: lineNumber,
-                  startColumn: 1,
-                  endLineNumber: lineNumber,
-                  endColumn: 1
-                },
-                options: {
-                  isWholeLine: true,
-                  glyphMarginClassName: 'breakpoint-glyph'
-                }
-              }
-            ]);
-          }
-        }
-      });
+      initBreakPoints(editor, breakPoints, lastLineNumber, monaco);
     };
 
     // 格式化
@@ -179,7 +158,7 @@ const CodeEditor: FC = memo(
             value={curCode}
             theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
             onMount={handleEditorDidMount}
-            options={{ glyphMargin: true, lineNumbersMinChars: 3  }}
+            options={{ glyphMargin: true, lineNumbersMinChars: 3 }}
           ></Editor>
         </div>
       </>

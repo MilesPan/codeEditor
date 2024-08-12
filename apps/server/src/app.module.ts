@@ -8,6 +8,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { CodeModule } from './modules/code/code.module';
 import { DockerModule } from './modules/docker/docker.module';
 import { LeetcodeModule } from './modules/leetcode/leetcode.module';
+import { GraphqlModule } from './modules/graphql/graphql.module';
 @Module({
   imports: [
     PrismaModule,
@@ -17,6 +18,7 @@ import { LeetcodeModule } from './modules/leetcode/leetcode.module';
     CodeModule,
     DockerModule,
     LeetcodeModule,
+    GraphqlModule,
   ],
   controllers: [AppController],
   providers: [AppService],

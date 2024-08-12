@@ -55,5 +55,3 @@ export function setUserToolTip (awareness: Awareness) {
   setUsers(states);
   throttledAddTooltip(states);
 }
-
-// 断点功能
