@@ -9,6 +9,7 @@ import { CodeModule } from './modules/code/code.module';
 import { DockerModule } from './modules/docker/docker.module';
 import { LeetcodeModule } from './modules/leetcode/leetcode.module';
 import { GraphqlModule } from './modules/graphql/graphql.module';
+import { DebugModule } from './modules/debug/debug.module';
 @Module({
   imports: [
     PrismaModule,
@@ -19,6 +20,7 @@ import { GraphqlModule } from './modules/graphql/graphql.module';
     DockerModule,
     LeetcodeModule,
     GraphqlModule,
+    DebugModule,
   ],
   controllers: [AppController],
   providers: [AppService],
