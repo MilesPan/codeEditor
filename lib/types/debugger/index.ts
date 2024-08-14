@@ -8,6 +8,13 @@ export namespace Debugger {
     scopeChain: ScopeChain[];
     this: This;
   }
+  // setBreakpointByUrl的参数类型
+  export interface SetBreakpointByUrlParamType {
+    urlRegex: string;
+    lineNumber: number;
+    columnNumber: number;
+    condition: string;
+  }
   // getProperties的参数类型
   export interface GetPropertiesParamType {
     objectId: string;

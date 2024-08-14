@@ -24,7 +24,8 @@
       "@/*": ["src/*"],
       "@Utils/*": ["../../lib/utils/*"],
       "@Request/*": ["../../lib/requests/*"],
-      "@Types/*": ["../../lib/types/*"]
+      "@Types/*": ["../../lib/types/*"],
+      "@Dtos/*": ["../../lib/dtos/*"]
     }
   }
 }

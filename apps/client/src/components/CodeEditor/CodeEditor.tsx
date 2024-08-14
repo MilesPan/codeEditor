@@ -18,6 +18,7 @@ import { Awareness } from 'y-protocols/awareness.js';
 import { observer } from 'mobx-react-lite';
 import { setUserToolTip } from './helpers/UserTooltip';
 import { initBreakPoints } from './helpers/BreakPoint';
+import debugStore from '@/store/debugStore';
 
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap<Language | undefined>('settings');
@@ -51,7 +52,6 @@ const CodeEditor: FC = memo(
       };
     }, []);
 
-    const breakPoints = useRef(new Set<number>());
     const lastLineNumber = useRef<number>();
     const handleEditorDidMount: OnMount = (editor, monaco) => {
       CodeStore.setEditorRef(editor);
@@ -89,7 +89,7 @@ const CodeEditor: FC = memo(
       });
 
       // 断点相关
-      initBreakPoints(editor, breakPoints, lastLineNumber, monaco);
+      initBreakPoints(editor, debugStore.breakPoints, lastLineNumber, monaco);
     };
 
     // 格式化

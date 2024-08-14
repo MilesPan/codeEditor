@@ -6,9 +6,14 @@ import { TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
 import { runCode, convertLanguageToCodeType } from '@Request/code';
 import { parseConsoleOutput } from '@Utils/code';
-import { useRequest } from 'ahooks';
+import { useRequest, useToggle, useUpdateEffect } from 'ahooks';
 import { observer } from 'mobx-react-lite';
 import codeStore from '@/store/codeStore';
+import { message } from 'antd';
+import debugStore from '@/store/debugStore';
+import { fetchStartDebug } from '@Request/debug';
+import { useMemo } from 'react';
+
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
 
@@ -35,21 +40,53 @@ const Operations = observer(() => {
       setIsRunning(false);
     }
   });
+  const { run: runWithDebug } = useRequest(fetchStartDebug, {
+    manual: true,
+    onBefore() {
+      setIsRunning(true);
+      setExecedCode(true);
+      // const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
+      // activateTab(testResponseNode?.getId() || '');
+    },
+    onSuccess(res) {
+      debugStore.setIsDebugging(true);
+    },
+    onFinally() {
+      setIsRunning(false);
+    }
+  });
+  const [debugActive, { toggle: toggleDebugActive }] = useToggle(false, true);
+  useUpdateEffect(() => {
+    message.success(debugActive ? 'Debugger 已开启' : 'Debugger 已关闭');
+    debugStore.setDebugActive(debugActive);
+  }, [debugActive]);
   function handleRun() {
-    run({
-      code: CodeStore.code,
-      testCases: CodeStore.testCases,
-      functionName: CodeStore.functionName,
-      type: convertLanguageToCodeType(CodeStore.codeType)
-    });
+    debugActive
+      ? runWithDebug({
+          code: CodeStore.code,
+          breakPoints: Array.from(debugStore.breakPoints)
+        })
+      : run({
+          code: CodeStore.code,
+          testCases: CodeStore.testCases,
+          functionName: CodeStore.functionName,
+          type: convertLanguageToCodeType(CodeStore.codeType)
+        });
   }
   ``;
+
+  const showOps = useMemo(() => {
+    return !(isRunning || debugStore.isDebugging);
+  }, [isRunning, debugStore.isDebugging]);
   return (
     <>
-      <CSSTransition in={!isRunning} timeout={500} classNames="button-transition" unmountOnExit>
+      <CSSTransition in={showOps} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="operations flex items-center gap-1">
-          <div className="h-9 px-3 bug flex items-center bg-[--fill-quaternary_hover] rounded-l-lg cursor-not-allowed">
-            <Bug size={18} color="#a4a4a4"></Bug>
+          <div
+            onClick={toggleDebugActive}
+            className="h-9 px-3 bug flex items-center bg-[--fill-quaternary_hover] rounded-l-lg cursor-pointer hover:opacity-80"
+          >
+            <Bug size={18} color={debugActive ? 'var(--star_color)' : '#a4a4a4'}></Bug>
           </div>
           <div
             className="h-9 px-3 run flex items-center bg-[--fill-quaternary] hover:bg-[--fill-quaternary_hover] cursor-pointer"
@@ -67,12 +104,11 @@ const Operations = observer(() => {
           </div>
         </div>
       </CSSTransition>
-
-      <CSSTransition in={isRunning} timeout={500} classNames="button-transition" unmountOnExit>
+      <CSSTransition in={!showOps} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="isRunning-container flex justify-center">
           <div className="h-9 px-3 rounded-lg flex items-center gap-2 bg-[--fill-quaternary]">
             <div className="loader"></div>
-            判题中...
+            {debugStore.debugActive ? '调试中...' : '判题中...'}
           </div>
         </div>
       </CSSTransition>

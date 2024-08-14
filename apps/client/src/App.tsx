@@ -1,4 +1,4 @@
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme, App as AntApp, message } from 'antd';
 
 import './styles/App.css';
 import '@livekit/components-styles';
@@ -15,7 +15,10 @@ import { useEffect } from 'react';
 
 const App = () => {
   const { resolvedTheme } = useTheme();
-
+  message.config({
+    top: 20,
+    duration: 2
+  });
   useEffect(() => {
     AOS.init({
       easing: 'ease-out-cubic',
@@ -39,13 +42,15 @@ const App = () => {
         }
       }}
     >
-      <CodeProvider>
-        <TabProvider>
-          <div className="app flex flex-col w-full  px-4 overflow-x-auto h-[100vh]">
-            <RouterProvider router={router}></RouterProvider>
-          </div>
-        </TabProvider>
-      </CodeProvider>
+      <AntApp>
+        <CodeProvider>
+          <TabProvider>
+            <div className="app flex flex-col w-full  px-4 overflow-x-auto h-[100vh]">
+              <RouterProvider router={router}></RouterProvider>
+            </div>
+          </TabProvider>
+        </CodeProvider>
+      </AntApp>
     </ConfigProvider>
   );
 };

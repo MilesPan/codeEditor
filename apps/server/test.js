@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// JavaScript code here
 const a = 1;
-debugger;
-const b = 2;
-let c = 3;
+let b = 2;
+var c = 3;

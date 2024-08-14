@@ -3,7 +3,7 @@ import { MutableRefObject } from 'react';
 type MyEditor = Parameters<OnMount>[0];
 export function initBreakPoints(
   editor: MyEditor,
-  breakPoints: MutableRefObject<Set<number | undefined>>,
+  breakPoints: Set<number>,
   lastLineNumber: MutableRefObject<number | undefined>,
   monaco: Monaco
 ) {
@@ -11,12 +11,12 @@ export function initBreakPoints(
   editor.onMouseDown(event => {
     if (event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
       const lineNumber = event.target.position.lineNumber;
-      if (breakPoints.current.has(lineNumber)) {
-        breakPoints.current.delete(lineNumber);
+      if (breakPoints.has(lineNumber)) {
+        breakPoints.delete(lineNumber);
         const decorations = editor.getLineDecorations(lineNumber);
         editor.removeDecorations(decorations?.map(d => d.id) || []);
       } else {
-        breakPoints.current.add(lineNumber);
+        breakPoints.add(lineNumber);
         editor.createDecorationsCollection([
           {
             range: {
@@ -37,11 +37,9 @@ export function initBreakPoints(
   // 悬浮效果
   editor.onMouseMove(event => {
     const lineNumber = event.target.position?.lineNumber;
-    if (
-      !breakPoints.current.has(lineNumber) &&
-      event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN
-    ) {
-      if (lastLineNumber.current !== lineNumber && !breakPoints.current.has(lastLineNumber.current)) {
+    if (!lineNumber) return;
+    if (!breakPoints.has(lineNumber) && event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
+      if (lastLineNumber.current && lastLineNumber.current !== lineNumber && !breakPoints.has(lastLineNumber.current)) {
         editor.removeDecorations(editor.getLineDecorations(lastLineNumber.current!)?.map(d => d.id) || []);
       }
       lastLineNumber.current = lineNumber;
@@ -60,9 +58,9 @@ export function initBreakPoints(
         }
       ]);
     } else {
-      if (!breakPoints.current.has(lineNumber))
+      if (!breakPoints.has(lineNumber))
         editor.removeDecorations(editor.getLineDecorations(lineNumber!)?.map(d => d.id) || []);
-      if (!breakPoints.current.has(lastLineNumber.current))
+      if (!breakPoints.has(lastLineNumber.current ?? Infinity))
         editor.removeDecorations(editor.getLineDecorations(lastLineNumber.current!)?.map(d => d.id) || []);
     }
   });
