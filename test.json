@@ -1,0 +1,16 @@
+{
+  "method": "Debugger.setBreakpointsActive",
+  "params": {
+    "active": true
+  },
+  "id": 2,
+  "c": {
+    "method": "Debugger.setBreakpointByUrl",
+    "params": {
+      "urlRegex": "wdjaklwdjio",
+      "lineNumber": 3,
+      "columnNumber": 1,
+      "condition": ""
+    }
+  }
+}

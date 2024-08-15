@@ -2,7 +2,7 @@ import { Bug, Play, Send } from 'lucide-react';
 import { CSSTransition } from 'react-transition-group';
 import { useCodeContext } from '@/contexts/CodeContext';
 import { useTabContext } from '@/contexts/TabContext';
-import { TabName } from '@/components/FlexLayout/model';
+import { DebuggerTab, TabName } from '@/components/FlexLayout/model';
 import { CodeStore } from '@/store';
 import { runCode, convertLanguageToCodeType } from '@Request/code';
 import { parseConsoleOutput } from '@Utils/code';
@@ -13,6 +13,7 @@ import { message } from 'antd';
 import debugStore from '@/store/debugStore';
 import { fetchStartDebug } from '@Request/debug';
 import { useMemo } from 'react';
+import { Actions, DockLocation } from 'flexlayout-react';
 
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
@@ -45,6 +46,15 @@ const Operations = observer(() => {
     onBefore() {
       setIsRunning(true);
       setExecedCode(true);
+      model?.doAction(
+        Actions.addNode(
+          DebuggerTab,
+          findTabNodeByName(model?.getRoot(), TabName.leftTabset)!.getId(),
+          DockLocation.CENTER,
+          1,
+          true
+        )
+      );
       // const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
       // activateTab(testResponseNode?.getId() || '');
     },

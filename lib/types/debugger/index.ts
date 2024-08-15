@@ -10,7 +10,8 @@ export namespace Debugger {
   }
   // setBreakpointByUrl的参数类型
   export interface SetBreakpointByUrlParamType {
-    urlRegex: string;
+    urlRegex?: string;
+    url?: string
     lineNumber: number;
     columnNumber: number;
     condition: string;

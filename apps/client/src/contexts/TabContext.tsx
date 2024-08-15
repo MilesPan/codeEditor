@@ -1,5 +1,6 @@
 // TabContext.tsx
-import { Model, Node, TabNode } from 'flexlayout-react';
+import { TABNAME } from '@/components/FlexLayout/model';
+import { Model, Node, TabNode, TabSetNode } from 'flexlayout-react';
 import React, { createContext, useContext, useState } from 'react';
 
 interface TabContextProps {
@@ -7,7 +8,7 @@ interface TabContextProps {
   setModel: React.Dispatch<React.SetStateAction<Model | null>>;
   activateTab: (tabId: string) => void;
   setActivateTab: React.Dispatch<React.SetStateAction<(tabId: string) => void>>;
-  findTabNodeByName: (node: Node | null | undefined, name: string) => TabNode | null;
+  findTabNodeByName: (node: Node | null | undefined, name: TABNAME) => TabNode | TabSetNode | null;
 }
 
 const TabContext = createContext<TabContextProps | undefined>(undefined);
@@ -16,8 +17,8 @@ const TabProvider: any = ({ children }: { children: any }) => {
   const [activateTab, setActivateTab] = useState<(tabId: string) => void>(() => () => {});
   const [model, setModel] = useState<Model | null>(null);
 
-  const findTabNodeByName = (node: Node | null | undefined, name: string): TabNode | null => {
-    if (node instanceof TabNode && node.getName() === name) {
+  const findTabNodeByName = (node: Node | null | undefined, name: string): TabNode | TabSetNode | null => {
+    if ((node instanceof TabNode || node instanceof TabSetNode) && node.getName() === name) {
       return node;
     }
     if (node?.getChildren()?.length) {

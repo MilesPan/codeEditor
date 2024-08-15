@@ -1,4 +1,4 @@
-import { IJsonModel, IJsonRowNode, IJsonTabSetNode } from 'flexlayout-react';
+import { IJsonModel, IJsonTabNode, IJsonTabSetNode } from 'flexlayout-react';
 
 export const MinTabSet = { width: 40, height: 36 };
 export const TabName = {
@@ -8,9 +8,17 @@ export const TabName = {
   code: '代码',
   testCase: '测试用例',
   testResponse: '测试结果',
-  meeting: '视频会议'
-};
-export type TABNAME = keyof typeof TabName;
+  meeting: '视频会议',
+  debugger: '调试器',
+  leftTabset: 'left'
+} as const;
+export type TABNAME = (typeof TabName)[keyof typeof TabName];
+export const DebuggerTab = {
+  type: 'tab',
+  name: TabName.debugger,
+  component: TabName.debugger
+} as IJsonTabNode;
+
 export default {
   global: {
     tabSetMinWidth: MinTabSet.width,
@@ -25,6 +33,7 @@ export default {
         type: 'tabset',
         weight: 20,
         foldBeforeWeight: 59.05,
+        name: TabName.leftTabset,
         children: [
           {
             type: 'tab',

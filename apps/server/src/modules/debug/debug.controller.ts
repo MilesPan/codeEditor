@@ -7,16 +7,17 @@ export class DebugController {
   constructor(private readonly debugService: DebugService) {}
 
   @Post('startDebug')
-  startDebug(@Body() startDebugDto: StartDebugDto) {
-    return this.debugService.startDebug(startDebugDto);
+  async startDebug(@Body() startDebugDto: StartDebugDto) {
+    const res = await this.debugService.startDebug(startDebugDto);
+    return res;
   }
   @Post('stepInto')
-  stepInto() {
-    return this.debugService.stepInto();
+  async stepInto() {
+    return await this.debugService.stepInto();
   }
   @Post('resume')
-  resume() {
-    return this.debugService.resume();
+  async resume() {
+    return await this.debugService.resume();
   }
   @Post('stepOver')
   stepOver() {
