@@ -1,5 +1,16 @@
 import { TabNode, TitleFactory } from 'flexlayout-react';
-import { ClipboardPen, Code, FlaskRound, History, LoaderCircle, SquareActivity, Terminal } from 'lucide-react';
+import {
+  ClipboardPen,
+  Code,
+  CogIcon,
+  FlaskRound,
+  History,
+  LoaderCircle,
+  SquareActivity,
+  Terminal,
+  Video,
+  VideoIcon
+} from 'lucide-react';
 import { ReactNode } from 'react';
 import { TABNAME, TabName } from './model';
 import CodeEditor from '../CodeEditor/CodeEditor';
@@ -7,27 +18,30 @@ import ProblemDescription from '../ProblemDescription/ProblemDescription';
 import TestResponse from '../TestResponse/TestResponse';
 import Meeting from '../Meeting/Meeting';
 import TestCase from '../TestCase/TestCase';
+import DebugTab from '../Debug/DebugTab';
 
 import { useCodeContext } from '@/contexts/CodeContext';
 import './factory.css';
 
+type ExcludeLeftTabset = Exclude<TABNAME, typeof TabName.leftTabset>;
 export const contentFactory = (node: TabNode): ReactNode => {
-  const TabStrategy = {
+  const TabStrategy: Record<ExcludeLeftTabset, ReactNode> = {
     [TabName.desc]: <ProblemDescription></ProblemDescription>,
     [TabName.solution]: <TestResponse></TestResponse>,
     [TabName.record]: <TestResponse></TestResponse>,
     [TabName.code]: <CodeEditor></CodeEditor>,
     [TabName.testCase]: <TestCase></TestCase>,
     [TabName.testResponse]: <TestResponse></TestResponse>,
-    [TabName.meeting]: <Meeting></Meeting>
+    [TabName.meeting]: <Meeting></Meeting>,
+    [TabName.debugger]: <DebugTab></DebugTab>
   };
-  return TabStrategy[node.getComponent() as TABNAME];
+  return TabStrategy[node.getComponent() as ExcludeLeftTabset];
 };
 
 export const titleFactory: TitleFactory = (node: TabNode) => {
   const { isRunning } = useCodeContext();
 
-  const TitleStrategy = {
+  const TitleStrategy: Record<ExcludeLeftTabset, ReactNode> = {
     [TabName.desc]: (
       <>
         <div className="flex items-center">
@@ -79,7 +93,23 @@ export const titleFactory: TitleFactory = (node: TabNode) => {
           <span className="ml-1 text-sm">{TabName.code}</span>
         </div>
       </>
+    ),
+    [TabName.meeting]: (
+      <>
+        <div className="flex items-center">
+          <VideoIcon size={18} color="var(--logo_bg-blue)"></VideoIcon>
+          <span className="ml-1 text-sm">{TabName.code}</span>
+        </div>
+      </>
+    ),
+    [TabName.debugger]: (
+      <>
+        <div className="flex items-center">
+          <CogIcon size={18} color="var(--logo_bg-blue)"></CogIcon>
+          <span className="ml-1 text-sm">{TabName.debugger}</span>
+        </div>
+      </>
     )
   };
-  return TitleStrategy[node.getName() as TABNAME];
+  return TitleStrategy[node.getName() as ExcludeLeftTabset];
 };

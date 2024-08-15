@@ -8,7 +8,7 @@ interface TabContextProps {
   setModel: React.Dispatch<React.SetStateAction<Model | null>>;
   activateTab: (tabId: string) => void;
   setActivateTab: React.Dispatch<React.SetStateAction<(tabId: string) => void>>;
-  findTabNodeByName: (node: Node | null | undefined, name: TABNAME) => TabNode | TabSetNode | null;
+  findTabNode: (node: Node | null | undefined, type: 'name' | 'id', name: TABNAME) => TabNode | TabSetNode | null;
 }
 
 const TabContext = createContext<TabContextProps | undefined>(undefined);
@@ -17,20 +17,25 @@ const TabProvider: any = ({ children }: { children: any }) => {
   const [activateTab, setActivateTab] = useState<(tabId: string) => void>(() => () => {});
   const [model, setModel] = useState<Model | null>(null);
 
-  const findTabNodeByName = (node: Node | null | undefined, name: string): TabNode | TabSetNode | null => {
-    if ((node instanceof TabNode || node instanceof TabSetNode) && node.getName() === name) {
+  const findTabNode = (
+    node: Node | null | undefined,
+    type: 'name' | 'id',
+    target: string
+  ): TabNode | TabSetNode | null => {
+    const isTabNode = node instanceof TabNode || node instanceof TabSetNode;
+    if (isTabNode && (type === 'name' ? node.getName() === target : node.getId() === target)) {
       return node;
     }
     if (node?.getChildren()?.length) {
       for (let child of node.getChildren()) {
-        const result = findTabNodeByName(child, name);
+        const result = findTabNode(child, type, target);
         if (result) return result;
       }
     }
     return null;
   };
 
-  const value = { activateTab, setActivateTab, model, setModel, findTabNodeByName };
+  const value = { activateTab, setActivateTab, model, setModel, findTabNode };
 
   return <TabContext.Provider value={value}>{children}</TabContext.Provider>;
 };

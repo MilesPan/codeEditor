@@ -18,13 +18,13 @@ import { Actions, DockLocation } from 'flexlayout-react';
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
 
-  const { activateTab, findTabNodeByName, model } = useTabContext();
+  const { activateTab, findTabNode, model } = useTabContext();
   const { run } = useRequest(runCode, {
     manual: true,
     onBefore() {
       setIsRunning(true);
       setExecedCode(true);
-      const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
+      const testResponseNode = findTabNode(model?.getRoot(), 'name', TabName.testResponse);
       activateTab(testResponseNode?.getId() || '');
     },
     onSuccess(res) {
@@ -46,17 +46,7 @@ const Operations = observer(() => {
     onBefore() {
       setIsRunning(true);
       setExecedCode(true);
-      model?.doAction(
-        Actions.addNode(
-          DebuggerTab,
-          findTabNodeByName(model?.getRoot(), TabName.leftTabset)!.getId(),
-          DockLocation.CENTER,
-          1,
-          true
-        )
-      );
-      // const testResponseNode = findTabNodeByName(model?.getRoot(), TabName.testResponse);
-      // activateTab(testResponseNode?.getId() || '');
+      model?.doAction(Actions.addNode(DebuggerTab, TabName.leftTabset, DockLocation.CENTER, 1, true));
     },
     onSuccess(res) {
       debugStore.setIsDebugging(true);

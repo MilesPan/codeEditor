@@ -1,4 +1,4 @@
-import { DebugOperation } from '@/components/Debug/Debug';
+import { DebugOperation } from '@/components/Debug/DebugWidget';
 import { DragWrapper } from '@/components/DragWrapper';
 import FlexLayout from '@/components/FlexLayout/FlexLayout';
 import { memo } from 'react';

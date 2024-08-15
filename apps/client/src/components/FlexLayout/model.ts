@@ -33,7 +33,7 @@ export default {
         type: 'tabset',
         weight: 20,
         foldBeforeWeight: 59.05,
-        name: TabName.leftTabset,
+        id: TabName.leftTabset,
         children: [
           {
             type: 'tab',
