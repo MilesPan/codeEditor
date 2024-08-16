@@ -12,19 +12,19 @@ import Avatar from './Avatar';
 import Operations from './Operations';
 import { CircleX, Menu } from 'lucide-react';
 import { userLeaveRoomReq } from '@Request/room';
-import { message } from 'antd';
+import { App, message } from 'antd';
 import QuestionDrawer from '@/components/QuestionDrawer/QuestionDrawer';
 import userStore from '@/store/userStore';
 import { observer } from 'mobx-react-lite';
 const Header: FC = observer(() => {
   const { resolvedTheme } = useTheme();
-
+  const [messageApi, ContextHolder] = message.useMessage();
   const { roomId } = useParams();
   const { runAsync: runUserLeaveRoomReq } = useRequest(userLeaveRoomReq, { manual: true });
   const navigate = useNavigate();
   const leaveRoom = async () => {
     await runUserLeaveRoomReq(UserStore.userInfo.roomId, UserStore.userInfo.userName);
-    message.success('退出成功');
+    messageApi.success('退出成功');
     navigate('/joinRoom');
   };
 
@@ -33,6 +33,7 @@ const Header: FC = observer(() => {
   const closeDrawer = () => setDrawerStatus(false);
   return (
     <>
+      {ContextHolder}
       <header className="relative flex items-center justify-between py-2 px-4 h-14">
         {roomId && (
           <section className="center absolute left-1/2 -translate-x-1/2">

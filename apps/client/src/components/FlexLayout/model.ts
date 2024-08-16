@@ -16,6 +16,7 @@ export type TABNAME = (typeof TabName)[keyof typeof TabName];
 export const DebuggerTab = {
   type: 'tab',
   name: TabName.debugger,
+  id: TabName.debugger,
   component: TabName.debugger
 } as IJsonTabNode;
 

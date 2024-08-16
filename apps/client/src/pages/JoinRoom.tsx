@@ -14,7 +14,7 @@ import '@/styles/joinRoom.css'
 
 const JoinRoom: FC = observer(() => {
   const { resolvedTheme } = useTheme();
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, ContextHolder] = message.useMessage();
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', resolvedTheme);
   }, [resolvedTheme]);
@@ -55,7 +55,7 @@ const JoinRoom: FC = observer(() => {
   };
   return (
     <>
-      {contextHolder}
+      {ContextHolder}
       <div className="joinRoom flex items-center justify-center h-full">
         {step === 1 && (
           <>

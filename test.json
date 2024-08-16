@@ -1,16 +1,126 @@
-{
-  "method": "Debugger.setBreakpointsActive",
-  "params": {
-    "active": true
+[
+  {
+    "name": "exports",
+    "value": {
+      "type": "object",
+      "className": "Object",
+      "description": "Object",
+      "objectId": "8978482421779707284.1.27",
+      "preview": {
+        "type": "object",
+        "description": "Object",
+        "overflow": false,
+        "properties": []
+      }
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
   },
-  "id": 2,
-  "c": {
-    "method": "Debugger.setBreakpointByUrl",
-    "params": {
-      "urlRegex": "wdjaklwdjio",
-      "lineNumber": 3,
-      "columnNumber": 1,
-      "condition": ""
-    }
+  {
+    "name": "require",
+    "value": {
+      "type": "function",
+      "className": "Function",
+      "description": "function require(path) {\r\n      // When no policy manifest, the original prototype.require is sustained\r\n      return mod.require(path);\r\n    }",
+      "objectId": "8978482421779707284.1.28"
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
+  },
+  {
+    "name": "module",
+    "value": {
+      "type": "object",
+      "className": "Module",
+      "description": "Module",
+      "objectId": "8978482421779707284.1.29",
+      "preview": {
+        "type": "object",
+        "description": "Module",
+        "overflow": true,
+        "properties": [
+          {
+            "name": "9",
+            "type": "function",
+            "value": ""
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "value": "."
+          },
+          {
+            "name": "path",
+            "type": "string",
+            "value": "D:\\Learn\\codeEditor\\apps\\server"
+          },
+          {
+            "name": "exports",
+            "type": "object",
+            "value": "Object"
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "value": "D:\\Learn\\codeEditor\\apps\\server\\test1.js"
+          },
+          {
+            "name": "loaded",
+            "type": "boolean",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
+  },
+  {
+    "name": "__filename",
+    "value": {
+      "type": "string",
+      "value": "D:\\Learn\\codeEditor\\apps\\server\\test1.js"
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
+  },
+  {
+    "name": "__dirname",
+    "value": {
+      "type": "string",
+      "value": "D:\\Learn\\codeEditor\\apps\\server"
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
+  },
+  {
+    "name": "a",
+    "value": {
+      "type": "undefined"
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
+  },
+  {
+    "name": "b",
+    "value": {
+      "type": "undefined"
+    },
+    "writable": true,
+    "configurable": true,
+    "enumerable": true,
+    "isOwn": true
   }
-}
+]

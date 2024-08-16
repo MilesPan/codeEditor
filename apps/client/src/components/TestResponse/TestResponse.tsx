@@ -33,10 +33,8 @@ const HoverWrapper: FC<{ children: ReactNode; text: string }> = ({ children, tex
         {copied ? (
           <CopyCheck
             size={18}
-            color='var(--logo_bg-green)'
-            className={cs(
-              `absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer _hoverBtnLeft`,
-            )}
+            color="var(--logo_bg-green)"
+            className={cs(`absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer _hoverBtnLeft`)}
           />
         ) : (
           <Copy

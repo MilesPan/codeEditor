@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { WebSocket } from 'ws';
 import { Debugger } from '@Types/debugger';
 import * as fs from 'fs';
@@ -32,14 +32,19 @@ export class DebugService {
   private filePath: string;
   private lastCommand: COMMAND;
   private hightlightLine: number;
+  private debugProcess: ChildProcessWithoutNullStreams;
+  private port = 9229;
   async startDebug(startDebugDto: StartDebugDto) {
     const { code, breakPoints } = startDebugDto;
     this.breakPoints = breakPoints;
-
+    if (!this.breakPoints?.length) this.breakPoints = [0];
     this.generateCode(code);
-    const debugProcess = spawn('node', ['--inspect=127.0.0.1:9229', this.PATH]);
+    this.debugProcess = spawn('node', [
+      `--inspect=127.0.0.1:${this.port++}`,
+      this.PATH,
+    ]);
     return new Promise((resolve) => {
-      debugProcess.stderr.on('data', (data) => {
+      this.debugProcess.stderr.on('data', (data) => {
         const wsUrl = this.extractWsUrl(data.toString());
         if (!wsUrl) return;
         this.initEnhanceWsClient(wsUrl);
@@ -50,6 +55,7 @@ export class DebugService {
 
         this.wsClient.addEventListener('message', (event) => {
           const message = JSON.parse(event.data.toString());
+          console.log(message.method);
 
           if (message?.result?.debuggerId) message.method = COMMAND.enable;
 
@@ -59,7 +65,10 @@ export class DebugService {
             this.lastCommand === COMMAND.getProperties &&
             message.result?.result?.length
           ) {
-            resolve(message.result?.result);
+            resolve({
+              result: message.result.result,
+              curLine: this.hightlightLine,
+            });
           }
         });
       });
@@ -146,6 +155,10 @@ export class DebugService {
     }
     return null;
   }
+  #disableDebugger() {
+    this.wsClient.mySend('{"method": "Debugger.disable"}');
+    this.#resume();
+  }
   // debugger: 启用调试
   #enableDebugger() {
     this.wsClient.mySend('{"method": "Debugger.enable"}');
@@ -202,7 +215,7 @@ export class DebugService {
   #getProperties() {
     const params: Debugger.GetPropertiesParamType = {
       objectId: this.callFrames?.[0]?.scopeChain?.[0]?.object?.objectId ?? '',
-      ownProperties: false,
+      ownProperties: true,
       accessorPropertiesOnly: false,
       nonIndexedPropertiesOnly: false,
       generatePreview: true,

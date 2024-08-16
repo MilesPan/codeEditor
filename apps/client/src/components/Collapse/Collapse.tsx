@@ -1,25 +1,55 @@
 import { ChevronDown, LucideProps } from 'lucide-react';
-import { FC, ForwardRefExoticComponent, ReactNode, RefAttributes, useEffect, useRef, useState } from 'react';
+import {
+  cloneElement,
+  FC,
+  ForwardRefExoticComponent,
+  isValidElement,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 const Collapse: FC<{
   children?: ReactNode;
   TitleIcon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'>>;
   titleContent: string;
-}> = ({ children, TitleIcon, titleContent }) => {
-  const [status, setStatus] = useState(false);
+  initStatus?: boolean;
+}> = ({ children, TitleIcon, titleContent, initStatus = false }) => {
   const [maxHeight, setMaxHeight] = useState('0px');
+  const [status, setStatus] = useState(initStatus);
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const childrenRef = useRef<HTMLElement>(null);
+  const clonedChild = isValidElement(children) ? cloneElement<any>(children, { ref: childrenRef }) : children;
   const handleChangeStatus = () => {
     setStatus(!status);
   };
 
   useEffect(() => {
+    const updateMaxHeight = () => {
+      if (childrenRef.current) {
+        const styles = getComputedStyle(childrenRef.current, 'margin-top');
+        const margin = parseInt(styles.marginTop) + parseInt(styles.marginBottom);
+        setMaxHeight(`${(childrenRef.current?.scrollHeight || 0) + margin}px`);
+      }
+    };
     if (status) {
-      setMaxHeight(`${contentRef.current!.scrollHeight}px`);
+      updateMaxHeight();
     } else {
       setMaxHeight('0px');
     }
+
+    const observer = new ResizeObserver(() => {
+      if (status) {
+        updateMaxHeight();
+      }
+    });
+    if (childrenRef.current) {
+      observer.observe(childrenRef.current, { box: 'border-box' });
+    }
+    return () => {
+      observer.disconnect();
+    };
   }, [status]);
 
   return (
@@ -41,13 +71,13 @@ const Collapse: FC<{
       </section>
       <div
         ref={contentRef}
-        className="transition-[max-height] overflow-hidden"
+        className={`transition-[height] overflow-hidden`}
         style={{
-          maxHeight: maxHeight,
+          height: maxHeight,
           transitionDuration: '0.5s'
         }}
       >
-        {children}
+        {clonedChild}
       </div>
     </>
   );

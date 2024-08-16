@@ -1,4 +1,12 @@
 export namespace Debugger {
+  export interface PropertyItemType {
+    name: string;
+    value: { type: string; value: number; description: string };
+    writable: boolean;
+    configurable: boolean;
+    enumerable: boolean;
+    isOwn: boolean;
+  }
   export interface CallFrameItemType {
     callFrameId: string;
     functionName: string;
@@ -11,7 +19,7 @@ export namespace Debugger {
   // setBreakpointByUrl的参数类型
   export interface SetBreakpointByUrlParamType {
     urlRegex?: string;
-    url?: string
+    url?: string;
     lineNumber: number;
     columnNumber: number;
     condition: string;

@@ -9,15 +9,15 @@ import { parseConsoleOutput } from '@Utils/code';
 import { useRequest, useToggle, useUpdateEffect } from 'ahooks';
 import { observer } from 'mobx-react-lite';
 import codeStore from '@/store/codeStore';
-import { message } from 'antd';
+import { App, message } from 'antd';
 import debugStore from '@/store/debugStore';
 import { fetchStartDebug } from '@Request/debug';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { Actions, DockLocation } from 'flexlayout-react';
 
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
-
+  const [messageApi, ContextHolder] = message.useMessage();
   const { activateTab, findTabNode, model } = useTabContext();
   const { run } = useRequest(runCode, {
     manual: true,
@@ -44,12 +44,15 @@ const Operations = observer(() => {
   const { run: runWithDebug } = useRequest(fetchStartDebug, {
     manual: true,
     onBefore() {
-      setIsRunning(true);
-      setExecedCode(true);
-      model?.doAction(Actions.addNode(DebuggerTab, TabName.leftTabset, DockLocation.CENTER, 1, true));
+      // setIsRunning(true);
+      // setExecedCode(true);
+      model?.doAction(Actions.deleteTab(TabName.debugger));
+      model?.doAction(Actions.addNode(DebuggerTab, TabName.leftTabset, DockLocation.CENTER, -1, true));
     },
     onSuccess(res) {
       debugStore.setIsDebugging(true);
+      debugStore.setResult(res.data.result);
+      debugStore.setCurLine(res.data.curLine);
     },
     onFinally() {
       setIsRunning(false);
@@ -57,7 +60,7 @@ const Operations = observer(() => {
   });
   const [debugActive, { toggle: toggleDebugActive }] = useToggle(false, true);
   useUpdateEffect(() => {
-    message.success(debugActive ? 'Debugger 已开启' : 'Debugger 已关闭');
+    messageApi.success(debugActive ? 'Debugger 已开启' : 'Debugger 已关闭');
     debugStore.setDebugActive(debugActive);
   }, [debugActive]);
   function handleRun() {
@@ -78,9 +81,12 @@ const Operations = observer(() => {
   const showOps = useMemo(() => {
     return !(isRunning || debugStore.isDebugging);
   }, [isRunning, debugStore.isDebugging]);
+
+  const nodeRef = useRef(null);
   return (
     <>
-      <CSSTransition in={showOps} timeout={500} classNames="button-transition" unmountOnExit>
+      {ContextHolder}
+      <CSSTransition nodeRef={nodeRef} in={showOps} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="operations flex items-center gap-1">
           <div
             onClick={toggleDebugActive}
@@ -104,7 +110,7 @@ const Operations = observer(() => {
           </div>
         </div>
       </CSSTransition>
-      <CSSTransition in={!showOps} timeout={500} classNames="button-transition" unmountOnExit>
+      <CSSTransition nodeRef={nodeRef} in={!showOps} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="isRunning-container flex justify-center">
           <div className="h-9 px-3 rounded-lg flex items-center gap-2 bg-[--fill-quaternary]">
             <div className="loader"></div>
