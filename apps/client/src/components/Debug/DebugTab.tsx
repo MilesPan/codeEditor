@@ -13,6 +13,7 @@ const DebugTab = observer(() => {
   console.log(debugStore.result);
   const jsonTheme = useMemo(() => {
     if (resolvedTheme === 'dark') {
+      vscodeTheme.backgroundColor = 'transparent';
       return vscodeTheme;
     } else {
       return lightTheme;

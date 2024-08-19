@@ -1,8 +1,6 @@
 import { StartDebugResponseDto } from '@Dtos/debug';
 import { makeAutoObservable } from 'mobx';
 
-const EXCLUDE_NAMES = ['require', 'module', 'exports', '__filename', '__dirname'];
-
 class DebugStore {
   debugActive: boolean = false;
   setDebugActive(status: boolean) {
@@ -17,8 +15,7 @@ class DebugStore {
 
   result: Record<PropertyKey, any> = {};
   setResult(result: StartDebugResponseDto['result']) {
-    this.result = this.convertResult(result);
-    console.log(this.result)
+    this.result = result;
   }
 
   curLine: number = 0;
@@ -29,9 +26,7 @@ class DebugStore {
   convertResult(result: StartDebugResponseDto['result']) {
     const obj: Record<PropertyKey, any> = {};
     result.forEach(item => {
-      if (EXCLUDE_NAMES.includes(item.name)) {
-        return;
-      }
+      
 
       if (item.value.type === 'undefined') {
         obj[item.name] = undefined;

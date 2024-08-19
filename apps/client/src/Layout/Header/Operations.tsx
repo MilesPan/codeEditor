@@ -86,7 +86,7 @@ const Operations = observer(() => {
   return (
     <>
       {ContextHolder}
-      <CSSTransition nodeRef={nodeRef} in={showOps} timeout={500} classNames="button-transition" unmountOnExit>
+      <CSSTransition nodeRef={nodeRef} in={true} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="operations flex items-center gap-1">
           <div
             onClick={toggleDebugActive}
@@ -110,14 +110,14 @@ const Operations = observer(() => {
           </div>
         </div>
       </CSSTransition>
-      <CSSTransition nodeRef={nodeRef} in={!showOps} timeout={500} classNames="button-transition" unmountOnExit>
+      {/* <CSSTransition nodeRef={nodeRef} in={!showOps} timeout={500} classNames="button-transition" unmountOnExit>
         <div className="isRunning-container flex justify-center">
           <div className="h-9 px-3 rounded-lg flex items-center gap-2 bg-[--fill-quaternary]">
             <div className="loader"></div>
             {debugStore.debugActive ? '调试中...' : '判题中...'}
           </div>
         </div>
-      </CSSTransition>
+      </CSSTransition> */}
     </>
   );
 });

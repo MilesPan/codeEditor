@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { WebSocket } from 'ws';
+import { WebSocket, MessageEvent } from 'ws';
 import { Debugger } from '@Types/debugger';
 import * as fs from 'fs';
 import { StartDebugDto } from '@Dtos/debug';
 import { pathToFileURL } from 'url';
+
+const EXCLUDE_NAMES = [
+  'require',
+  'module',
+  'exports',
+  '__filename',
+  '__dirname',
+];
 
 enum COMMAND {
   enable = 'Debugger.enable',
@@ -34,6 +42,7 @@ export class DebugService {
   private hightlightLine: number;
   private debugProcess: ChildProcessWithoutNullStreams;
   private port = 9229;
+  private convertedSet: Set<string> = new Set();
   async startDebug(startDebugDto: StartDebugDto) {
     const { code, breakPoints } = startDebugDto;
     this.breakPoints = breakPoints;
@@ -53,28 +62,68 @@ export class DebugService {
           console.log('open');
         });
 
-        this.wsClient.addEventListener('message', (event) => {
+        const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
-          console.log(message.method);
-
-          if (message?.result?.debuggerId) message.method = COMMAND.enable;
-
-          this.effects(message);
 
           if (
             this.lastCommand === COMMAND.getProperties &&
             message.result?.result?.length
           ) {
+            console.log('startUpppppppppppppppppppppppppppp');
+            const result = await this.convertResult(
+              message.result.result,
+              this.convertedSet,
+            );
+            this.convertedSet = new Set();
+            this.wsClient.removeEventListener('message', handler);
+
             resolve({
-              result: message.result.result,
+              result: result,
               curLine: this.hightlightLine,
             });
           }
-        });
+        };
+        this.wsClient.addEventListener('message', handler);
       });
     });
   }
+  async convertResult(
+    result: Debugger.PropertyItemType[],
+    convetedIds: Set<string>,
+  ) {
+    const results = [];
+    for (const prop of result) {
+      const { name, value } = prop;
+      if (EXCLUDE_NAMES.includes(name)) {
+        continue;
+      }
+      if (value.type === 'object' && value.objectId) {
+        if (convetedIds.has(value.objectId)) continue;
+        convetedIds.add(value.objectId);
+        // 如果这是一个复杂对象类型，递归获取其属性
+        const nestedProperties = await this.fetchProperties(value.objectId);
+        const nestedReults = await this.convertResult(
+          nestedProperties,
+          convetedIds,
+        );
+        console.log(value, nestedProperties, nestedReults, 'nested');
 
+        results.push({
+          name: name,
+          value: nestedReults,
+          type: value.type,
+        });
+      } else {
+        // 否则，直接使用值
+        results.push({
+          name: name,
+          value: value.value,
+          type: value.type,
+        });
+      }
+    }
+    return results;
+  }
   effects(message: any) {
     switch (message.method) {
       case COMMAND.scriptParsed:
@@ -84,7 +133,8 @@ export class DebugService {
         this.callFrames = message.params.callFrames;
         this.hightlightLine = this.callFrames[0].location.lineNumber;
         this.#getProperties();
-        return this.resolveProperties();
+        // return this.resolveProperties();
+        break;
       case COMMAND.enable:
         this.debuggerId = message.result.debuggerId;
         this.#setBreakpoints();
@@ -120,17 +170,43 @@ export class DebugService {
     this.#stepOut();
     return this.resolveProperties();
   }
+  private fetchProperties(
+    objectId: string,
+  ): Promise<Debugger.PropertyItemType[]> {
+    this.#getProperties(objectId);
+    return new Promise((resolve) => {
+      const handler = (event: MessageEvent) => {
+        const message = JSON.parse(event.data.toString());
+        if (Array.isArray(message.result?.result)) {
+          resolve(message.result.result);
+        }
+        this.wsClient.removeListener('message', handler);
+        this.wsClient.removeAllListeners('message');
+        this.wsClient.removeEventListener('message', handler);
+      };
+      this.wsClient.addEventListener('message', handler);
+    });
+  }
   private resolveProperties() {
     return new Promise((resolve) => {
-      this.wsClient.addEventListener('message', (event) => {
+      const handler = async (event: MessageEvent) => {
         const message = JSON.parse(event.data.toString());
         if (message?.result?.result) {
+          console.log('resolvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+          const result = await this.convertResult(
+            message.result.result,
+            this.convertedSet,
+          );
+          this.convertedSet = new Set();
+          this.wsClient.removeEventListener('message', handler);
+
           resolve({
-            result: message.result?.result,
+            result: result,
             curLine: this.hightlightLine,
           });
         }
-      });
+      };
+      this.wsClient.addEventListener('message', handler);
     });
   }
   // 初始化并增强一下wsClient, 因为每次send时都要传一个id所以改写一下send方法
@@ -145,6 +221,12 @@ export class DebugService {
 
       this.wsClient.send(...args);
     };
+    this.wsClient.addEventListener('message', (event: MessageEvent) => {
+      const message = JSON.parse(event.data.toString());
+      if (message?.result?.debuggerId) message.method = COMMAND.enable;
+
+      this.effects(message);
+    });
   }
   // 从stderr中提取wsurl
   private extractWsUrl(str: string): string | null {
@@ -168,7 +250,6 @@ export class DebugService {
     this.wsClient.mySend(
       '{"method": "Debugger.stepInto", "params": {"breakOnAsyncCall":true,"skipList":[]}}',
     );
-    this.#getProperties();
   }
   // debugger: 步骤
   #stepNext() {
@@ -212,14 +293,18 @@ export class DebugService {
     });
   }
   // debugger: 获取作用域和调用堆栈
-  #getProperties() {
+  #getProperties(objectId?: string) {
     const params: Debugger.GetPropertiesParamType = {
-      objectId: this.callFrames?.[0]?.scopeChain?.[0]?.object?.objectId ?? '',
+      objectId:
+        objectId ??
+        this.callFrames?.[0]?.scopeChain?.[0]?.object?.objectId ??
+        '',
       ownProperties: true,
       accessorPropertiesOnly: false,
-      nonIndexedPropertiesOnly: false,
+      nonIndexedPropertiesOnly: true,
       generatePreview: true,
     };
+    console.log(params.objectId);
     this.wsClient.mySend(
       `{"method": "${COMMAND.getProperties}", "params": ${JSON.stringify(params)} }`,
     );
