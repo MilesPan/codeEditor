@@ -10,7 +10,6 @@ import { useMemo } from 'react';
 
 const DebugTab = observer(() => {
   const { resolvedTheme } = useTheme();
-  console.log(debugStore.result);
   const jsonTheme = useMemo(() => {
     if (resolvedTheme === 'dark') {
       vscodeTheme.backgroundColor = 'transparent';

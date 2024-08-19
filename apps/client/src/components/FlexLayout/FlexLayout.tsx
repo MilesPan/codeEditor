@@ -22,10 +22,8 @@ const FlexLayout = memo(() => {
     if (action.type === 'FlexLayout_DeleteTab') {
       let borders = [...model.toJson().borders!];
       borders[0]?.children.push(model.getNodeById(action.data.node)?.toJson() as IJsonTabNode);
-      console.log(model.getNodeById(action.data.node)?.toJson());
       model.doAction(Actions.deleteTab(action.data.node));
       var newmodel = { ...model.toJson(), borders };
-      console.log('model', newmodel);
       setModel(Model?.fromJson(newmodel));
     } else {
       return action;

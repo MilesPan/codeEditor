@@ -38,11 +38,9 @@ export class DebugService {
   private breakPoints: number[] = [];
   private PATH = './test1.js';
   private filePath: string;
-  private lastCommand: COMMAND;
   private hightlightLine: number;
   private debugProcess: ChildProcessWithoutNullStreams;
   private port = 9229;
-  private convertedSet: Set<string> = new Set();
   async startDebug(startDebugDto: StartDebugDto) {
     const { code, breakPoints } = startDebugDto;
     this.breakPoints = breakPoints;
@@ -64,66 +62,52 @@ export class DebugService {
 
         const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
-
-          if (
-            this.lastCommand === COMMAND.getProperties &&
-            message.result?.result?.length
-          ) {
-            console.log('startUpppppppppppppppppppppppppppp');
-            const result = await this.convertResult(
-              message.result.result,
-              this.convertedSet,
-            );
-            this.convertedSet = new Set();
-            this.wsClient.removeEventListener('message', handler);
-
-            resolve({
-              result: result,
-              curLine: this.hightlightLine,
-            });
+          if (message.method === COMMAND.paused) {
+            const res = await this.fetchProperties();
+            resolve({ result: res, curLine: this.hightlightLine });
           }
         };
         this.wsClient.addEventListener('message', handler);
       });
     });
   }
-  async convertResult(
-    result: Debugger.PropertyItemType[],
-    convetedIds: Set<string>,
-  ) {
-    const results = [];
-    for (const prop of result) {
-      const { name, value } = prop;
-      if (EXCLUDE_NAMES.includes(name)) {
-        continue;
-      }
-      if (value.type === 'object' && value.objectId) {
-        if (convetedIds.has(value.objectId)) continue;
-        convetedIds.add(value.objectId);
-        // 如果这是一个复杂对象类型，递归获取其属性
-        const nestedProperties = await this.fetchProperties(value.objectId);
-        const nestedReults = await this.convertResult(
-          nestedProperties,
-          convetedIds,
-        );
-        console.log(value, nestedProperties, nestedReults, 'nested');
+  // async convertResult(
+  //   result: Debugger.PropertyItemType[],
+  //   convetedIds: Set<string>,
+  // ) {
+  //   const results = [];
+  //   for (const prop of result) {
+  //     const { name, value } = prop;
+  //     if (EXCLUDE_NAMES.includes(name)) {
+  //       continue;
+  //     }
+  //     if (value.type === 'object' && value.objectId) {
+  //       if (convetedIds.has(value.objectId)) continue;
+  //       convetedIds.add(value.objectId);
+  //       // 如果这是一个复杂对象类型，递归获取其属性
+  //       const nestedProperties = await this.fetchProperties(value.objectId);
+  //       const nestedReults = await this.convertResult(
+  //         nestedProperties,
+  //         convetedIds,
+  //       );
+  //       console.log(value, nestedProperties, nestedReults, 'nested');
 
-        results.push({
-          name: name,
-          value: nestedReults,
-          type: value.type,
-        });
-      } else {
-        // 否则，直接使用值
-        results.push({
-          name: name,
-          value: value.value,
-          type: value.type,
-        });
-      }
-    }
-    return results;
-  }
+  //       results.push({
+  //         name: name,
+  //         value: nestedReults,
+  //         type: value.type,
+  //       });
+  //     } else {
+  //       // 否则，直接使用值
+  //       results.push({
+  //         name: name,
+  //         value: value.value,
+  //         type: value.type,
+  //       });
+  //     }
+  //   }
+  //   return results;
+  // }
   effects(message: any) {
     switch (message.method) {
       case COMMAND.scriptParsed:
@@ -132,8 +116,6 @@ export class DebugService {
       case COMMAND.paused:
         this.callFrames = message.params.callFrames;
         this.hightlightLine = this.callFrames[0].location.lineNumber;
-        this.#getProperties();
-        // return this.resolveProperties();
         break;
       case COMMAND.enable:
         this.debuggerId = message.result.debuggerId;
@@ -171,42 +153,24 @@ export class DebugService {
     return this.resolveProperties();
   }
   private fetchProperties(
-    objectId: string,
+    objectId?: string,
   ): Promise<Debugger.PropertyItemType[]> {
-    this.#getProperties(objectId);
     return new Promise((resolve) => {
       const handler = (event: MessageEvent) => {
         const message = JSON.parse(event.data.toString());
         if (Array.isArray(message.result?.result)) {
           resolve(message.result.result);
+          this.wsClient.removeListener('message', handler);
         }
-        this.wsClient.removeListener('message', handler);
-        this.wsClient.removeAllListeners('message');
-        this.wsClient.removeEventListener('message', handler);
       };
       this.wsClient.addEventListener('message', handler);
+      this.#getProperties(objectId);
     });
   }
   private resolveProperties() {
-    return new Promise((resolve) => {
-      const handler = async (event: MessageEvent) => {
-        const message = JSON.parse(event.data.toString());
-        if (message?.result?.result) {
-          console.log('resolvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
-          const result = await this.convertResult(
-            message.result.result,
-            this.convertedSet,
-          );
-          this.convertedSet = new Set();
-          this.wsClient.removeEventListener('message', handler);
-
-          resolve({
-            result: result,
-            curLine: this.hightlightLine,
-          });
-        }
-      };
-      this.wsClient.addEventListener('message', handler);
+    return new Promise(async (resolve) => {
+      const res = await this.fetchProperties();
+      resolve({ result: res, curLine: this.hightlightLine });
     });
   }
   // 初始化并增强一下wsClient, 因为每次send时都要传一个id所以改写一下send方法
@@ -215,7 +179,6 @@ export class DebugService {
     this.wsClient.mySend = (...args: [string]) => {
       this.id++;
       const json = JSON.parse(args[0]);
-      this.lastCommand = json.method;
       json.id = this.id;
       args[0] = JSON.stringify(json);
 
@@ -304,7 +267,6 @@ export class DebugService {
       nonIndexedPropertiesOnly: true,
       generatePreview: true,
     };
-    console.log(params.objectId);
     this.wsClient.mySend(
       `{"method": "${COMMAND.getProperties}", "params": ${JSON.stringify(params)} }`,
     );
