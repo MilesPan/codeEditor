@@ -1,4 +1,4 @@
-import { cloneElement, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Popover, Tooltip } from 'antd';
 import LanguageSelector, { languages } from './LanguageSelector';
@@ -55,6 +55,7 @@ const CodeEditor: FC = memo(
     const lastLineNumber = useRef<number>();
     const handleEditorDidMount: OnMount = (editor, monaco) => {
       CodeStore.setEditorRef(editor);
+      CodeStore.setMonacoRef(monaco);
       editorRef.current = editor;
 
       function observer() {

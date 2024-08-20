@@ -98,7 +98,7 @@ export const titleFactory: TitleFactory = (node: TabNode) => {
       <>
         <div className="flex items-center">
           <VideoIcon size={18} color="var(--logo_bg-blue)"></VideoIcon>
-          <span className="ml-1 text-sm">{TabName.code}</span>
+          <span className="ml-1 text-sm">{TabName.meeting}</span>
         </div>
       </>
     ),

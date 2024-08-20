@@ -8,16 +8,21 @@ import { lightTheme } from '@uiw/react-json-view/light';
 import { useTheme } from '../ThemeProvider';
 import { useMemo } from 'react';
 
+lightTheme.fontFamily = 'Menlo';
+vscodeTheme.backgroundColor = 'transparent';
+vscodeTheme.fontFamily = 'Menlo';
+
 const DebugTab = observer(() => {
   const { resolvedTheme } = useTheme();
   const jsonTheme = useMemo(() => {
     if (resolvedTheme === 'dark') {
-      vscodeTheme.backgroundColor = 'transparent';
       return vscodeTheme;
     } else {
       return lightTheme;
     }
   }, [resolvedTheme]);
+
+  const m = new Map([[{ name: 'pdy' }, 1]]);
   return (
     <>
       <div className="px-4 py-5 overflow-x-hidden overflow-y-auto">

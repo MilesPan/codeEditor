@@ -1,7 +1,7 @@
 export namespace Debugger {
   export interface PropertyItemType {
     name: string;
-    value: { preview?: any; type: string; value: string; description: string; objectId?: string; className?: string };
+    value: { subtype?: string, preview?: any; type: string; value: string; description: string; objectId?: string; className?: string };
     writable: boolean;
     configurable: boolean;
     enumerable: boolean;

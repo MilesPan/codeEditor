@@ -1,6 +1,9 @@
 import { type OnMount, Monaco } from '@monaco-editor/react';
 import { MutableRefObject } from 'react';
 type MyEditor = Parameters<OnMount>[0];
+
+const tempBreakPointIds = new Set<string>(); // hover时创建的断点 的id集合
+const breakPointIds = new Set<string>(); // 点击后创建的断点 的id集合
 export function initBreakPoints(
   editor: MyEditor,
   breakPoints: Set<number>,
@@ -13,11 +16,10 @@ export function initBreakPoints(
       const lineNumber = event.target.position.lineNumber;
       if (breakPoints.has(lineNumber)) {
         breakPoints.delete(lineNumber);
-        const decorations = editor.getLineDecorations(lineNumber);
-        editor.removeDecorations(decorations?.map(d => d.id) || []);
+        removeBreakPointDecorations(lineNumber, editor, breakPointIds);
       } else {
         breakPoints.add(lineNumber);
-        editor.createDecorationsCollection([
+        const breakPointDecorations = editor.createDecorationsCollection([
           {
             range: {
               startLineNumber: lineNumber,
@@ -31,6 +33,7 @@ export function initBreakPoints(
             }
           }
         ]);
+        addDecorationsToSet(editor, breakPointIds, breakPointDecorations);
       }
     }
   });
@@ -40,10 +43,10 @@ export function initBreakPoints(
     if (!lineNumber) return;
     if (!breakPoints.has(lineNumber) && event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
       if (lastLineNumber.current && lastLineNumber.current !== lineNumber && !breakPoints.has(lastLineNumber.current)) {
-        editor.removeDecorations(editor.getLineDecorations(lastLineNumber.current!)?.map(d => d.id) || []);
+        removeBreakPointDecorations(lastLineNumber.current!, editor, tempBreakPointIds);
       }
       lastLineNumber.current = lineNumber;
-      editor.createDecorationsCollection([
+      const tempBreakPointDecorations = editor.createDecorationsCollection([
         {
           range: {
             startLineNumber: lineNumber!,
@@ -57,11 +60,50 @@ export function initBreakPoints(
           }
         }
       ]);
+      addDecorationsToSet(editor, tempBreakPointIds, tempBreakPointDecorations);
     } else {
-      if (!breakPoints.has(lineNumber))
-        editor.removeDecorations(editor.getLineDecorations(lineNumber!)?.map(d => d.id) || []);
+      if (!breakPoints.has(lineNumber)) removeBreakPointDecorations(lineNumber!, editor, tempBreakPointIds);
       if (!breakPoints.has(lastLineNumber.current ?? Infinity))
-        editor.removeDecorations(editor.getLineDecorations(lastLineNumber.current!)?.map(d => d.id) || []);
+        removeBreakPointDecorations(lastLineNumber.current!, editor, tempBreakPointIds);
     }
   });
+}
+
+function addDecorationsToSet(
+  editor: MyEditor,
+  targetSet: Set<string>,
+  decorations: ReturnType<MyEditor['createDecorationsCollection']>
+) {
+  const range = decorations.getRange(0)!;
+  const decoration = editor.getDecorationsInRange(range);
+  decoration?.forEach(d => targetSet.add(d.id));
+}
+function removeBreakPointDecorations(lineNumber: number, editor: MyEditor, pointSet: Set<string>) {
+  const decorations = editor.getLineDecorations(lineNumber!);
+  editor.removeDecorations(decorations?.map(d => (pointSet.has(d.id) ? d.id : '')).filter(Boolean) || []);
+}
+
+// 存高亮行DecorationIds
+const HighlightLineSet = new Set<string>();
+export function setHighlightLine(editor: MyEditor, lineNumber: number, monaco: Monaco) {
+  clearHighlightLine(editor);
+  const decorations = editor.createDecorationsCollection([
+    {
+      range: new monaco.Range(lineNumber, 0, lineNumber, 0),
+      options: {
+        className: 'myLineHighlight',
+        marginClassName: 'myLineHighlight',
+        isWholeLine: true
+      }
+    }
+  ]);
+  const range = decorations.getRange(0)!;
+  const decoration = editor.getDecorationsInRange(range);
+  // 获取第一个
+  decoration?.forEach(d => HighlightLineSet.add(d.id));
+  return decorations;
+}
+export function clearHighlightLine(editor: MyEditor) {
+  editor.removeDecorations(Array.from(HighlightLineSet));
+  HighlightLineSet.clear();
 }

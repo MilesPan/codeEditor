@@ -11,6 +11,6 @@ export class StartDebugDto {
 }
 
 export class StartDebugResponseDto {
-  result: Debugger.PropertyItemType[];
+  result: { name: string; value: StartDebugResponseDto['result'] | string | number | boolean; type: string }[];
   curLine: number;
 }

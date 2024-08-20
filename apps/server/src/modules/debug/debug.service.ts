@@ -3,7 +3,7 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { WebSocket, MessageEvent } from 'ws';
 import { Debugger } from '@Types/debugger';
 import * as fs from 'fs';
-import { StartDebugDto } from '@Dtos/debug';
+import { StartDebugDto, StartDebugResponseDto } from '@Dtos/debug';
 import { pathToFileURL } from 'url';
 
 const EXCLUDE_NAMES = [
@@ -40,7 +40,7 @@ export class DebugService {
   private filePath: string;
   private hightlightLine: number;
   private debugProcess: ChildProcessWithoutNullStreams;
-  private port = 9229;
+  private port = 9230;
   async startDebug(startDebugDto: StartDebugDto) {
     const { code, breakPoints } = startDebugDto;
     this.breakPoints = breakPoints;
@@ -63,51 +63,47 @@ export class DebugService {
         const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
           if (message.method === COMMAND.paused) {
-            const res = await this.fetchProperties();
+            const res = await this.convertResult(await this.fetchProperties());
             resolve({ result: res, curLine: this.hightlightLine });
+            this.wsClient.removeEventListener('message', handler);
           }
         };
         this.wsClient.addEventListener('message', handler);
       });
     });
   }
-  // async convertResult(
-  //   result: Debugger.PropertyItemType[],
-  //   convetedIds: Set<string>,
-  // ) {
-  //   const results = [];
-  //   for (const prop of result) {
-  //     const { name, value } = prop;
-  //     if (EXCLUDE_NAMES.includes(name)) {
-  //       continue;
-  //     }
-  //     if (value.type === 'object' && value.objectId) {
-  //       if (convetedIds.has(value.objectId)) continue;
-  //       convetedIds.add(value.objectId);
-  //       // 如果这是一个复杂对象类型，递归获取其属性
-  //       const nestedProperties = await this.fetchProperties(value.objectId);
-  //       const nestedReults = await this.convertResult(
-  //         nestedProperties,
-  //         convetedIds,
-  //       );
-  //       console.log(value, nestedProperties, nestedReults, 'nested');
+  async convertResult(result: Debugger.PropertyItemType[]) {
+    console.log('convert');
+    const results = [];
+    for (const prop of result) {
+      const { name, value } = prop;
+      if (EXCLUDE_NAMES.includes(name)) {
+        continue;
+      }
+      if (value.type === 'object' && value.objectId) {
+        // 如果这是一个复杂对象类型，递归获取其属性
+        const nestedProperties = await this.fetchProperties(value.objectId);
+        if (!nestedProperties?.length && value.subtype === 'map') {
+          console.log(value.objectId, name, value.preview.entries);
+        }
+        const nestedReults = await this.convertResult(nestedProperties);
 
-  //       results.push({
-  //         name: name,
-  //         value: nestedReults,
-  //         type: value.type,
-  //       });
-  //     } else {
-  //       // 否则，直接使用值
-  //       results.push({
-  //         name: name,
-  //         value: value.value,
-  //         type: value.type,
-  //       });
-  //     }
-  //   }
-  //   return results;
-  // }
+        results.push({
+          name: name,
+          value: nestedReults,
+          type: value.type,
+        });
+      } else {
+        // 否则，直接使用值
+        results.push({
+          name: name,
+          value: value.value,
+          type: value.type,
+        });
+      }
+    }
+    return results;
+  }
   effects(message: any) {
     switch (message.method) {
       case COMMAND.scriptParsed:
@@ -136,21 +132,38 @@ export class DebugService {
       callFrames: this.callFrames,
     };
   }
-  resume() {
+  async resume() {
     this.#resume();
+    await this.#paused();
     return this.resolveProperties();
   }
-  stepInto() {
+  async stepInto() {
     this.#stepInto();
+    await this.#paused();
     return this.resolveProperties();
   }
-  stepOver() {
+  async stepOver() {
     this.#stepOver();
+    await this.#paused();
     return this.resolveProperties();
   }
-  stepOut() {
+  async stepOut() {
     this.#stepOut();
+    await this.#paused();
     return this.resolveProperties();
+  }
+  #paused() {
+    return new Promise((resolve) => {
+      const handler = (event: MessageEvent) => {
+        const message = JSON.parse(event.data.toString());
+        if (message.method === COMMAND.paused) {
+          resolve(undefined);
+          this.wsClient.removeEventListener('message', handler);
+        }
+      };
+      this.wsClient.addEventListener('message', handler);
+      this.#resume();
+    });
   }
   private fetchProperties(
     objectId?: string,
@@ -167,15 +180,16 @@ export class DebugService {
       this.#getProperties(objectId);
     });
   }
-  private resolveProperties() {
+  private resolveProperties(): Promise<StartDebugResponseDto> {
     return new Promise(async (resolve) => {
-      const res = await this.fetchProperties();
+      const res = await this.convertResult(await this.fetchProperties());
       resolve({ result: res, curLine: this.hightlightLine });
     });
   }
   // 初始化并增强一下wsClient, 因为每次send时都要传一个id所以改写一下send方法
   private initEnhanceWsClient(wsUrl: string) {
     this.wsClient = new WebSocket(wsUrl) as WebSocket & { mySend: any };
+    this.wsClient.setMaxListeners(40);
     this.wsClient.mySend = (...args: [string]) => {
       this.id++;
       const json = JSON.parse(args[0]);
@@ -184,6 +198,9 @@ export class DebugService {
 
       this.wsClient.send(...args);
     };
+    this.wsClient.addEventListener('close', () => {
+      this.wsClient.removeAllListeners();
+    });
     this.wsClient.addEventListener('message', (event: MessageEvent) => {
       const message = JSON.parse(event.data.toString());
       if (message?.result?.debuggerId) message.method = COMMAND.enable;
