@@ -1,8 +1,8 @@
 import codeStore from '@/store/codeStore';
 import { setHighlightLine } from '@/components/CodeEditor/helpers/BreakPoint';
 import { StartDebugResponseDto } from '@Dtos/debug';
-import { autorun, makeAutoObservable, reaction } from 'mobx';
-import { isNumber } from 'lodash-es';
+import { makeAutoObservable, reaction } from 'mobx';
+import { isMyArray } from '@Utils/index';
 
 class DebugStore {
   debugActive: boolean = false;
@@ -18,8 +18,8 @@ class DebugStore {
 
   result: Record<PropertyKey, any> = {};
   setResult(result: StartDebugResponseDto['result']) {
-    console.log('res', result);
     this.result = this.convertResult(result);
+    console.log(this.result);
   }
 
   curLine: number = -1;
@@ -29,16 +29,14 @@ class DebugStore {
   // 将result转换为一个真正的JSON
   convertResult(result: StartDebugResponseDto['result']) {
     if (typeof result !== 'object') return result;
-    const obj: Record<PropertyKey, any> = {};
+    const isArray = isMyArray(result);
+    const obj: Record<PropertyKey, any> = isArray ? [] : {};
     result.forEach(item => {
       if (item.type === 'undefined') {
         obj[item.name] = undefined;
       } else {
         if (Array.isArray(item.value)) {
-          if (
-            item.value[item.value.length - 1]?.name === 'length' &&
-            item.value.slice(0, -1).every(childItem => isNumber(parseInt(childItem.name)))
-          ) {
+          if (isMyArray(item.value)) {
             obj[item.name] = item.value
               .filter(childItem => childItem.name !== 'length')
               .map(childItem => this.convertResult(childItem.value as StartDebugResponseDto['result']));

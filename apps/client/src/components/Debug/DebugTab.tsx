@@ -22,7 +22,6 @@ const DebugTab = observer(() => {
     }
   }, [resolvedTheme]);
 
-  const m = new Map([[{ name: 'pdy' }, 1]]);
   return (
     <>
       <div className="px-4 py-5 overflow-x-hidden overflow-y-auto">

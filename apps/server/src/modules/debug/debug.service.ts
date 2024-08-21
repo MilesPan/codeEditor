@@ -5,7 +5,6 @@ import { Debugger } from '@Types/debugger';
 import * as fs from 'fs';
 import { StartDebugDto, StartDebugResponseDto } from '@Dtos/debug';
 import { pathToFileURL } from 'url';
-
 const EXCLUDE_NAMES = [
   'require',
   'module',
@@ -50,9 +49,10 @@ export class DebugService {
       `--inspect=127.0.0.1:${this.port++}`,
       this.PATH,
     ]);
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.debugProcess.stderr.on('data', (data) => {
         const wsUrl = this.extractWsUrl(data.toString());
+        console.log(wsUrl);
         if (!wsUrl) return;
         this.initEnhanceWsClient(wsUrl);
         this.wsClient.addEventListener('open', () => {
@@ -63,9 +63,16 @@ export class DebugService {
         const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
           if (message.method === COMMAND.paused) {
-            const res = await this.convertResult(await this.fetchProperties());
-            resolve({ result: res, curLine: this.hightlightLine });
-            this.wsClient.removeEventListener('message', handler);
+            try {
+              const res = await this.convertResult(
+                await this.fetchProperties(),
+              );
+              resolve({ result: res, curLine: this.hightlightLine });
+            } catch (error) {
+              reject(error);
+            } finally {
+              this.wsClient.removeEventListener('message', handler);
+            }
           }
         };
         this.wsClient.addEventListener('message', handler);
@@ -73,36 +80,42 @@ export class DebugService {
     });
   }
   async convertResult(result: Debugger.PropertyItemType[]) {
-    console.log('convert');
-    const results = [];
-    for (const prop of result) {
-      const { name, value } = prop;
-      if (EXCLUDE_NAMES.includes(name)) {
-        continue;
-      }
-      if (value.type === 'object' && value.objectId) {
-        // 如果这是一个复杂对象类型，递归获取其属性
-        const nestedProperties = await this.fetchProperties(value.objectId);
-        if (!nestedProperties?.length && value.subtype === 'map') {
-          console.log(value.objectId, name, value.preview.entries);
-        }
-        const nestedReults = await this.convertResult(nestedProperties);
+    try {
+      const results = [];
 
-        results.push({
-          name: name,
-          value: nestedReults,
-          type: value.type,
-        });
-      } else {
-        // 否则，直接使用值
-        results.push({
-          name: name,
-          value: value.value,
-          type: value.type,
-        });
+      for (const prop of result) {
+        const { name, value } = prop;
+        if (EXCLUDE_NAMES.includes(name)) {
+          continue;
+        }
+        if (value.type === 'object' && value.objectId) {
+          // 如果这是一个复杂对象类型，递归获取其属性
+          const nestedProperties = await this.fetchProperties(value.objectId);
+          const nestedReults = await this.convertResult(nestedProperties);
+          results.push({
+            name: name,
+            value: nestedReults,
+            type: value.type,
+          });
+        } else if (value.type === 'function') {
+          results.push({
+            name: name,
+            value: value.description,
+            type: value.type,
+          });
+        } else {
+          // 否则，直接使用值
+          results.push({
+            name: name,
+            value: value.value,
+            type: value.type,
+          });
+        }
       }
+      return results;
+    } catch (error) {
+      throw new Error('error');
     }
-    return results;
   }
   effects(message: any) {
     switch (message.method) {
@@ -120,7 +133,6 @@ export class DebugService {
       case COMMAND.setBreakpointByUrl:
         break;
     }
-    return undefined;
   }
   generateCode(code: string) {
     fs.writeFileSync(this.PATH, code);
@@ -153,37 +165,61 @@ export class DebugService {
     return this.resolveProperties();
   }
   #paused() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const handler = (event: MessageEvent) => {
         const message = JSON.parse(event.data.toString());
+        if (message.error) {
+          reject(message.error);
+          this.wsClient.removeEventListener('message', handler);
+        }
         if (message.method === COMMAND.paused) {
           resolve(undefined);
           this.wsClient.removeEventListener('message', handler);
         }
       };
       this.wsClient.addEventListener('message', handler);
-      this.#resume();
+      // this.#resume();
     });
   }
   private fetchProperties(
     objectId?: string,
   ): Promise<Debugger.PropertyItemType[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const handler = (event: MessageEvent) => {
         const message = JSON.parse(event.data.toString());
         if (Array.isArray(message.result?.result)) {
-          resolve(message.result.result);
+          const hasEntries =
+            Boolean(message.result.internalProperties) &&
+            message.result.internalProperties.findIndex(
+              (r) => r.name === '[[Entries]]',
+            ) !== -1;
+          console.log('hasEntries', message.result);
+          if (!message.result.result.length && hasEntries) {
+            resolve(
+              message.result.internalProperties.filter(
+                (r) => r.name === '[[Entries]]',
+              ),
+            );
+          } else {
+            resolve(message.result.result);
+          }
           this.wsClient.removeListener('message', handler);
         }
+        if (message.error) reject(message.error);
+        this.wsClient.removeListener('message', handler);
       };
       this.wsClient.addEventListener('message', handler);
       this.#getProperties(objectId);
     });
   }
   private resolveProperties(): Promise<StartDebugResponseDto> {
-    return new Promise(async (resolve) => {
-      const res = await this.convertResult(await this.fetchProperties());
-      resolve({ result: res, curLine: this.hightlightLine });
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await this.convertResult(await this.fetchProperties());
+        resolve({ result: res, curLine: this.hightlightLine });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
   // 初始化并增强一下wsClient, 因为每次send时都要传一个id所以改写一下send方法
@@ -196,6 +232,7 @@ export class DebugService {
       json.id = this.id;
       args[0] = JSON.stringify(json);
 
+      console.log(json);
       this.wsClient.send(...args);
     };
     this.wsClient.addEventListener('close', () => {
@@ -204,7 +241,6 @@ export class DebugService {
     this.wsClient.addEventListener('message', (event: MessageEvent) => {
       const message = JSON.parse(event.data.toString());
       if (message?.result?.debuggerId) message.method = COMMAND.enable;
-
       this.effects(message);
     });
   }
@@ -240,14 +276,12 @@ export class DebugService {
   // debugger: 单步跳过下一个函数调用
   #stepOver() {
     this.wsClient.mySend(
-      '{"method": "Debugger.stepOver", "params": {"callFrameId": "callFrameId"}}',
+      '{"method": "Debugger.stepOver", "params": {"skipList": []}}',
     );
   }
   // debugger: 单步跳出当前函数
   #stepOut() {
-    this.wsClient.mySend(
-      '{"method": "Debugger.stepOut", "params": {"callFrameId": "callFrameId"}}',
-    );
+    this.wsClient.mySend('{"method": "Debugger.stepOut", "params": {}}');
   }
   // debugger: 恢复执行
   #resume() {

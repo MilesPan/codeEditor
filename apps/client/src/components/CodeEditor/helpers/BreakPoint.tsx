@@ -23,9 +23,9 @@ export function initBreakPoints(
           {
             range: {
               startLineNumber: lineNumber,
-              startColumn: 1,
+              startColumn: 0,
               endLineNumber: lineNumber,
-              endColumn: 1
+              endColumn: 0
             },
             options: {
               hoverMessage: { value: '添加断点' },
@@ -50,9 +50,9 @@ export function initBreakPoints(
         {
           range: {
             startLineNumber: lineNumber!,
-            startColumn: 1,
+            startColumn: 0,
             endLineNumber: lineNumber!,
-            endColumn: 1
+            endColumn: 0
           },
           options: {
             hoverMessage: { value: '添加断点' },
@@ -74,13 +74,13 @@ function addDecorationsToSet(
   targetSet: Set<string>,
   decorations: ReturnType<MyEditor['createDecorationsCollection']>
 ) {
-  const range = decorations.getRange(0)!;
-  const decoration = editor.getDecorationsInRange(range);
-  decoration?.forEach(d => targetSet.add(d.id));
+  (decorations as unknown as { _decorationIds: string[] })._decorationIds.map(id => targetSet.add(id));
 }
 function removeBreakPointDecorations(lineNumber: number, editor: MyEditor, pointSet: Set<string>) {
   const decorations = editor.getLineDecorations(lineNumber!);
-  editor.removeDecorations(decorations?.map(d => (pointSet.has(d.id) ? d.id : '')).filter(Boolean) || []);
+  const existedIds = decorations?.filter(d => pointSet.has(d.id)).map(d => d.id);
+  existedIds?.forEach(id => pointSet.delete(id));
+  editor.removeDecorations(existedIds || []);
 }
 
 // 存高亮行DecorationIds

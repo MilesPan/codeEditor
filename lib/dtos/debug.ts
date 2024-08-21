@@ -1,4 +1,3 @@
-import { Debugger } from '@Types/debugger';
 import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class StartDebugDto {

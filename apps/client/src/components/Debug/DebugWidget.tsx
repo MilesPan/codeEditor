@@ -11,7 +11,7 @@ export const DebugOperation: FC<{ children?: ReactNode }> = forwardRef<HTMLEleme
       debugStore.setCurLine(res.data.curLine);
     };
     const handleStepOver = async () => {
-      const res = await fetchStepInto();
+      const res = await fetchStepOver();
       debugStore.setResult(res.data.result);
       debugStore.setCurLine(res.data.curLine);
     };

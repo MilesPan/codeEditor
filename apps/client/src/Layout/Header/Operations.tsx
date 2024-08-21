@@ -67,7 +67,7 @@ const Operations = observer(() => {
     debugActive
       ? runWithDebug({
           code: CodeStore.code,
-          breakPoints: Array.from(debugStore.breakPoints)
+          breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1)
         })
       : run({
           code: CodeStore.code,
