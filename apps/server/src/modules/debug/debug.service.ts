@@ -52,14 +52,15 @@ export class DebugService {
     return new Promise((resolve, reject) => {
       this.debugProcess.stderr.on('data', (data) => {
         const wsUrl = this.extractWsUrl(data.toString());
-        console.log(wsUrl);
         if (!wsUrl) return;
         this.initEnhanceWsClient(wsUrl);
         this.wsClient.addEventListener('open', () => {
           this.#enableDebugger();
           console.log('open');
         });
-
+        setTimeout(() => {
+          reject('未知错误');
+        }, 2000);
         const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
           if (message.method === COMMAND.paused) {
@@ -193,7 +194,6 @@ export class DebugService {
             message.result.internalProperties.findIndex(
               (r) => r.name === '[[Entries]]',
             ) !== -1;
-          console.log('hasEntries', message.result);
           if (!message.result.result.length && hasEntries) {
             resolve(
               message.result.internalProperties.filter(
@@ -216,7 +216,24 @@ export class DebugService {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await this.convertResult(await this.fetchProperties());
-        resolve({ result: res, curLine: this.hightlightLine });
+        // hack: 暂且认为如果作用域内存在这几个变量就停止调试
+        if (
+          [
+            'filename',
+            'moduleURL',
+            'redirects',
+            'manifest',
+            'compiledWrapper',
+          ].every((key) => res.map((r) => r.name).includes(key))
+        ) {
+          resolve({ status: 'end', result: [], curLine: -1 });
+        } else {
+          resolve({
+            status: 'debugging',
+            result: res,
+            curLine: this.hightlightLine,
+          });
+        }
       } catch (error) {
         reject(error);
       }
@@ -232,7 +249,6 @@ export class DebugService {
       json.id = this.id;
       args[0] = JSON.stringify(json);
 
-      console.log(json);
       this.wsClient.send(...args);
     };
     this.wsClient.addEventListener('close', () => {

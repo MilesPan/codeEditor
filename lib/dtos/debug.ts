@@ -10,6 +10,7 @@ export class StartDebugDto {
 }
 
 export class StartDebugResponseDto {
+  status: 'debugging' | 'end'
   result: { name: string; value: StartDebugResponseDto['result'] | string | number | boolean; type: string }[];
   curLine: number;
 }

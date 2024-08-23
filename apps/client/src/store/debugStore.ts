@@ -1,5 +1,5 @@
 import codeStore from '@/store/codeStore';
-import { setHighlightLine } from '@/components/CodeEditor/helpers/BreakPoint';
+import { clearHighlightLine, setHighlightLine } from '@/components/CodeEditor/helpers/BreakPoint';
 import { StartDebugResponseDto } from '@Dtos/debug';
 import { makeAutoObservable, reaction } from 'mobx';
 import { isMyArray } from '@Utils/index';
@@ -59,9 +59,10 @@ const debugStore = new DebugStore();
 reaction(
   () => debugStore.curLine,
   curLine => {
-    console.log(curLine);
-    if (codeStore.editorRef && codeStore.monacoRef)
-      setHighlightLine(codeStore.editorRef, (curLine || 0) + 1, codeStore.monacoRef);
+    if (codeStore.editorRef && codeStore.monacoRef) {
+      if (curLine === -1) clearHighlightLine(codeStore.editorRef);
+      else setHighlightLine(codeStore.editorRef, (curLine || 0) + 1, codeStore.monacoRef);
+    }
   }
 );
 

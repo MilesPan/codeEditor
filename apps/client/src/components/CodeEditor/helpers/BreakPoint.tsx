@@ -101,6 +101,7 @@ export function setHighlightLine(editor: MyEditor, lineNumber: number, monaco: M
   const decoration = editor.getDecorationsInRange(range);
   // 获取第一个
   decoration?.forEach(d => HighlightLineSet.add(d.id));
+  // console.log(editor.getContentHeight(), editor.getTopForLineNumber(lineNumber), editor.getScrollTop());
   return decorations;
 }
 export function clearHighlightLine(editor: MyEditor) {

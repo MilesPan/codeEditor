@@ -27,7 +27,7 @@ const DebugTab = observer(() => {
       <div className="px-4 py-5 overflow-x-hidden overflow-y-auto">
         <Collapse TitleIcon={ScanEyeIcon} titleContent="作用域" initStatus={true}>
           <div className="h-fit">
-            <ReactJson value={debugStore.result} style={jsonTheme}></ReactJson>
+            <ReactJson value={debugStore.result} style={jsonTheme} collapsed={2}></ReactJson>
           </div>
         </Collapse>
       </div>

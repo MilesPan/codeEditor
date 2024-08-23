@@ -1,29 +1,36 @@
 import { StepForward, RedoDot, ArrowDownToDot, ArrowUpFromDot } from 'lucide-react';
-import { FC, forwardRef, ReactNode } from 'react';
+import { FC, forwardRef, ReactNode, useCallback } from 'react';
 import { fetchResume, fetchStepInto, fetchStepOut, fetchStepOver } from '@Request/debug';
 import debugStore from '@/store/debugStore';
+import { ResponseResult } from '@Request/request';
+import { StartDebugResponseDto } from '@Dtos/debug';
 
 export const DebugOperation: FC<{ children?: ReactNode }> = forwardRef<HTMLElement, { children?: ReactNode }>(
   ({ children }, ref) => {
+    const helper = useCallback((res: ResponseResult<StartDebugResponseDto, any>) => {
+      if (res.data.status === 'debugging') {
+        debugStore.setResult(res.data.result);
+        debugStore.setCurLine(res.data.curLine);
+      } else if (res.data.status === 'end') {
+        debugStore.setCurLine(-1);
+      }
+    }, []);
+
     const handleResume = async () => {
       const res = await fetchResume();
-      debugStore.setResult(res.data.result);
-      debugStore.setCurLine(res.data.curLine);
+      helper(res);
     };
     const handleStepOver = async () => {
       const res = await fetchStepOver();
-      debugStore.setResult(res.data.result);
-      debugStore.setCurLine(res.data.curLine);
+      helper(res);
     };
     const handleStepInto = async () => {
       const res = await fetchStepInto();
-      debugStore.setResult(res.data.result);
-      debugStore.setCurLine(res.data.curLine);
+      helper(res);
     };
     const handleStepOut = async () => {
       const res = await fetchStepOut();
-      debugStore.setResult(res.data.result);
-      debugStore.setCurLine(res.data.curLine);
+      helper(res);
     };
     return (
       <>
