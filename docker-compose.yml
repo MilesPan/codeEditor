@@ -10,11 +10,11 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: production
-  # client:
-  #   build:
-  #     context: ./
-  #     dockerfile: Client.Dockerfile
-  #   ports:
-  #     - '3030:3030'
-  #   environment:
-  #     NODE_ENV: production
+  client:
+    build:
+      context: ./
+      dockerfile: Client.Dockerfile
+    ports:
+      - '3030:3030'
+    environment:
+      NODE_ENV: production
