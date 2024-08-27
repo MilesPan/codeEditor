@@ -34,3 +34,14 @@ export function isType(...args: ('Object' | 'Array' | 'Number' | 'String')[]) {
     return args.some(arg => Object.prototype.toString.call(target) === `[object ${arg}]`);
   };
 }
+
+// 判断debugger中返回数据是否是个数组
+export function isMyArray(obj) {
+  return (
+    obj[obj.length - 1]?.name === 'length' &&
+    obj.slice(0, -1).every(async childItem => {
+      const { isNumber } = await import('lodash-es');
+      return isNumber(parseInt(childItem.name));
+    })
+  );
+}

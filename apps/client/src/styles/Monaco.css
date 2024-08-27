@@ -13,10 +13,14 @@
 :root {
   --custom-hover-message_bg: #fff;
   --custom-hover-message_borderColor: #eee;
+  --pausedLine-bg-color: #fdf3aa;
+  --pausedLine-border-color: #facc15;
 }
 .dark {
   --custom-hover-message_bg: #333;
   --custom-hover-message_borderColor: rgba(0, 0, 0, 0.3);
+  --pausedLine-bg-color: #866801;
+  --pausedLine-border-color: #c59a0b;
 }
 .custom-hover-message {
   position: absolute;
@@ -44,4 +48,8 @@
   height: 10px;
   width: 10px;
   background-color: #d47d78;
+}
+.myLineHighlight {
+  border: 1px solid var(--pausedLine-border-color);
+  background-color: var(--pausedLine-bg-color);
 }

@@ -1,5 +1,5 @@
 import { Language } from '@Request/index';
-import { OnMount } from '@monaco-editor/react';
+import { Monaco, OnMount } from '@monaco-editor/react';
 import { makeAutoObservable } from 'mobx';
 import {} from 'mobx-react-lite';
 import { MyTabItemType } from '@/components/TestCase/MyTab';
@@ -11,6 +11,10 @@ class CodeStore {
   editorRef: IEditor | null = null;
   setEditorRef(ref: IEditor) {
     this.editorRef = ref;
+  }
+  monacoRef: Monaco | null = null;
+  setMonacoRef(ref: Monaco) {
+    this.monacoRef = ref;
   }
 
   codeType: Language | undefined = Language.cpp;

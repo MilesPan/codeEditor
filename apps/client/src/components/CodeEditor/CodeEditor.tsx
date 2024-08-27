@@ -1,10 +1,9 @@
-import { cloneElement, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Popover, Tooltip } from 'antd';
-import LanguageSelector, { languages } from './LanguageSelector';
+import LanguageSelector, { LanguageItemType, languages } from './LanguageSelector';
 import { Language } from '@Request/index';
 import { ChevronDown, Maximize2, Menu, Minimize2, RotateCcw } from 'lucide-react';
-import useFullscreen from '@/hooks/useFullscreen';
 
 import Editor, { OnMount } from '@monaco-editor/react';
 import '@/styles/Monaco.css';
@@ -19,14 +18,21 @@ import { observer } from 'mobx-react-lite';
 import { setUserToolTip } from './helpers/UserTooltip';
 import { initBreakPoints } from './helpers/BreakPoint';
 import debugStore from '@/store/debugStore';
+import { useTabContext } from '@/contexts/TabContext';
+import { Actions } from 'flexlayout-react';
+import { TabName } from '../FlexLayout/model';
+import { useToggle } from 'ahooks';
+import useMessage from 'antd/es/message/useMessage';
 
 const ydoc = new Y.Doc();
 const yMap = ydoc.getMap<Language | undefined>('settings');
+
+const initLanguage = languages[0];
 const CodeEditor: FC = memo(
   observer(() => {
     const { resolvedTheme } = useTheme();
-
-    const [curLanguage, setCurLanguage] = useState<Language>(Language.cpp);
+    const [messageApi, ContextHolder] = useMessage();
+    const [curLanguage, setCurLanguage] = useState<Language>(initLanguage.value);
     const curCode = useMemo(() => languages.find(lang => lang.value === curLanguage)?.defaultCode || '', [curLanguage]);
 
     useEffect(() => {
@@ -37,8 +43,9 @@ const CodeEditor: FC = memo(
     const [showLangSelector, setShowLangSelector] = useState(false);
 
     // 改变语言事件
-    const handleLanguageChange = useCallback((languageType: Language) => {
-      setCurLanguage(languageType);
+    const handleLanguageChange = useCallback((language: LanguageItemType) => {
+      if (language.isDisabled) return messageApi.warning('该语言暂未支持');
+      setCurLanguage(language.value);
       setShowLangSelector(false);
     }, []);
 
@@ -55,6 +62,7 @@ const CodeEditor: FC = memo(
     const lastLineNumber = useRef<number>();
     const handleEditorDidMount: OnMount = (editor, monaco) => {
       CodeStore.setEditorRef(editor);
+      CodeStore.setMonacoRef(monaco);
       editorRef.current = editor;
 
       function observer() {
@@ -64,7 +72,7 @@ const CodeEditor: FC = memo(
       // 语言协同
       yMap.set('language', curLanguage);
       yMap.observe(observer);
-      setCurLanguage(Language.cpp);
+      setCurLanguage(curLanguage);
       const provider = new WebsocketProvider(`ws://localhost:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
       const awareness = provider.awareness;
       awarenessRef.current = awareness;
@@ -100,13 +108,22 @@ const CodeEditor: FC = memo(
     };
     // 还原模板
     const resetCode = () => {
-      setCurLanguage(Language.cpp);
-      if (editorRef.current) editorRef.current.setValue(curCode);
+      setCurLanguage(initLanguage.value);
+      if (editorRef.current) editorRef.current.setValue(initLanguage.defaultCode);
     };
     // 全屏
-    const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
+    const [maximizeStatus, { toggle: toggleMaximizeStatus }] = useToggle(false);
+    const { model, findTabNode } = useTabContext();
+    const toggleMaximize = () => {
+      model?.doAction(
+        Actions.maximizeToggle(findTabNode(model?.getRoot(), 'name', TabName.code)?.getParent()?.getId() || '')
+      );
+      toggleMaximizeStatus();
+    };
+
     return (
       <>
+        {ContextHolder}
         <div className="w-full h-full flex flex-col overflow-y-hidden">
           <div className="operators w-full h-8 py-1 flex items-center justify-between border-b border-b-[--tag-bg] mb-4">
             <div className="left flex items-center px-1">
@@ -141,10 +158,10 @@ const CodeEditor: FC = memo(
               </div>
               <div className="fullscreen cursor-pointer">
                 <Tooltip title="全屏">
-                  {isFullscreen ? (
-                    <Minimize2 size={14} onClick={() => exitFullscreen()}></Minimize2>
+                  {maximizeStatus ? (
+                    <Minimize2 size={14} onClick={toggleMaximize}></Minimize2>
                   ) : (
-                    <Maximize2 size={14} onClick={() => requestFullscreen(document.documentElement)}></Maximize2>
+                    <Maximize2 size={14} onClick={toggleMaximize}></Maximize2>
                   )}
                 </Tooltip>
               </div>

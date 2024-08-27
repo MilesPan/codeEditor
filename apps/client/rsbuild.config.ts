@@ -17,5 +17,8 @@ export default defineConfig({
     define: {
       'process.env': JSON.stringify(process.env)
     }
+  },
+  html: {
+    title: 'Code Editor'
   }
 });

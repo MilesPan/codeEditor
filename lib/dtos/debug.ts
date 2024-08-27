@@ -1,4 +1,3 @@
-import { Debugger } from '@Types/debugger';
 import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class StartDebugDto {
@@ -11,6 +10,7 @@ export class StartDebugDto {
 }
 
 export class StartDebugResponseDto {
-  result: Debugger.PropertyItemType[];
+  status: 'debugging' | 'end'
+  result: { name: string; value: StartDebugResponseDto['result'] | string | number | boolean; type: string }[];
   curLine: number;
 }
