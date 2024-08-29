@@ -23,14 +23,14 @@ jobs:
       - name: 编译Client镜像
         uses: docker/build-push-action@v2.4.0
         with:
-          context: .
+          context: ./
           file: ./Client.Dockerfile
           push: true
           tags: pdy666/codeeditor-client:latest
       - name: 编译Server镜像
         uses: docker/build-push-action@v2.4.0
         with:
-          context: .
+          context: ./
           file: ./Server.Dockerfile
           push: true
           tags: pdy666/codeeditor-server:latest
