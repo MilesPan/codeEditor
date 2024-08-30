@@ -1,5 +1,5 @@
 # 使用官方的 Node.js 作为基础镜像
-FROM node:18 as builder
+FROM node:16 as builder
 
 # 设置时区
 ENV TZ=Asia/Shanghai \
@@ -9,16 +9,20 @@ RUN ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezon
 WORKDIR /app
 COPY ./package.json /package.json
 
-RUN npm install --registry https://registry.npmmirror.com
+RUN rm -rf node_modules
+RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 
 COPY . .
 
-COPY ./apps/client/package.json /apps/client/package.json
+# COPY ./apps/client/package.json /apps/client/package.json
 # 设置工作目录
-WORKDIR /app/apps/client
+# WORKDIR /app/apps/client
+RUN npm run build:client
+FROM nginx:latest
+COPY --from=0 /app/apps/client/dist /usr/share/nginx/html
 
 # 暴露应用运行的端口
-EXPOSE 3030
+EXPOSE 8080
 
 # 启动应用
-CMD ["npm", "run" , "dev"]
+CMD ["nginx", "-g" , "daemon off;"]

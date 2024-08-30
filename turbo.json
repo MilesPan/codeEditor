@@ -6,6 +6,8 @@
     },
     "server#dev": {
       "persistent": true
-    }
+    },
+    "server#build": {},
+    "client#build": {}    
   }
 }
