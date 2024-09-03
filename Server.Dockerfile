@@ -1,5 +1,5 @@
 # 使用官方的 Node.js 作为基础镜像
-FROM node:alpine
+FROM node:16-alpine as builder
 
 
 WORKDIR /app
@@ -9,18 +9,19 @@ RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 
 COPY . .
 
-# COPY ./apps/server/package.json /apps/server/package.json
-# 设置工作目录
-# WORKDIR /app/apps/server
-
-# 复制 package.json 和 package-lock.json
-
 RUN npm run build:server
+FROM node:16-alpine
+COPY --from=builder /app/apps/server/dist /app/server/dist
+COPY --from=builder /app/apps/server/package.json /app/server/dist/package.json
 
+WORKDIR /app/server/dist
+RUN npm install --only=production
+RUN npx prisma generate
+RUN npx prisma migrate deploy
 
-WORKDIR /app/apps/server
+WORKDIR /app
 # 暴露应用运行的端口
 EXPOSE 3000
 
 # 启动应用
-CMD ["node". "/dist/apps/server/main.js"]
+CMD ["node", "/app/server/dist/apps/server/src/main.js"]

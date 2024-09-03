@@ -14,9 +14,6 @@ RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 
 COPY . .
 
-# COPY ./apps/client/package.json /apps/client/package.json
-# 设置工作目录
-# WORKDIR /app/apps/client
 RUN npm run build:client
 FROM nginx:latest
 COPY --from=0 /app/apps/client/dist /usr/share/nginx/html
