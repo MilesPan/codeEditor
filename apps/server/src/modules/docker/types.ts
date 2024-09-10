@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum CodeEnv {
   cpp = 'cpp:11',
-  nodejs = 'nodejs:lts',
+  nodejs = 'node:lts-alpine',
   go = 'go:latest',
   python3 = 'python:3',
   java = 'java:latest',
@@ -9,7 +9,7 @@ export enum CodeEnv {
   rust = 'rust:latest',
   c = 'cpp:11',
   dotnet = 'mono:lts',
-  ts = 'nodejs:lts',
+  ts = 'node:lts-alpine',
 }
 
 export enum FileSuffix {

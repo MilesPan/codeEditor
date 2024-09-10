@@ -3,6 +3,7 @@ version: '3.8'
 
 services:
   server:
+    image: pdy666/codeeditor-server
     build:
       context: ./
       dockerfile: Server.Dockerfile
@@ -10,11 +11,47 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: production
+    depends_on:
+      mysql: 
+        condition: service_healthy
+    networks:
+      - net1
+  mysql:
+    platform: linux/amd64
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_DATABASE=code
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - net1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
   client:
+    image: pdy666/codeeditor-client
     build:
       context: ./
       dockerfile: Client.Dockerfile
     ports:
-      - '3030:3030'
+      - '3030:80'
+    networks:
+      - net1
     environment:
       NODE_ENV: production
+    depends_on:
+      - server
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  net1:
+    driver: bridge

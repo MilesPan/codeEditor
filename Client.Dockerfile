@@ -15,11 +15,7 @@ RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 COPY . .
 
 RUN npm run build:client
-FROM nginx:latest
+FROM nginx:alpine
 COPY --from=0 /app/apps/client/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 暴露应用运行的端口
-EXPOSE 8080
-
-# 启动应用
-CMD ["nginx", "-g" , "daemon off;"]

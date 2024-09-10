@@ -56,7 +56,6 @@ export class DebugService {
         this.initEnhanceWsClient(wsUrl);
         this.wsClient.addEventListener('open', () => {
           this.#enableDebugger();
-          console.log('open');
         });
         setTimeout(() => {
           reject('未知错误');

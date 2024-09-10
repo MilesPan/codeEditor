@@ -12,16 +12,19 @@ COPY . .
 RUN npm run build:server
 FROM node:16-alpine
 COPY --from=builder /app/apps/server/dist /app/server/dist
+COPY --from=builder /app/apps/server/prisma /app/server/dist/prisma
+COPY --from=builder /app/apps/server/.env /app/server/dist/.env
 COPY --from=builder /app/apps/server/package.json /app/server/dist/package.json
-
+ 
 WORKDIR /app/server/dist
-RUN npm install --only=production
+RUN npm install --registry https://registry.npmmirror.com
 RUN npx prisma generate
-RUN npx prisma migrate deploy
+# RUN npx prisma migrate dev --name init
 
 WORKDIR /app
 # 暴露应用运行的端口
 EXPOSE 3000
 
 # 启动应用
+
 CMD ["node", "/app/server/dist/apps/server/src/main.js"]

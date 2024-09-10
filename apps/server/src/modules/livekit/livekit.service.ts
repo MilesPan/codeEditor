@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import * as dotenv from 'dotenv';
 import { AccessToken } from 'livekit-server-sdk';
 import { GenerateToken } from './dto';
-const envConfig = dotenv.config().parsed;
-
+import 'dotenv/config';
 @Injectable()
 export class LivekitService {
   async generateToken(query: GenerateToken): Promise<{ token: string }> {
@@ -11,8 +9,8 @@ export class LivekitService {
     const userName = query.userName;
 
     const at = new AccessToken(
-      envConfig.PUBLIC_LIVE_API_KEY,
-      envConfig.PUBLIC_LIVE_API_SECRET,
+      process.env.PUBLIC_LIVE_API_KEY,
+      process.env.PUBLIC_LIVE_API_SECRET,
       {
         identity: userName,
         ttl: 900,
