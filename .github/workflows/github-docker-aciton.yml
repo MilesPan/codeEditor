@@ -29,12 +29,13 @@ jobs:
         #   file: Client.Dockerfile
 
       - name: 编译Client镜像
+        working-directory: ./
         run: |
-          ls
+          docker buildx build -t pdy666/codeeditor-client:latest -f ./Client.Dockerfile .
       # - name: 推送Client镜像
-        # run: |
-          # echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
-          # docker push pdy666/codeeditor-client:latest
+      #   run: |
+      #     echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+      #     docker push pdy666/codeeditor-client:latest
       #     # .
       # - name: 编译Server镜像
       #   run: |
