@@ -13,7 +13,6 @@ RUN npm run build:server
 FROM node:16-alpine
 COPY --from=builder /app/apps/server/dist /app/server/dist
 COPY --from=builder /app/apps/server/prisma /app/server/dist/prisma
-COPY --from=builder /app/apps/server/.env /app/server/dist/.env
 COPY --from=builder /app/apps/server/package.json /app/server/dist/package.json
  
 WORKDIR /app/server/dist

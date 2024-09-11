@@ -4,9 +4,9 @@ version: '3.8'
 services:
   server:
     image: pdy666/codeeditor-server
-    build:
-      context: ./
-      dockerfile: Server.Dockerfile
+    # build:
+    #   context: ./
+    #   dockerfile: Server.Dockerfile
     ports:
       - '3000:3000'
     environment:
@@ -36,9 +36,9 @@ services:
       retries: 3
   client:
     image: pdy666/codeeditor-client
-    build:
-      context: ./
-      dockerfile: Client.Dockerfile
+    # build:
+    #   context: ./
+    #   dockerfile: Client.Dockerfile
     ports:
       - '3030:80'
     networks:
