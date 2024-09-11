@@ -20,18 +20,17 @@ jobs:
           username: "${{secrets.DOCKERHUB_USERNAME}}"
           password: "${{secrets.DOCKERHUB_PASSWORD}}"
 
-      # - name: Client镜像
-        # uses: docker/build-push-action@v2
-        # with:
-        #   tags: pdy666/codeeditor-client:latest
-        #   push: true
-        #   context: ./
-        #   file: Client.Dockerfile
+      - name: Client镜像
+        uses: docker/build-push-action@v3
+        with:
+          tags: pdy666/codeeditor-client:latest
+          push: true
+          context: .
+          file: codeEditor/Client.Dockerfile
 
-      - name: 编译Client镜像
-        working-directory: ./
-        run: |
-          docker buildx build -t pdy666/codeeditor-client:latest -f ./Client.Dockerfile .
+      # - name: 编译Client镜像
+        # run: |
+          # docker buildx build -t pdy666/codeeditor-client:latest -f ./Client.Dockerfile .
       # - name: 推送Client镜像
       #   run: |
       #     echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
