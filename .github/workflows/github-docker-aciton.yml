@@ -26,7 +26,7 @@ jobs:
           tags: pdy666/codeeditor-client:latest
           push: true
           context: .
-          file: codeEditor/Client.Dockerfile
+          file: Client.Dockerfile
 
       # - name: 编译Client镜像
         # run: |
