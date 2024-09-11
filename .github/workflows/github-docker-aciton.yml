@@ -30,7 +30,7 @@ jobs:
 
       - name: 编译Client镜像
         run: |
-          pwd && ls
+          ls
       # - name: 推送Client镜像
         # run: |
           # echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
