@@ -10,36 +10,26 @@ jobs:
     steps:
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
-      
+
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Docker login
         uses: docker/login-action@v3
         with:
-          username: "${{secrets.DOCKERHUB_USERNAME}}"
-          password: "${{secrets.DOCKERHUB_PASSWORD}}"
+          username: '${{secrets.DOCKERHUB_USERNAME}}'
+          password: '${{secrets.DOCKERHUB_PASSWORD}}'
 
-      - name: Client镜像
+      - name: 编译+推送Client镜像
         uses: docker/build-push-action@v3
         with:
           tags: pdy666/codeeditor-client:latest
           push: true
           file: Client.Dockerfile
 
-      # - name: 编译Client镜像
-        # run: |
-          # docker buildx build -t pdy666/codeeditor-client:latest -f ./Client.Dockerfile .
-      # - name: 推送Client镜像
-      #   run: |
-      #     echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
-      #     docker push pdy666/codeeditor-client:latest
-      #     # .
-      # - name: 编译Server镜像
-      #   run: |
-      #     docker buildx build -t pdy666/codeeditor-server:latest -f ./Server.Dockerfile .
-      # - name: 推送Client镜像
-      #   run: |
-      #     echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
-      #     docker push pdy666/codeeditor-server6:latest
-      #     # .
+      - name: 编译+推送Server镜像
+        uses: docker/build-push-action@v3
+        with:
+          tags: pdy666/codeeditor-server:latest
+          push: true
+          file: Server.Dockerfile
