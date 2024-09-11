@@ -59,7 +59,7 @@ export class DebugService {
         });
         setTimeout(() => {
           reject('未知错误');
-        }, 2000);
+        }, 10000);
         const handler = async (event: MessageEvent) => {
           const message = JSON.parse(event.data.toString());
           if (message.method === COMMAND.paused) {
@@ -275,6 +275,8 @@ export class DebugService {
   // debugger: 启用调试
   #enableDebugger() {
     this.wsClient.mySend('{"method": "Debugger.enable"}');
+    this.wsClient.mySend('{"method": "Runtime.enable"}');
+    this.wsClient.mySend('{"method": "Runtime.runIfWaitingForDebugger"}');
   }
   // debugger: 单步执行下一个函数调用
   #stepInto() {

@@ -60,7 +60,10 @@ reaction(
   () => debugStore.curLine,
   curLine => {
     if (codeStore.editorRef && codeStore.monacoRef) {
-      if (curLine === -1) clearHighlightLine(codeStore.editorRef);
+      if (curLine === -1){
+        clearHighlightLine(codeStore.editorRef);
+        debugStore.setIsDebugging(false)
+      } 
       else setHighlightLine(codeStore.editorRef, (curLine || 0) + 1, codeStore.monacoRef);
     }
   }

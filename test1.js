@@ -1,6 +1,6 @@
 const a = 1;
 let b = 2;
-const m = new Map([[1, { name: 666 }], [2, { name: 777 }]])R
+const m = new Map([[1, { name: 666 }], [2, { name: 777 }]])
 const s = new Set([1,2,3,4])
 var c = {
     a,
