@@ -9,6 +9,8 @@ services:
     #   dockerfile: Server.Dockerfile
     ports:
       - '3000:3000'
+    env_file:
+      - .env.server
     environment:
       NODE_ENV: production
     depends_on:
@@ -43,6 +45,8 @@ services:
       - '3030:80'
     networks:
       - net1
+    env_file:
+      - .env.client
     environment:
       NODE_ENV: production
     depends_on:
