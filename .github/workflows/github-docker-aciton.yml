@@ -50,6 +50,4 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            scp -P ${{secrets.SSH_PORT}} \
-                ./docker-compose.yml \
-                ${username}@${host}:/www/server/panel/data/compose/}
+            scp docker-compose.yml ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOST}}:/www/server/panel/data/compose/
