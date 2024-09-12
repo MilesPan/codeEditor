@@ -43,7 +43,7 @@ jobs:
       #     cache-to: type=registry,ref=pdy666/codeeditor-server:latest,mode=max
 
       - name: 更新最新镜像
-        uses: appleboy/ssh-action@1.0.3
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
