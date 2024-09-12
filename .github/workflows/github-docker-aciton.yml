@@ -13,35 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # - name: Setup QEMU
-      #   uses: docker/setup-qemu-action@v3
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
 
-      # - name: Setup Buildx
-      #   uses: docker/setup-buildx-action@v3
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # - name: Docker login
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: '${{secrets.DOCKERHUB_USERNAME}}'
-      #     password: '${{secrets.DOCKERHUB_PASSWORD}}'
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: '${{secrets.DOCKERHUB_USERNAME}}'
+          password: '${{secrets.DOCKERHUB_PASSWORD}}'
 
-      # - name: 编译+推送Client镜像
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     tags: pdy666/codeeditor-client:latest
-      #     push: true
-      #     file: Client.Dockerfile
-      #     cache-from: type=registry,ref=pdy666/codeeditor-client:latest
-      #     cache-to: type=registry,ref=pdy666/codeeditor-client:latest,mode=max
+      - name: 编译+推送Client镜像
+        uses: docker/build-push-action@v3
+        with:
+          tags: pdy666/codeeditor-client:latest
+          push: true
+          file: Client.Dockerfile
+          cache-from: type=registry,ref=pdy666/codeeditor-client:latest
+          cache-to: type=registry,ref=pdy666/codeeditor-client:latest,mode=max
 
-      # - name: 编译+推送Server镜像
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     tags: pdy666/codeeditor-server:latest
-      #     push: true
-      #     file: Server.Dockerfile
-      #     cache-from: type=registry,ref=pdy666/codeeditor-server:latest
-      #     cache-to: type=registry,ref=pdy666/codeeditor-server:latest,mode=max
+      - name: 编译+推送Server镜像
+        uses: docker/build-push-action@v3
+        with:
+          tags: pdy666/codeeditor-server:latest
+          push: true
+          file: Server.Dockerfile
+          cache-from: type=registry,ref=pdy666/codeeditor-server:latest
+          cache-to: type=registry,ref=pdy666/codeeditor-server:latest,mode=max
 
       - name: 更新Docker-compose文件
         uses: easingthemes/ssh-deploy@main
