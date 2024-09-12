@@ -56,9 +56,9 @@ jobs:
             echo "${{secrets.ENV_SERVER}}" > /www/server/panel/data/compose/.env.server
             echo "${{secrets.ENV_CLIENT}}" > /www/server/panel/data/compose/.env.client
           SCRIPT_AFTER: |
-            docker-compose -f /www/server/panel/data/compose/docker-compose pull
-            docker-compose -f /www/server/panel/data/compose/docker-compose down
-            docker-compose -f /www/server/panel/data/compose/docker-compose up -d
+            docker-compose -f /www/server/panel/data/compose/docker-compose.yml pull
+            docker-compose -f /www/server/panel/data/compose/docker-compose.yml down
+            docker-compose -f /www/server/panel/data/compose/docker-compose.yml up -d
       # - name: 更新最新镜像
       #   uses: appleboy/ssh-action@v1.0.3
       #   with:
