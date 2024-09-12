@@ -17,7 +17,7 @@ services:
       NODE_ENV: production
     depends_on:
       - mysql
-    command: ["sh", "wait-for", "mysql:3306", "--", "node", "/app/server/dist/apps/server/src/main.js"]
+    command: sh -c './wait-for mysql:3306 -- node /app/server/dist/apps/server/src/main.js'
     networks:
       - net1
   mysql:
