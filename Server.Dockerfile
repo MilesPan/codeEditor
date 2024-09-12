@@ -17,7 +17,7 @@ COPY --from=builder /app/apps/server/prisma /app/server/dist/prisma
 COPY --from=builder /app/apps/server/package.json /app/server/dist/package.json
  
 WORKDIR /app/server/dist
-RUN apt-get -q update && apt-get -qy install netcat
+RUN yum -y update && yum install -y nc
 RUN npm install --registry https://registry.npmmirror.com
 RUN npx prisma generate
 # RUN npx prisma migrate dev --name init
