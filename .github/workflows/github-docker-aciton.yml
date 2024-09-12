@@ -1,5 +1,9 @@
 name: GithubDockerAction
 run-name: 🚀 ${{ github.actor }} is Running GithubDockerAction 🚀
+# docker pull pdy666/codeeditor-client:latest
+# docker pull pdy666/codeeditor-server:latest
+# docker-compose -f /www/server/panel/data/compose/test1/template/test1.yaml down
+# docker-compose -f /www/server/panel/data/compose/test1/template/test1.yaml up -d
 on:
   push:
     branches: [master]
@@ -20,16 +24,32 @@ jobs:
           username: '${{secrets.DOCKERHUB_USERNAME}}'
           password: '${{secrets.DOCKERHUB_PASSWORD}}'
 
-      - name: 编译+推送Client镜像
-        uses: docker/build-push-action@v3
-        with:
-          tags: pdy666/codeeditor-client:latest
-          push: true
-          file: Client.Dockerfile
+      # - name: 编译+推送Client镜像
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     tags: pdy666/codeeditor-client:latest
+      #     push: true
+      #     file: Client.Dockerfile
+      #     cache-from: type=registry,ref=pdy666/codeeditor-client:latest
+      #     cache-to: type=registry,ref=pdy666/codeeditor-client:latest,mode=max
 
-      - name: 编译+推送Server镜像
-        uses: docker/build-push-action@v3
+      # - name: 编译+推送Server镜像
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     tags: pdy666/codeeditor-server:latest
+      #     push: true
+      #     file: Server.Dockerfile
+      #     cache-from: type=registry,ref=pdy666/codeeditor-server:latest
+      #     cache-to: type=registry,ref=pdy666/codeeditor-server:latest,mode=max
+
+      - name: 更新最新镜像
+        uses: appleboy/ssh-action@1.0.3
         with:
-          tags: pdy666/codeeditor-server:latest
-          push: true
-          file: Server.Dockerfile
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            scp -P ${{secrets.SSH_PORT}} \
+                ./docker-compose.yml \
+                ${username}@${host}:/www/server/panel/data/compose/}
