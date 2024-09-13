@@ -1,9 +1,5 @@
 name: GithubDockerAction
 run-name: 🚀 ${{ github.actor }} is Running GithubDockerAction 🚀
-# docker pull pdy666/codeeditor-client:latest
-# docker pull pdy666/codeeditor-server:latest
-# docker-compose -f /www/server/panel/data/compose/test1/template/test1.yaml down
-# docker-compose -f /www/server/panel/data/compose/test1/template/test1.yaml up -d
 on:
   push:
     branches: [master]
