@@ -73,7 +73,7 @@ const CodeEditor: FC = memo(
       yMap.set('language', curLanguage);
       yMap.observe(observer);
       setCurLanguage(curLanguage);
-      const provider = new WebsocketProvider(`ws://localhost:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
+      const provider = new WebsocketProvider(`ws://${process.env.PUBLIC_HOST}:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
       const awareness = provider.awareness;
       awarenessRef.current = awareness;
 

@@ -84,7 +84,7 @@ const LanguageSelector = memo(
     const [hoveredLang, setHoveredLang] = useState(languages.find(lang => lang.name === currentLanguage)?.value || '');
     return (
       <>
-        <div className=" language-selector flex flex-col flex-wrap max-h-64  gap-1 items-center justify-center px-2 py-1">
+        <div className=" language-selector flex flex-col flex-wrap max-h-64  gap-1 items-center px-2 py-1">
           {languages.map((lang, index) => {
             return (
               <div

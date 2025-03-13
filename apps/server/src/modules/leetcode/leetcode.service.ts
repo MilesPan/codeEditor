@@ -76,26 +76,23 @@ export class LeetcodeService {
         content:
           html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state?.data
             ?.question?.translatedContent,
-        interviewed:
-          html?.props?.pageProps?.dehydratedState?.queries?.[12]?.state?.data
-            ?.interviewed,
         frontend_question_id:
-          html?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data
+          html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state?.data
             ?.question?.questionFrontendId,
         tags:
-          html?.props?.pageProps?.dehydratedState?.queries?.[11]?.state?.data
+          html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state?.data
             ?.question?.topicTags || [],
         testCase: {
           metaData: JSON.parse(
-            html?.props?.pageProps?.dehydratedState?.queries?.[4]?.state?.data
+            html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state?.data
               ?.question.metaData,
           ),
           exampleTestCases: JSON.parse(
-            html?.props?.pageProps?.dehydratedState?.queries?.[4]?.state?.data
+            html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state?.data
               ?.question.jsonExampleTestcases,
           ),
         },
-        level: html?.props?.pageProps?.dehydratedState?.queries?.[0]?.state
+        level: html?.props?.pageProps?.dehydratedState?.queries?.[1]?.state
           ?.data?.question?.difficulty as Level,
       };
     });

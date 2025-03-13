@@ -18,7 +18,7 @@ const FlexLayout = memo(() => {
     setContextModel(model);
   }, [])
   const onAction = useCallback((action: Action) => {
-    console.log('onAction', action);
+    // console.log('onAction', action);
     if (action.type === 'FlexLayout_DeleteTab') {
       let borders = [...model.toJson().borders!];
       borders[0]?.children.push(model.getNodeById(action.data.node)?.toJson() as IJsonTabNode);

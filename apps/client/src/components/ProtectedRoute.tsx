@@ -1,13 +1,12 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
 import { useRequest } from 'ahooks';
 import { findRoomReq } from '@Request/room';
 import { useEffect, useState } from 'react';
-
+import { UserStore } from '@/store';
+import { observer } from 'mobx-react-lite';
+import { message } from 'antd';
 const ProtectedRoute = ({ children }: { children: any }) => {
-  console.log('protected render');
   const { roomId } = useParams();
-
   const [loading, setLoading] = useState(true);
   // useRequest的loading默认是false，会造成不必要的重复渲染
   const { run } = useRequest(findRoomReq, {
@@ -30,6 +29,11 @@ const ProtectedRoute = ({ children }: { children: any }) => {
 
   if (loading) {
     return <div className="flex justify-center items-center h-full">Loading...</div>;
+  }
+  if (!UserStore.hasUserInfo) {
+    message.destroy();
+    message.error('不存在用户信息')
+    return <Navigate to="/joinRoom" />;
   }
   if (!hasRoom) {
     return <Navigate to="/joinRoom" />;

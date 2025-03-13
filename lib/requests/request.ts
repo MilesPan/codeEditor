@@ -51,6 +51,7 @@ class Axios {
         return res.data;
       },
       (error: AxiosError<{ code: number; data: any; message: string }>) => {
+        message.destroy();
         message.error(error.response?.data?.message || '');
         return Promise.reject(error.response?.data);
       }

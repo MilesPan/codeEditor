@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import LogoLight from '@SVG/logo.light.svg';
 import LogoDark from '@SVG/logo.dark.svg';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -31,6 +31,9 @@ const Header: FC = observer(() => {
   const [drawerStatus, setDrawerStatus] = useState(false);
   const openDrawer = () => setDrawerStatus(true);
   const closeDrawer = () => setDrawerStatus(false);
+  const showQuestionDrawer = useMemo(() => {
+    return roomId && userStore.hasUserInfo;
+  }, [roomId, userStore.hasUserInfo]);
   return (
     <>
       {ContextHolder}
@@ -42,7 +45,7 @@ const Header: FC = observer(() => {
         )}
         <div className="left flex items-center pl-2">
           <img src={resolvedTheme === 'dark' ? LogoDark : LogoLight} className="w-7" />
-          {userStore.hasUserInfo && (
+          {showQuestionDrawer && (
             <li className="flex h-[16px] ml-2">
               <div className="flex items-center gap-1 _hoverBtnRight" onClick={openDrawer}>
                 <Menu />

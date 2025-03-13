@@ -1,8 +1,8 @@
 # 使用 node:lts-alpine 作为基础镜像
-FROM node:lts-alpine
+FROM node:18-alpine
 
 # 安装一些必要的包和 sudo（因为 alpine 版本通常没有预装 sudo）
-RUN apk add --no-cache bash sudo shadow
+RUN apk update && apk add --no-cache bash sudo shadow
 
 # 创建用户并将其加入 sudo 组
 RUN useradd -m -s /bin/bash user \
@@ -22,5 +22,5 @@ RUN npm config set registry https://registry.npmmirror.com \
 # 暴露端口（如果需要的话）
 EXPOSE 3000
 
-# 设置默认命令（可根据需要设置）
-CMD [ "node" ]
+# 使用 /bin/sh -c 来执行命令
+CMD ["/bin/bash", "-c", "node & tail -f /dev/null"]
