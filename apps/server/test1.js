@@ -1,5 +1,6 @@
-function resolver () {
+function main () {
     const a = 1;
-    let b = 2;
-    var c = 3;
+    var b = 2;
+    const c = 3;
+    return 1
 }

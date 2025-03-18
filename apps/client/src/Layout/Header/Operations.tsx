@@ -53,6 +53,7 @@ const Operations = observer(() => {
       debugStore.setIsDebugging(true);
       debugStore.setResult(res.data.result);
       debugStore.setCurLine(res.data.curLine);
+      debugStore.setSessionId(res.data.sessionId);
     },
     onFinally() {
       setIsRunning(false);
@@ -77,7 +78,8 @@ const Operations = observer(() => {
     debugActive
       ? runWithDebug({
           code: CodeStore.code,
-          breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1)
+          breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1),
+          functionName: CodeStore.functionName
         })
       : run({
           code: CodeStore.code,

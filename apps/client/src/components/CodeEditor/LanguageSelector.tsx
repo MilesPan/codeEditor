@@ -13,13 +13,17 @@ export const languages: LanguageItemType[] = [
   {
     name: 'JavaScript',
     value: Language.nodejs,
-    defaultCode: '// JavaScript code here',
+    defaultCode:`function main() {
+  console.log("Hello, World!");
+}`,
     info: 'JavaScript is a versatile language.'
   },
   {
     name: 'TypeScript',
     value: Language.ts,
-    defaultCode: '// TypeScript code here',
+    defaultCode: `function main(): void {
+  console.log("Hello, World!");
+}`,
     info: 'TypeScript is a typed superset of JavaScript.'
   },
   {

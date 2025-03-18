@@ -1,64 +1,54 @@
-// function solveNQueens(n) {
-//   const pos = [];
-//   const map = new Array(n).fill(0).map(() => new Array(n).fill(0));
-//   const isvalid = (i, j) => {
-//     //行内
-//     for (let k = 0; k < n; k++) {
-//       if (map[i][k]) return false;
-//     } //列内
-//     for (let k = 0; k < n; k++) {
-//       if (map[k][j]) return false;
-//     } // 左上斜线
-//     // 假如当前点是(3,2) 左上就是(2,1) (1,0)  j-i=-1
-//     const lt = j - i;
-//     for (let k = 0; k < n; k++) {
-//       if (k + lt < 0 || k + lt >= n) continue;
-//       if (map[k][k + lt]) return false;
-//     } // 右上斜线
-//     // 假如当前点是(3,2) 右上就是(2,3) (1,4) i+j = 5;
-//     const rt = j + i;
-//     for (let k = 0; k < n; k++) {
-//       if (rt - k < 0 || rt - k >= n) continue;
-//       if (map[k][rt - k]) return false;
-//     }
-//     return true;
-//   };
-//   const dfs = (i, cur) => {
-//     if (i === n) {
-//       pos.push([...cur]);
-//       return;
-//     }
-//     for (let j = 0; j < n; j++) {
-//       if (!isvalid(i, j)) continue;
-//       map[i][j] = 1;
-//       dfs(i + 1, [...cur, j]);
-//       map[i][j] = 0;
-//     }
-//   };
-//   dfs(0, []);
-//   const res = [];
-//   const convert = pos => {
-//     pos.forEach(map => {
-//       const temp = [];
-//       map.forEach(item => {
-//         let t = '';
-//         for (let k = 0; k < n; k++) {
-//           if (k === item) t += 'Q';
-//           else t += '.';
-//         }
-//         temp.push(t);
-//       });
-//       res.push(temp);
-//     });
-//   };
-//   convert(pos);
-//   return res;
-// }
-// solveNQueens(8)
+
+// ===== 调试环境初始化 =====
+process.on('uncaughtException', (err) => {
+  console.error('未捕获的异常:', err);
+  process.emit('debugger:end');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未处理的Promise拒绝:', reason);
+  process.emit('debugger:end');
+});
+
+// 监听调试结束事件
+process.on('debugger:end', () => {
+  console.log('调试会话结束');
+  process.exit(0);
+});
+
+// 调试辅助函数
+global.__debugPrint = function(value) {
+  console.log(JSON.stringify(value, null, 2));
+};
 
 
-class A {
-  w () {
-      
-  }
+// ========== 用户代码开始 ==========
+(function() {
+  // 提供一些调试辅助变量
+  const __debug = {
+    log: function(...args) { console.log('[DEBUG]', ...args); },
+    error: function(...args) { console.error('[DEBUG ERROR]', ...args); },
+    inspect: function(obj) { console.log(require('util').inspect(obj, { depth: null, colors: true })); }
+  };
+
+   function main(){
+  console.log(1)
+  let a = 1;
+  var b = 2;
+  const c = 3;
+  let d = 4;
+  const e = 6
 }
+
+  // 如果提供了函数名，直接调用该函数
+  if (typeof main === 'function') {
+    console.log('调用入口函数: main');
+    const result = main();
+    console.log('入口函数返回结果:', result);
+    // 标记调试结束
+  }
+  process.emit('debugger:end');
+
+})();
+// ========== 用户代码结束 ==========
+

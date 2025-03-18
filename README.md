@@ -5,9 +5,9 @@ docker build --platform linux/amd64 -f ./Server.Dockerfile -t codeeditor-server 
 ```
 # 推送harbor
 ```bash
-docker tag codeeditor-client xxx/code-editor/codeeditor-client
-docker push xxx/code-editor/codeeditor-client
+docker tag codeeditor-client xxx/codeeditor/codeeditor-client
+docker push xxx/codeeditor/codeeditor-client
 
-docker tag codeeditor-server xxx/code-editor/codeeditor-server
-docker push xxx/code-editor/codeeditor-server
+docker tag codeeditor-server xxx/codeeditor/codeeditor-server
+docker push xxx/codeeditor/codeeditor-server
 ```

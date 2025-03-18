@@ -38,7 +38,7 @@ export const CaseDetail = observer(
 );
 
 const FunctionName = () => {
-  const [functionName, setFunctionName] = useFunctionName('');
+  const [functionName, setFunctionName] = useFunctionName(codeStore.functionName);
   const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
     setFunctionName(event.target.value);
     codeStore.setFunctionName(event.target.value);

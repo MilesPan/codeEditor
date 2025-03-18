@@ -8,8 +8,11 @@ import { IncomingMessage } from 'http';
 import { Server, WebSocket } from 'ws';
 import * as Y from 'yjs';
 // import * as yawareness from 'y-protocols/awareness'
-import { setupWsConnection } from './y-websocket';
+import { setupYjsWsConnection } from './y-websocket';
+import { setupDebugWsConnection } from '../debug/debug.websocket';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 @WebSocketGateway({
   transports: ['websocket'],
 })
@@ -19,25 +22,24 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private clients: Map<string, { socket: WebSocket; room: string | null }> =
     new Map();
   private docs: Map<string, Y.Doc> = new Map();
+
+  constructor() {}
+
   handleConnection(client: WebSocket, message: IncomingMessage) {
     const room = message.url.match(/room=([^&/]+)/)?.[1];
-    setupWsConnection(client, message, { docName: room, gc: true });
+    const debug = message.url.match(/debug=([^&/]+)/)?.[1];
+    if (room) {
+      setupYjsWsConnection(client, message, { docName: room, gc: true });
+    } else if (debug) {
+      setupDebugWsConnection(client);
+    } else {
+      client.close();
+    }
   }
 
   handleDisconnect() {}
 
-  handleMessage() {
-    // const decoder = decoding.createDecoder(message);
-    // const encoder = encoding.createEncoder();
-    // const messageType = decoding.readUint8(decoder);
-    // console.log(messageType);
-    // if (messageType === 0) {
-    //   const roomId = decoding.readVarUint(decoder);
-    //   const client = this.clients.get(clientId);
-    //   console.log('roomId', roomId);
-    //   // console.log('client', client)
-    // }
-  }
+  handleMessage() {}
   broadcast(room: string, message: Buffer | string, senderId?: string) {
     for (const [clientId, client] of this.clients.entries()) {
       if (client.room === room && clientId !== senderId) {

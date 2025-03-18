@@ -15,7 +15,7 @@ const messageAwareness = 1;
 
 const pingTimeout = 30000;
 
-export function setupWsConnection(
+export function setupYjsWsConnection(
   connect: WebSocket,
   req: IncomingMessage,
   { docName, gc = true }: { docName: string; gc: boolean },

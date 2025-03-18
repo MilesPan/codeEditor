@@ -59,7 +59,7 @@ class CodeStore {
     this.testCases.push(targetCase);
   }
 
-  functionName: string = '';
+  functionName: string = 'main';
   setFunctionName(name: string) {
     this.functionName = name;
   }

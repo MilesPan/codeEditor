@@ -33,10 +33,10 @@ const CodeEditor: FC = memo(
     const { resolvedTheme } = useTheme();
     const [messageApi, ContextHolder] = useMessage();
     const [curLanguage, setCurLanguage] = useState<Language>(initLanguage.value);
-    const curCode = useMemo(() => languages.find(lang => lang.value === curLanguage)?.defaultCode || '', [curLanguage]);
-
+    const [curCode, setCurCode] = useState<string>(initLanguage.defaultCode);
     useEffect(() => {
       CodeStore.setCodeType(curLanguage);
+      setCurCode(languages.find(lang => lang.value === curLanguage)?.defaultCode || '');
       yMap.set('language', curLanguage);
     }, [curLanguage]);
 

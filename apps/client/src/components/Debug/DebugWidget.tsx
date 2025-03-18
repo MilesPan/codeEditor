@@ -4,6 +4,9 @@ import { fetchResume, fetchStepInto, fetchStepOut, fetchStepOver } from '@Reques
 import debugStore from '@/store/debugStore';
 import { ResponseResult } from '@Request/request';
 import { StartDebugResponseDto } from '@Dtos/debug';
+import { useTabContext } from '@/contexts/TabContext';
+import { Actions } from 'flexlayout-react';
+import { TabName } from '../FlexLayout/model';
 
 export const DebugOperation: FC<{ children?: ReactNode }> = forwardRef<HTMLElement, { children?: ReactNode }>(
   ({ children }, ref) => {
@@ -16,22 +19,48 @@ export const DebugOperation: FC<{ children?: ReactNode }> = forwardRef<HTMLEleme
       }
     }, []);
 
+    const { model, findTabNode, activateTab } = useTabContext();
     const handleResume = async () => {
-      const res = await fetchResume();
-      helper(res);
+      try {
+        const res = await fetchResume({ sessionId: debugStore.sessionId });
+        helper(res);
+      } catch (error) {
+        debugStore.closeDebug();
+        model?.doAction(Actions.deleteTab(TabName.debugger));
+        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+      }
     };
     const handleStepOver = async () => {
-      const res = await fetchStepOver();
-      helper(res);
+      try {
+        const res = await fetchStepOver({ sessionId: debugStore.sessionId });
+        helper(res);
+      } catch (error) {
+        debugStore.closeDebug();
+        model?.doAction(Actions.deleteTab(TabName.debugger));
+        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+      }
     };
     const handleStepInto = async () => {
-      const res = await fetchStepInto();
-      helper(res);
+      try {
+        const res = await fetchStepInto({ sessionId: debugStore.sessionId });
+        helper(res);
+      } catch (error) {
+        debugStore.closeDebug();
+        model?.doAction(Actions.deleteTab(TabName.debugger));
+        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+      }
     };
     const handleStepOut = async () => {
-      const res = await fetchStepOut();
-      helper(res);
+      try {
+        const res = await fetchStepOut({ sessionId: debugStore.sessionId });
+        helper(res);
+      } catch (error) {
+        debugStore.closeDebug();
+        model?.doAction(Actions.deleteTab(TabName.debugger));
+        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+      }
     };
+
     return (
       <>
         <section ref={ref}>

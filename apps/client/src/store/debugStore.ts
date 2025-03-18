@@ -3,6 +3,9 @@ import { clearHighlightLine, setHighlightLine } from '@/components/CodeEditor/he
 import { StartDebugResponseDto } from '@Dtos/debug';
 import { makeAutoObservable, reaction } from 'mobx';
 import { isMyArray } from '@Utils/index';
+import { useTabContext } from '@/contexts/TabContext';
+import { Actions } from 'flexlayout-react';
+import model, { TabName } from '@/components/FlexLayout/model';
 
 class DebugStore {
   debugActive: boolean = false;
@@ -14,12 +17,15 @@ class DebugStore {
   setIsDebugging(status: boolean) {
     this.isDebugging = status;
   }
+  sessionId: string = '';
+  setSessionId(sessionId: string) {
+    this.sessionId = sessionId;
+  }
   breakPoints: Set<number> = new Set();
 
   result: Record<PropertyKey, any> = {};
   setResult(result: StartDebugResponseDto['result']) {
     this.result = this.convertResult(result);
-    console.log(this.result);
   }
 
   curLine: number = -1;
@@ -51,6 +57,11 @@ class DebugStore {
     return obj;
   }
 
+  closeDebug() {
+    this.setIsDebugging(false);
+    this.setCurLine(-1);
+    this.setResult([]);
+  }
   constructor() {
     makeAutoObservable(this);
   }
