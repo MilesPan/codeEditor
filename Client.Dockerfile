@@ -15,7 +15,7 @@ RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 COPY . .
 
 RUN npm run build:client
-FROM nginx:alpine
+FROM nginx
 COPY --from=0 /app/apps/client/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

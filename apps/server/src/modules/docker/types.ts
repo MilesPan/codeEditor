@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum CodeEnv {
   cpp = 'cpp:11',
-  nodejs = 'node:lts-alpine',
+  nodejs = 'node:lts',
   go = 'go:latest',
   python3 = 'python:3',
   java = 'java:latest',

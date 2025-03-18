@@ -1,30 +1,32 @@
-# 使用官方的 Node.js 作为基础镜像
-FROM node:16-alpine as builder
-
-
-WORKDIR /app
-COPY ./package.json /package.json
-
-RUN npm install --legacy-peer-deps --registry https://registry.npmmirror.com
-
-COPY . .
-
-RUN npm run build:server
-FROM node:16-alpine
-COPY wait-for /wait-for
-COPY --from=builder /app/apps/server/dist /app/server/dist
-COPY --from=builder /app/apps/server/prisma /app/server/dist/prisma
-COPY --from=builder /app/apps/server/package.json /app/server/dist/package.json
- 
-WORKDIR /app/server/dist
-RUN npm install --registry https://registry.npmmirror.com
-RUN npx prisma generate
-# RUN npx prisma migrate dev --name init
+# 构建阶段
+FROM node:20-alpine3.19 AS builder
 
 WORKDIR /app
-# 暴露应用运行的端口
+COPY ./apps/server/dist ./dist
+COPY ./apps/server/prisma ./prisma
+COPY ./apps/server/package.json ./package.json
+
+# 只安装生产依赖
+RUN npm install --production --registry https://registry.npmmirror.com \
+    && npx prisma generate
+
+# 最终阶段
+FROM node:20-alpine3.19 AS production
+
+# 创建非root用户
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# 只复制必要的文件
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# 切换到非root用户
+USER appuser
+
 EXPOSE 3000
 
-# 启动应用
-
-CMD ["node", "/app/server/dist/apps/server/src/main.js"]
+CMD ["node", "dist/apps/server/src/main.js"]

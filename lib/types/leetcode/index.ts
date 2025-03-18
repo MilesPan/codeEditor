@@ -43,7 +43,6 @@ export type CTProblemItemType = {
 export type ProblemItemType = {
   title: string;
   content: string;
-  interviewed: LC.Interviewed;
   frontend_question_id: string;
   testCase: {
     metaData: {

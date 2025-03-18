@@ -27,7 +27,7 @@ class UserStore {
       name: 'UserStore',
       properties: ['userInfo', 'users'],
       storage: window.localStorage
-    }).then(r => console.log('持久化存储', r));
+    })
   }
   setUserInfo = (key: keyof typeof this.userInfo, value: string) => {
     this.userInfo[key] = value;

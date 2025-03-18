@@ -3,28 +3,31 @@ version: '3.8'
 
 services:
   server:
-    image: pdy666/codeeditor-server
-    # build:
-    #   context: ./
-    #   dockerfile: Server.Dockerfile
+    image: codeeditor-server
+    platform: linux/amd64
+    container_name: codeeditor-server
+    build:
+      context: ./
+      dockerfile: Server.Dockerfile
     ports:
       - '3000:3000'
-    env_file:
-      - .env.server
     environment:
-      NODE_ENV: production
+      - PUBLIC_LIVE_API_KEY=APIECBzrnxEjXE3
+      - PUBLIC_LIVE_API_SECRET=SkEWmGIJR56FZu5pnLnSLxPDHpagbddjZliNPOHT0iK
+      - PUBLIC_LIVE_WEBSOCKET_URL=wss://codeeditor-341m5dwl.livekit.cloud
+      - DATABASE_URL=mysql://root:cc5428486@codeeditor-mysql:3306/codeeditor
     depends_on:
       - mysql
-    command: sh -c '/wait-for mysql:3306 -- node /app/server/dist/apps/server/src/main.js'
     networks:
       - net1
   mysql:
-    platform: linux/amd64
     image: mysql:latest
+    platform: linux/amd64
+    container_name: codeeditor-mysql
     restart: always
     environment:
-      - MYSQL_DATABASE=code
-      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=codeeditor
+      - MYSQL_ROOT_PASSWORD=cc5428486
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
@@ -32,18 +35,21 @@ services:
     networks:
       - net1
   client:
-    image: pdy666/codeeditor-client
-    # build:
-    #   context: ./
-    #   dockerfile: Client.Dockerfile
+    image: codeeditor-client
+    platform: linux/amd64
+    container_name: codeeditor-client
+    build:
+      context: ./
+      dockerfile: Client.Dockerfile
     ports:
       - '3030:80'
     networks:
       - net1
-    env_file:
-      - .env.client
     environment:
-      NODE_ENV: production
+      - PUBLIC_LIVE_API_KEY=APIECBzrnxEjXE3
+      - PUBLIC_LIVE_API_SECRET=SkEWmGIJR56FZu5pnLnSLxPDHpagbddjZliNPOHT0iK
+      - PUBLIC_LIVE_WEBSOCKET_URL=wss://codeeditor-341m5dwl.livekit.cloud
+      - DATABASE_URL=mysql://root:root@localhost:3306/codeeditor
     depends_on:
       - server
 
