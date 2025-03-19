@@ -25,7 +25,8 @@
       "@Utils/*": ["../../lib/utils/*"],
       "@Request/*": ["../../lib/requests/*"],
       "@Types/*": ["../../lib/types/*"],
-      "@Dtos/*": ["../../lib/dtos/*"]
+      "@Dtos/*": ["../../lib/dtos/*"],
+      "@Debugger/*": ["../../lib/debugger/*"]
     }
   }
 }

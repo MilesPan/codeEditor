@@ -3,7 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { useCodeContext } from '@/contexts/CodeContext';
 import { useTabContext } from '@/contexts/TabContext';
 import { DebuggerTab, TabName } from '@/components/FlexLayout/model';
-import { CodeStore } from '@/store';
+import { CodeStore, UserStore } from '@/store';
 import { runCode, convertLanguageToCodeType, Language } from '@Request/code';
 import { parseConsoleOutput } from '@Utils/code';
 import { useRequest, useToggle, useUpdateEffect } from 'ahooks';
@@ -51,9 +51,8 @@ const Operations = observer(() => {
     },
     onSuccess(res) {
       debugStore.setIsDebugging(true);
-      debugStore.setResult(res.data.result);
-      debugStore.setCurLine(res.data.curLine);
-      debugStore.setSessionId(res.data.sessionId);
+      // debugStore.setResult(res.data.result);
+      debugStore.setFileName(res.data.fileName);
     },
     onFinally() {
       setIsRunning(false);
@@ -78,8 +77,10 @@ const Operations = observer(() => {
     debugActive
       ? runWithDebug({
           code: CodeStore.code,
-          breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1),
-          functionName: CodeStore.functionName
+          // breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1),
+          functionName: CodeStore.functionName,
+          roomId: UserStore.userInfo.roomId,
+          userName: '123'
         })
       : run({
           code: CodeStore.code,

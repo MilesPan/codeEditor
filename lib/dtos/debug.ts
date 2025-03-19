@@ -8,9 +8,13 @@ export class StartDebugDto {
   @IsNotEmpty()
   functionName: string;
 
-  @IsArray()
-  @IsOptional()
-  breakPoints: number[];
+  @IsString()
+  @IsNotEmpty()
+  roomId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  userName: string;
 }
 
 export class NeedSessionDto {
@@ -27,9 +31,6 @@ export class StepOutDto extends NeedSessionDto {}
 
 export class ResumeDto extends NeedSessionDto {}
 
-export class StartDebugResponseDto {
-  sessionId: string;
-  status: 'debugging' | 'end';
-  result: { name: string; value: StartDebugResponseDto['result'] | string | number | boolean; type: string }[];
-  curLine: number;
+export class StartDebugResponseVo {
+  fileName: string;
 }

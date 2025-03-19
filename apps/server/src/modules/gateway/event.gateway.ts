@@ -6,7 +6,6 @@ import {
 } from '@nestjs/websockets';
 import { IncomingMessage } from 'http';
 import { Server, WebSocket } from 'ws';
-import * as Y from 'yjs';
 // import * as yawareness from 'y-protocols/awareness'
 import { setupYjsWsConnection } from './y-websocket';
 import { setupDebugWsConnection } from '../debug/debug.websocket';
@@ -21,7 +20,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
   private clients: Map<string, { socket: WebSocket; room: string | null }> =
     new Map();
-  private docs: Map<string, Y.Doc> = new Map();
 
   constructor() {}
 
