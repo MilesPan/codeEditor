@@ -28,5 +28,11 @@
       "@Dtos/*": ["../../lib/dtos/*"],
       "@Debugger/*": ["../../lib/debugger/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/node_modules/*",
+    "**/vscode-node-debug2/**"
+  ]
 }

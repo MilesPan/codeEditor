@@ -20,12 +20,10 @@ export class DebugService {
     this.fixLineNumber += 1;
     // const originCodeLines = code.split('\n');
     // const finallyCodeLine = originCodeLines.length + this.fixLineNumber + 2;
-    const generatedCode = `
-    (function main(){
+    const generatedCode = `(function (){
       ${code}
       ${functionName}();
-    })()
-    `;
+    })()`;
 
     const fileName = `${roomId}.${userName}.js`;
     const filePath = path.join(__dirname, fileName);

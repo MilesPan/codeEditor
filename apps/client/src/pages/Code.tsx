@@ -10,7 +10,7 @@ const Code = observer(() => {
         <div className="flex relative w-full h-full">
           <FlexLayout></FlexLayout>
           {debugStore.isDebugging && (
-            <DragWrapper initPosition={{ left: 842, top: 13 }}>
+            <DragWrapper initPosition={{ left: 400, top: 13 }}>
               <DebugOperation></DebugOperation>
             </DragWrapper>
           )}

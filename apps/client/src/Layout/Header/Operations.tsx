@@ -12,7 +12,7 @@ import codeStore from '@/store/codeStore';
 import { message } from 'antd';
 import debugStore from '@/store/debugStore';
 import { fetchStartDebug } from '@Request/debug';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Actions, DockLocation } from 'flexlayout-react';
 
 const Operations = observer(() => {
@@ -41,15 +41,27 @@ const Operations = observer(() => {
       setIsRunning(false);
     }
   });
-  const { run: runWithDebug } = useRequest(fetchStartDebug, {
+  const { run: runWithDebug, cancel } = useRequest(fetchStartDebug, {
     manual: true,
     onBefore() {
+      if (!debugStore.breakPoints.size) {
+        messageApi.warning('请设置断点');
+        cancel();
+        return;
+      }
       setIsRunning(true);
       setExecedCode(true);
       model?.doAction(Actions.deleteTab(TabName.debugger));
       model?.doAction(Actions.addNode(DebuggerTab, TabName.leftTabset, DockLocation.CENTER, -1, true));
     },
     onSuccess(res) {
+      debugStore.setupDapWebSocket(codeStore.editorRef);
+      debugStore.startDebug();
+      debugStore.onTerminate(() => {
+        messageApi.warning('调试结束');
+        model?.doAction(Actions.deleteTab(TabName.debugger));
+        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+      });
       debugStore.setIsDebugging(true);
       // debugStore.setResult(res.data.result);
       debugStore.setFileName(res.data.fileName);

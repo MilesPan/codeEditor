@@ -1,6 +1,6 @@
-import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '../ThemeProvider';
-import { Popover, Tooltip } from 'antd';
+import { Popover, Tooltip, notification } from 'antd';
 import LanguageSelector, { LanguageItemType, languages } from './LanguageSelector';
 import { Language } from '@Request/index';
 import { ChevronDown, Maximize2, Menu, Minimize2, RotateCcw } from 'lucide-react';
@@ -30,6 +30,7 @@ const yMap = ydoc.getMap<Language | undefined>('settings');
 const initLanguage = languages[0];
 const CodeEditor: FC = memo(
   observer(() => {
+    const [notificationApi, NotificationHolder] = notification.useNotification();
     const { resolvedTheme } = useTheme();
     const [messageApi, ContextHolder] = useMessage();
     const [curLanguage, setCurLanguage] = useState<Language>(initLanguage.value);
@@ -50,7 +51,6 @@ const CodeEditor: FC = memo(
     }, []);
 
     const awarenessRef = useRef<Awareness>();
-    const providerRef = useRef<WebsocketProvider>();
 
     const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
     useEffect(() => {
@@ -60,7 +60,7 @@ const CodeEditor: FC = memo(
     }, []);
 
     const lastLineNumber = useRef<number>();
-    const handleEditorDidMount: OnMount = (editor, monaco) => {
+    const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
       CodeStore.setEditorRef(editor);
       CodeStore.setMonacoRef(monaco);
       editorRef.current = editor;
@@ -73,7 +73,11 @@ const CodeEditor: FC = memo(
       yMap.set('language', curLanguage);
       yMap.observe(observer);
       setCurLanguage(curLanguage);
-      const provider = new WebsocketProvider(`ws://${process.env.PUBLIC_HOST}:3000/?room=${UserStore.userInfo.roomId}`, '', ydoc);
+      const provider = new WebsocketProvider(
+        `ws://${process.env.PUBLIC_HOST}:3000/?room=${UserStore.userInfo.roomId}`,
+        '',
+        ydoc
+      );
       const awareness = provider.awareness;
       awarenessRef.current = awareness;
 
@@ -82,7 +86,7 @@ const CodeEditor: FC = memo(
 
       setUserToolTip(awareness);
 
-      awareness.on('change', (changes: any, ...args: any[]) => {
+      awareness.on('change', () => {
         setUserToolTip(awareness);
       });
 
@@ -98,7 +102,17 @@ const CodeEditor: FC = memo(
 
       // 断点相关
       initBreakPoints(editor, debugStore.breakPoints, lastLineNumber, monaco);
-    };
+    }, []);
+    const handleEditorChange = useCallback(() => {
+      if (debugStore.isDebugging) {
+        notificationApi.warning({
+          message: '代码已变更，请重新调试'
+        });
+        setTimeout(() => {
+          debugStore.closeDebug();
+        }, 1000);
+      }
+    }, []);
 
     // 格式化
     const formatCode = () => {
@@ -123,7 +137,7 @@ const CodeEditor: FC = memo(
 
     return (
       <>
-        {ContextHolder}
+        {ContextHolder && NotificationHolder}
         <div className="w-full h-full flex flex-col overflow-y-hidden">
           <div className="operators w-full h-8 py-1 flex items-center justify-between border-b border-b-[--tag-bg] mb-4">
             <div className="left flex items-center px-1">
@@ -175,6 +189,7 @@ const CodeEditor: FC = memo(
             value={curCode}
             theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
             onMount={handleEditorDidMount}
+            onChange={handleEditorChange}
             options={{ glyphMargin: true, lineNumbersMinChars: 3 }}
           ></Editor>
         </div>

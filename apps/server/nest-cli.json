@@ -4,6 +4,13 @@
   "sourceRoot": "src",
   "entryFile": "apps/server/src/main.js",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "tsConfigPath": "tsconfig.json",
+    "assets": [{
+        "include": "modules/debug/vscode-node-debug2/**/*",
+        "outDir": "dist/apps/server/src",
+        "watchAssets": true
+      }
+    ]
   }
 }

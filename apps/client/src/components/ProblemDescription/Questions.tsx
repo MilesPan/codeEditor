@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { createElement, useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Button, Input } from 'antd';
 const Question1 = (props: { step: number; stepCount: number; handleNext: (step: number, value: any) => void }) => {
   const { step, stepCount, handleNext } = props;
@@ -60,7 +60,19 @@ const Question2 = (props: { step: number; stepCount: number; handleNext: (step: 
   );
 };
 const Question3 = (props: { step: number; stepCount: number; handleNext: (step: number, value: any) => void }) => {
-  const types = ['后端', '前端', '软件开发', '机器学习', '游戏开发', '数据开发', '数据分析', '客户端', '运维', '测试', '其他'];
+  const types = [
+    '后端',
+    '前端',
+    '软件开发',
+    '机器学习',
+    '游戏开发',
+    '数据开发',
+    '数据分析',
+    '客户端',
+    '运维',
+    '测试',
+    '其他'
+  ];
   return (
     <>
       <div className="question">
@@ -150,11 +162,21 @@ const Questions = () => {
   const CurrentStepComponent = StepFactory[step - 1];
   return (
     <>
-      <CurrentStepComponent step={step} stepCount={StepFactory.length - 1} handleNext={handleNext}></CurrentStepComponent>
+      <CurrentStepComponent
+        step={step}
+        stepCount={StepFactory.length - 1}
+        handleNext={handleNext}
+      ></CurrentStepComponent>
       <div className="information flex gap-5 mt-3 text-[--question-text_color]">
-        <div className="passedCount">通过次数<span className='questionInformation'>24K</span></div>
-        <div className="submitCount">提交次数<span className='questionInformation'>51K</span></div>
-        <div className="passedRatio">通过率<span className='questionInformation'>47.0%</span></div>
+        <div className="passedCount">
+          通过次数<span className="questionInformation">24K</span>
+        </div>
+        <div className="submitCount">
+          提交次数<span className="questionInformation">51K</span>
+        </div>
+        <div className="passedRatio">
+          通过率<span className="questionInformation">47.0%</span>
+        </div>
       </div>
     </>
   );

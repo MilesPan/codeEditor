@@ -5,7 +5,7 @@ import {} from 'mobx-react-lite';
 import { MyTabItemType } from '@/components/TestCase/MyTab';
 import { CaseDeltaType, ParsedTestResponse } from '@Types/leetcode';
 
-type IEditor = Parameters<OnMount>[0];
+export type IEditor = Parameters<OnMount>[0];
 
 class CodeStore {
   editorRef: IEditor | null = null;
