@@ -12,13 +12,7 @@ RUN npm install --production --registry https://registry.npmmirror.com \
 # 最终阶段
 FROM node:20-alpine3.19 AS production
 
-# 创建非root用户
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
 WORKDIR /app
-
-# 创建调试目录
-RUN mkdir -p /tmp/node-debug-files && chmod 777 /tmp/node-debug-files
 
 # 只复制必要的文件
 COPY --from=builder /app/dist ./dist

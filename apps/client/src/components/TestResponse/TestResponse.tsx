@@ -1,17 +1,6 @@
 import { useCodeContext } from '@/contexts/CodeContext';
 import { Skeleton } from 'antd';
-import {
-  cloneElement,
-  FC,
-  Fragment,
-  isValidElement,
-  memo,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import MyTab, { MyTabItemType } from '../TestCase/MyTab';
 import { observer } from 'mobx-react-lite';
 import { Copy, CopyCheck, Smile } from 'lucide-react';
@@ -118,20 +107,32 @@ const TestResponse: FC = observer(() => {
             <>
               <div className="p-5 h-full overflow-y-auto">
                 <Skeleton active loading={isRunning}>
-                  <div className="flex gap-3 items-center mb-4">
-                    <Smile color="var(--logo_bg-green)" size={22}></Smile>
-                    <span className="text-sm text-[--paramName-label-color]">
-                      执行用时: {codeStore.testResponse?.[0].execTime}
-                    </span>
-                  </div>
-                  <MyTab
-                    tabs={tabs}
-                    activeKey={activeTabKey || 0}
-                    maxTabCount={8}
-                    onChange={e => {
-                      setActiveTabKey(e.key);
-                    }}
-                  ></MyTab>
+                  {!codeStore.error ? (
+                    <>
+                      <div className="flex gap-3 items-center mb-4">
+                        <Smile color="var(--logo_bg-green)" size={22}></Smile>
+                        <span className="text-sm text-[--paramName-label-color]">
+                          执行用时: {codeStore.testResponse?.[0]?.execTime}
+                        </span>
+                      </div>
+                      <MyTab
+                        tabs={tabs}
+                        activeKey={activeTabKey || 0}
+                        maxTabCount={8}
+                        onChange={e => {
+                          setActiveTabKey(e.key);
+                        }}
+                      ></MyTab>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <div className="text-red-500 text-xl">编译报错</div>
+                      <div className="text-lg whitespace-pre-line rounded-lg bg-red-200 p-2 text-red-500 font-bold">
+                        <span>Error: </span>
+                        <span dangerouslySetInnerHTML={{ __html: codeStore.error }}></span>
+                      </div>
+                    </div>
+                  )}
                 </Skeleton>
               </div>
             </>

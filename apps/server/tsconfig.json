@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
-    "lib": ["es5", "ES2015"],
+    "lib": ["es5", "ESNext"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",

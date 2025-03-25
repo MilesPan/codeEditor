@@ -1,5 +1,4 @@
 import { config } from './config';
-// @ts-ignore
 import { Container } from 'dockerode';
 import * as Docker from 'dockerode';
 import { Injectable } from '@nestjs/common';

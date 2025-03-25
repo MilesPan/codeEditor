@@ -68,6 +68,9 @@ class CodeStore {
   setTestResponse(response: ParsedTestResponse[]) {
     this.testResponse = response;
   }
+  get error() {
+    return this.testResponse?.find(testResponse => testResponse.error)?.error;
+  }
   constructor() {
     makeAutoObservable(this);
   }

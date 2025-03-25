@@ -22,6 +22,10 @@ const Operations = observer(() => {
   const { run } = useRequest(runCode, {
     manual: true,
     onBefore() {
+      if (!CodeStore.code.trim()) {
+        messageApi.warning('请输入代码');
+        throw new Error('请输入代码');
+      }
       setIsRunning(true);
       setExecedCode(true);
       const testResponseNode = findTabNode(model?.getRoot(), 'name', TabName.testResponse);
@@ -32,6 +36,7 @@ const Operations = observer(() => {
         return {
           consoleLogs: log.consoleLogs.map(consoleLog => parseConsoleOutput(consoleLog)),
           results: log.results.map(result => parseConsoleOutput(result)),
+          error: log.error,
           execTime: res.data.execTime
         };
       });
@@ -41,13 +46,12 @@ const Operations = observer(() => {
       setIsRunning(false);
     }
   });
-  const { run: runWithDebug, cancel } = useRequest(fetchStartDebug, {
+  const { run: runWithDebug } = useRequest(fetchStartDebug, {
     manual: true,
     onBefore() {
       if (!debugStore.breakPoints.size) {
         messageApi.warning('请设置断点');
-        cancel();
-        return;
+        throw new Error('请设置断点');
       }
       setIsRunning(true);
       setExecedCode(true);

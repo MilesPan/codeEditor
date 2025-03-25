@@ -101,7 +101,7 @@ const CodeEditor: FC = memo(
       });
 
       // 断点相关
-      initBreakPoints(editor, debugStore.breakPoints, lastLineNumber, monaco);
+      initBreakPoints(editor, debugStore.breakPoints, lastLineNumber, monaco, notificationApi);
     }, []);
     const handleEditorChange = useCallback(() => {
       if (debugStore.isDebugging) {

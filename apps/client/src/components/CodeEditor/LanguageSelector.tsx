@@ -13,7 +13,7 @@ export const languages: LanguageItemType[] = [
   {
     name: 'JavaScript',
     value: Language.nodejs,
-    defaultCode:`function main() {
+    defaultCode: `function main() {
   console.log("Hello, World!");
 }`,
     info: 'JavaScript is a versatile language.'
@@ -89,7 +89,7 @@ const LanguageSelector = memo(
     return (
       <>
         <div className=" language-selector flex flex-col flex-wrap max-h-64  gap-1 items-center px-2 py-1">
-          {languages.map((lang, index) => {
+          {languages.map(lang => {
             return (
               <div
                 key={lang.value}

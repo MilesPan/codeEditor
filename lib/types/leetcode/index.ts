@@ -67,6 +67,7 @@ export type CaseDeltaType = {
 export interface LogData {
   consoleLogs: string[];
   results: string[];
+  error?: string;
 }
 export type TestResponseType = {
   logs: LogData[];
@@ -76,4 +77,5 @@ export type ParsedTestResponse = {
   consoleLogs: string[][];
   results: string[][];
   execTime: string;
-}
+  error?: string;
+};

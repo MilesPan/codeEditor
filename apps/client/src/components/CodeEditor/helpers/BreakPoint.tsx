@@ -1,4 +1,6 @@
+import debugStore from '@/store/debugStore';
 import { type OnMount, Monaco } from '@monaco-editor/react';
+import { NotificationInstance } from 'antd/es/notification/interface';
 import { MutableRefObject } from 'react';
 type MyEditor = Parameters<OnMount>[0];
 
@@ -8,7 +10,8 @@ export function initBreakPoints(
   editor: MyEditor,
   breakPoints: Set<number>,
   lastLineNumber: MutableRefObject<number | undefined>,
-  monaco: Monaco
+  monaco: Monaco,
+  notificationApi: NotificationInstance
 ) {
   // 点击效果
   editor.onMouseDown(event => {
@@ -34,6 +37,14 @@ export function initBreakPoints(
           }
         ]);
         addDecorationsToSet(editor, breakPointIds, breakPointDecorations);
+      }
+      if (debugStore.isDebugging) {
+        notificationApi.warning({
+          message: '断点已变更，请重新调试'
+        });
+        setTimeout(() => {
+          debugStore.closeDebug();
+        }, 1000);
       }
     }
   });

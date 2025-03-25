@@ -1,18 +1,14 @@
 import { CaseDeltaType, LogData } from '@Types/leetcode';
 import { DockerService } from '../docker/docker.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { RunCodeDto } from './dto/run-code.dto';
 import { Injectable } from '@nestjs/common';
-
 @Injectable()
 export class CodeService {
   private flagName = '_P_SELF_RES_';
   private startFlag = this.flagName + 'START';
   private endFlag = this.flagName + 'END';
-  constructor(
-    private prisma: PrismaService,
-    private dockerService: DockerService,
-  ) {}
+  private callExecs = [];
+  constructor(private dockerService: DockerService) {}
   async runCode(runCodeDto: RunCodeDto) {
     const { type } = runCodeDto;
     const finallyCode = this.addFunctionCall(runCodeDto);
@@ -44,13 +40,20 @@ export class CodeService {
       const callFunctionName = `${this.flagName}${testCaseIndex}`;
       const callExec = `
       const ${callFunctionName} = ${functionName}(${params.join(',')});
-      console.log('resStart:',${callFunctionName}, ':resEnd')
       `;
+      this.callExecs.push(callExec.trim());
       calcedCode += this.genIIFE(
-        `console.log("${this.startFlag}");` +
+        `
+        try {
+          eval(\`if (typeof ${functionName} !== 'function') {throw new Error('${functionName} is not defined')}
+          console.log("${this.startFlag}");` +
           code +
           `\n${callExec}` +
-          `console.log("${this.endFlag}");`,
+          `console.log('resStart:',${callFunctionName}, ':resEnd');` +
+          `console.log("${this.endFlag}");\`)` +
+          `} catch (e) {
+          console.log('error:',e.message);
+        }`,
       );
     });
     return calcedCode;
@@ -81,6 +84,15 @@ export class CodeService {
     const resultRegex = /resStart:\s*([\s\S]*?)\s*:resEnd/g;
 
     const logs: LogData[] = [];
+    if (!(res.includes(this.startFlag) && res.includes(this.endFlag))) {
+      return [
+        {
+          error: res.split('error:')[1].trim(),
+          consoleLogs: [],
+          results: [],
+        },
+      ];
+    }
     let match;
 
     while ((match = blockRegex.exec(res)) !== null) {
