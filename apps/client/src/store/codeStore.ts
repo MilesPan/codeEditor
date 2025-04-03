@@ -58,6 +58,10 @@ class CodeStore {
   addTestCases(targetCase: CaseDeltaType[]) {
     this.testCases.push(targetCase);
   }
+  get curTestCase() {
+    const activeTabIdx = this.tabs.findIndex(tab => tab.key === this.activeTabKey);
+    return this.testCases[activeTabIdx];
+  }
 
   functionName: string = 'main';
   setFunctionName(name: string) {

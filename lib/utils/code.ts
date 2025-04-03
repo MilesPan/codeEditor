@@ -11,14 +11,17 @@ export enum OutputType {
 export function parseConsoleOutput(output: string, type: OutputType = OutputType.plain) {
   if (!output) return [];
   // 换行解析
-  let splitAsEnter = output.split(/\n|\n\n/).map(str => {
-    if (type === OutputType.plain) {
-      str = encodeURI(str);
-      str = str.replace(/%1B%5B.*?m.*?%1B%5BK|%1B%5B.*?m|%0D/g, '');
-    }
+  const splitAsEnter = output
+    .split(/\n|\n\n/)
+    .map(str => {
+      if (type === OutputType.plain) {
+        str = encodeURI(str);
+        str = str.replace(/%1B%5B.*?m.*?%1B%5BK|%1B%5B.*?m|%0D/g, '');
+      }
 
-    return decodeURI(str);
-  }).filter(str => str);
+      return decodeURI(str);
+    })
+    .filter(str => str);
 
   return splitAsEnter;
 }

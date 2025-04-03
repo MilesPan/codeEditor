@@ -1,5 +1,5 @@
 import { CodeType } from '@Request/index';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 import { CaseDeltaType } from '@Types/leetcode';
 export class RunCodeDto {
   @IsString()
@@ -9,6 +9,8 @@ export class RunCodeDto {
   @IsString()
   code: string;
 
+  @IsArray()
+  @IsNotEmpty({ message: '测试用例不能为空' })
   testCases: Array<CaseDeltaType[]>;
 
   @IsString()

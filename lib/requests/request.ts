@@ -11,7 +11,7 @@ class Axios {
   private instance!: AxiosInstance;
   private baseConfig: AxiosRequestConfig = {
     timeout: 1200000,
-    baseURL: '/api'
+    baseURL: process.env.NODE_ENV === 'production' ? '/codeeditor/api' : '/api'
   };
   constructor(config?: AxiosRequestConfig) {
     this.instance = axios.create(Object.assign(this.baseConfig, config));

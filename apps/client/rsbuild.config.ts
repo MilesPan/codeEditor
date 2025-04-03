@@ -13,6 +13,9 @@ export default defineConfig({
       }
     }
   },
+  output: {
+    assetPrefix: '/codeeditor'
+  },
   source: {
     define: {
       'process.env': JSON.stringify(process.env)

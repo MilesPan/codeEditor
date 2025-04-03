@@ -20,11 +20,6 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# 设置工作目录权限
-RUN chown -R appuser:appgroup /app
-
-# 切换到非root用户
-USER appuser
 
 EXPOSE 3000
 

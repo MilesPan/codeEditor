@@ -92,6 +92,9 @@ importers:
       graphql-request:
         specifier: ^7.1.0
         version: 7.1.0(graphql@16.9.0)
+      isolated-vm:
+        specifier: ^5.0.4
+        version: 5.0.4
       lib0:
         specifier: ^0.2.94
         version: 0.2.94
@@ -4260,6 +4263,10 @@ packages:
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
+
+  isolated-vm@5.0.4:
+    resolution: {integrity: sha512-RYUf/JC4ldWz/oi2BVs8a1XIprQ71q6eQPBwySaF5Apu0KMyf2gIpElbCyPh2OEmRT+FYw1GOKSdkv7jw2KLxw==}
+    engines: {node: '>=18.0.0'}
 
   isomorphic.js@0.2.5:
     resolution: {integrity: sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==}
@@ -9505,7 +9512,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 2.6.9(supports-color@3.2.3)
+      debug: 2.6.9
       depd: 2.0.0
       destroy: 1.2.0
       http-errors: 2.0.0
@@ -10166,6 +10173,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  debug@2.6.9:
+    dependencies:
+      ms: 2.0.0
+
   debug@2.6.9(supports-color@3.2.3):
     dependencies:
       ms: 2.0.0
@@ -10773,7 +10784,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.6.0
       cookie-signature: 1.0.6
-      debug: 2.6.9(supports-color@3.2.3)
+      debug: 2.6.9
       depd: 2.0.0
       encodeurl: 1.0.2
       escape-html: 1.0.3
@@ -10911,7 +10922,7 @@ snapshots:
 
   finalhandler@1.2.0:
     dependencies:
-      debug: 2.6.9(supports-color@3.2.3)
+      debug: 2.6.9
       encodeurl: 1.0.2
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -11982,6 +11993,10 @@ snapshots:
       isarray: 1.0.0
 
   isobject@3.0.1: {}
+
+  isolated-vm@5.0.4:
+    dependencies:
+      prebuild-install: 7.1.3
 
   isomorphic.js@0.2.5: {}
 
@@ -14357,7 +14372,7 @@ snapshots:
 
   send@0.18.0:
     dependencies:
-      debug: 2.6.9(supports-color@3.2.3)
+      debug: 2.6.9
       depd: 2.0.0
       destroy: 1.2.0
       encodeurl: 1.0.2

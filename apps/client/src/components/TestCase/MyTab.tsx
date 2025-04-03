@@ -45,7 +45,7 @@ const MyTab = observer(
     const selfTabs = needAdd ? tabs.concat(ADDTAB) : tabs;
     return (
       <>
-        <div className="container flex gap-2  flex-col">
+        <div className="flex gap-2  flex-col w-full">
           <div className="panels flex gap-2 justify-between">
             <div className="pannelLeft flex gap-2 items-center">
               {selfTabs.map((tab, index) => {
@@ -77,7 +77,6 @@ const MyTab = observer(
 
 const MyTabPannel = ({
   tab,
-  index,
   tabs,
   isActive,
   maxTabCount,

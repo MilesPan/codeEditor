@@ -18,7 +18,7 @@ import { Actions, DockLocation } from 'flexlayout-react';
 const Operations = observer(() => {
   const { isRunning, setIsRunning, setExecedCode } = useCodeContext();
   const [messageApi, ContextHolder] = message.useMessage();
-  const { activateTab, findTabNode, model } = useTabContext();
+  const { activeTab, model, deleteTab } = useTabContext();
   const { run } = useRequest(runCode, {
     manual: true,
     onBefore() {
@@ -28,8 +28,7 @@ const Operations = observer(() => {
       }
       setIsRunning(true);
       setExecedCode(true);
-      const testResponseNode = findTabNode(model?.getRoot(), 'name', TabName.testResponse);
-      activateTab(testResponseNode?.getId() || '');
+      activeTab(TabName.testResponse);
     },
     onSuccess(res) {
       const parsedResponse = res.data.logs.map(log => {
@@ -41,6 +40,10 @@ const Operations = observer(() => {
         };
       });
       codeStore.setTestResponse(parsedResponse);
+    },
+    onError() {
+      activeTab(TabName.testCase);
+      setExecedCode(false);
     },
     onFinally() {
       setIsRunning(false);
@@ -55,7 +58,7 @@ const Operations = observer(() => {
       }
       setIsRunning(true);
       setExecedCode(true);
-      model?.doAction(Actions.deleteTab(TabName.debugger));
+      deleteTab(TabName.debugger);
       model?.doAction(Actions.addNode(DebuggerTab, TabName.leftTabset, DockLocation.CENTER, -1, true));
     },
     onSuccess(res) {
@@ -63,12 +66,15 @@ const Operations = observer(() => {
       debugStore.startDebug();
       debugStore.onTerminate(() => {
         messageApi.warning('调试结束');
-        model?.doAction(Actions.deleteTab(TabName.debugger));
-        activateTab(findTabNode(model?.getRoot(), 'name', TabName.desc)?.getId() || '');
+        activeTab(TabName.desc);
       });
       debugStore.setIsDebugging(true);
       // debugStore.setResult(res.data.result);
       debugStore.setFileName(res.data.fileName);
+    },
+    onError() {
+      model?.doAction(Actions.deleteTab(TabName.debugger));
+      activeTab(TabName.desc);
     },
     onFinally() {
       setIsRunning(false);
@@ -96,7 +102,8 @@ const Operations = observer(() => {
           // breakPoints: Array.from(debugStore.breakPoints).map(i => i - 1),
           functionName: CodeStore.functionName,
           roomId: UserStore.userInfo.roomId,
-          userName: '123'
+          userName: UserStore.userInfo.userName,
+          curTestCase: CodeStore.curTestCase
         })
       : run({
           code: CodeStore.code,

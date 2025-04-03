@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { CaseDeltaType } from '@Types/leetcode';
+import { IsNotEmpty, IsArray, IsString } from 'class-validator';
 
 export class StartDebugDto {
   @IsNotEmpty()
@@ -15,6 +16,10 @@ export class StartDebugDto {
   @IsString()
   @IsNotEmpty()
   userName: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  curTestCase: CaseDeltaType[];
 }
 
 export class NeedSessionDto {

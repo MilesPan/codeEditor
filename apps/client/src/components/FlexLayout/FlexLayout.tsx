@@ -1,5 +1,5 @@
-import { Layout, Model, Action, Actions, IJsonTabNode, TabNode } from 'flexlayout-react';
-import { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Layout, Model, Action, Actions, IJsonTabNode } from 'flexlayout-react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import Layout_Model from './model';
 
 import './FlexLayout.css';
@@ -14,16 +14,16 @@ const FlexLayout = memo(() => {
     layoutRef.current!.doAction(action);
   };
   useEffect(() => {
-    setActivateTab(() => handleActiveTab)
+    setActivateTab(() => handleActiveTab);
     setContextModel(model);
-  }, [])
+  }, []);
   const onAction = useCallback((action: Action) => {
     // console.log('onAction', action);
     if (action.type === 'FlexLayout_DeleteTab') {
-      let borders = [...model.toJson().borders!];
+      const borders = [...model.toJson().borders!];
       borders[0]?.children.push(model.getNodeById(action.data.node)?.toJson() as IJsonTabNode);
       model.doAction(Actions.deleteTab(action.data.node));
-      var newmodel = { ...model.toJson(), borders };
+      const newmodel = { ...model.toJson(), borders };
       setModel(Model?.fromJson(newmodel));
     } else {
       return action;

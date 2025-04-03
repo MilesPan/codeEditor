@@ -53,7 +53,7 @@ const FunctionName = () => {
 
 const TestCase: FC = observer(() => {
   console.log('render');
-  let newAddActiveKey = useRef(generateUUID());
+  const newAddActiveKey = useRef(generateUUID());
   const onEdit = (targetKey: TargetKey, action: Action) => {
     switch (action) {
       case 'add':

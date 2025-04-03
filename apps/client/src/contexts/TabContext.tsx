@@ -1,6 +1,6 @@
 // TabContext.tsx
 import { TABNAME } from '@/components/FlexLayout/model';
-import { Model, Node, TabNode, TabSetNode } from 'flexlayout-react';
+import { Actions, Model, Node, TabNode, TabSetNode } from 'flexlayout-react';
 import React, { createContext, useContext, useState } from 'react';
 
 interface TabContextProps {
@@ -9,6 +9,8 @@ interface TabContextProps {
   activateTab: (tabId: string) => void;
   setActivateTab: React.Dispatch<React.SetStateAction<(tabId: string) => void>>;
   findTabNode: (node: Node | null | undefined, type: 'name' | 'id', name: TABNAME) => TabNode | TabSetNode | null;
+  activeTab: (tabName: TABNAME) => void;
+  deleteTab: (tabName: TABNAME) => void;
 }
 
 const TabContext = createContext<TabContextProps | undefined>(undefined);
@@ -27,7 +29,7 @@ const TabProvider: any = ({ children }: { children: any }) => {
       return node;
     }
     if (node?.getChildren()?.length) {
-      for (let child of node.getChildren()) {
+      for (const child of node.getChildren()) {
         const result = findTabNode(child, type, target);
         if (result) return result;
       }
@@ -35,7 +37,21 @@ const TabProvider: any = ({ children }: { children: any }) => {
     return null;
   };
 
-  const value = { activateTab, setActivateTab, model, setModel, findTabNode };
+  const activeTab = (tabName: TABNAME) => {
+    const tabNode = findTabNode(model?.getRoot(), 'name', tabName);
+    if (tabNode) {
+      activateTab(tabNode.getId());
+    }
+  };
+
+  const deleteTab = (tabName: TABNAME) => {
+    const tabNode = findTabNode(model?.getRoot(), 'name', tabName);
+    if (tabNode) {
+      model?.doAction(Actions.deleteTab(tabNode.getId()));
+    }
+  };
+
+  const value = { activateTab, setActivateTab, model, setModel, findTabNode, activeTab, deleteTab };
 
   return <TabContext.Provider value={value}>{children}</TabContext.Provider>;
 };

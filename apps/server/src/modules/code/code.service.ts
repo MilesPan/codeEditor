@@ -1,16 +1,26 @@
 import { CaseDeltaType, LogData } from '@Types/leetcode';
 import { DockerService } from '../docker/docker.service';
 import { RunCodeDto } from './dto/run-code.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { validateFunction } from '@/utils/code';
 @Injectable()
 export class CodeService {
   private flagName = '_P_SELF_RES_';
   private startFlag = this.flagName + 'START';
   private endFlag = this.flagName + 'END';
   private callExecs = [];
-  constructor(private dockerService: DockerService) {}
+  constructor(
+    private dockerService: DockerService,
+    private logger: Logger,
+  ) {}
   async runCode(runCodeDto: RunCodeDto) {
-    const { type } = runCodeDto;
+    const { type, code, functionName } = runCodeDto;
+    try {
+      await validateFunction(code, functionName);
+    } catch (error) {
+      this.logger.debug(error.message);
+      throw new Error(error.message);
+    }
     const finallyCode = this.addFunctionCall(runCodeDto);
     const dockerOptions = this.dockerService.setDockerOptions(type);
     if (!dockerOptions) return new Error('未知语言');
