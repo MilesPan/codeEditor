@@ -1,5 +1,5 @@
+import AOS from 'aos';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigation } from 'react-router-dom';
 
 type Theme = 'dark' | 'light' | 'system';
 type ResolvedTheme = Exclude<Theme, 'system'>;
@@ -52,6 +52,9 @@ export function ThemeProvider({
     }
     root.classList.add(theme);
     setresolvedTheme(theme === 'dark' ? 'dark' : 'light');
+    setTimeout(() => {
+      AOS.refresh();
+    });
   }, [theme]);
 
   const value = {
